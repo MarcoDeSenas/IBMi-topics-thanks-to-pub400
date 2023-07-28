@@ -1,1 +1,1 @@
-This HowTo folder provides information about how to proceed to perform specific actions.
+This HowTo folder provides information about how to proceed to perform specific actions. While they could work on [PUB400](https://pub400.com) they are not ncessarily linked to using this system. Therefore, anyone can apply them on their own systems.
