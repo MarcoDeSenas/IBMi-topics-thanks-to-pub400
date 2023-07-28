@@ -3,4 +3,7 @@ This repository retains the topics I am able to work on, thanks to the availabil
 As I am retired now for a couple of years, this activity is the one of an hobbyist therefore the updates will come without any notice.
 There are several areas I work on to publish them here. It can be HowTo's, programming topics, using RPGLE, CLLE, SQL languages.
 
-Available here topics are organized in folders, which are independant each other. All discussions, questions, issues are welcome, and anyone can use the materiels as soon as one applies the LICENSE terms (based on GPL v3.0 license). 
+Available here topics are organized in folders, which are independant each other. All discussions, questions, issues are welcome, and anyone can use the materiels as soon as one applies the LICENSE terms (based on GPL v3.0 license).
+
+# HowTo
+This folder contains documents which show how to proceed to perform specific actions. There is mainly no code inside, with sometimes couples of commands to achieve the goal.
