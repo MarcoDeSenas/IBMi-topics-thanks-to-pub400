@@ -1,0 +1,130 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* This is the include file for standard error handling routine.            */
+/* The goal of this routine is to be executed each time an unexpected error */
+/* is received by the progrem, then to send back the *DIAG message prior to */
+/* the *ESCAPE one, and finally to send back the *ESCAPE message which      */
+/* initiated the routine, to the calling program                            */
+/* calling program.                                                         */
+/*                                                                          */
+/* Inspired from https://www.taatool.com/document/L_clpstderr.html          */
+/*                                                                          */
+/* If the target program has at least a DCLF command, it can be used        */
+/* immediately after, with its companion                                    */
+/* errorhandling_declare.clleinc just before the DCLF.                      */
+/* If it does not, this include is included in errorhandling.clleinc file   */
+/* as well as errorhandling_declare.clleinc                                 */
+/*                                                                          */
+/* First step is to set generic monitoring command for the program and then */
+/* skip to the real beginning of the program.                               */
+/* In case of non specifically handled error, the program will jump to      */
+/* STDERROR tag, which is the real beginning of error handling routine.     */
+/*                                                                          */
+/* Unused variables are initialized to avoid compilation warnings.          */
+/*                                                                          */
+/* Dates: 2023/07/24 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+MONMSG MSGID(CPF0000 MCH0000 CPX0000) EXEC(GOTO CMDLBL(STDERROR))
+GOTO CMDLBL(STRPROGRAM)
+
+STDERROR:
+
+CHGVAR VAR(&E_MSGKEY) VALUE(' ')
+CHGVAR VAR(&E_MSGLEN) VALUE(0)
+CHGVAR VAR(&E_SECLVL) VALUE(' ')
+CHGVAR VAR(&E_SECLVLEN) VALUE(0)
+CHGVAR VAR(&E_SEV) VALUE(0)
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* First, we check if we are not already handling errors, such as an error  */
+/* in the error handling routine itself. This is decided through the value  */
+/* of &E_SWITCH variable.                                                   */
+/*                                                                          */
+/* If True, we are already handling errors so this is a case of unexpected  */
+/* error and we just get out from the program with an *ESCAPE message.      */
+/* This message can be provided by the target program through &P_xxx        */
+/* variables. If they are not provided, we send a generic CPF9898 message.  */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+IF COND(&E_SWITCH) THEN(DO)
+    CHGVAR VAR(&E_MSGTYPE) VALUE('*ESCAPE')
+
+    CHGVAR VAR(&E_MSGDTA) VALUE('Unexpected error when handling errors.+
+         Review the joblog')
+    CHGVAR VAR(&E_MSGID) VALUE(CPF9898)
+    CHGVAR VAR(&E_MSGF) VALUE(QCPFMSG)
+    CHGVAR VAR(&E_MSGFLIB) VALUE('*LIBL')
+    
+    IF COND(&P_MSGID *NE ' ') THEN(DO)
+        CHGVAR VAR(&E_MSG) VALUE(' ')
+        RTVMSG MSGID(&P_MSGID) MSGF(&P_MSGFLIB/&P_MSGF) MSG(&E_MSG)
+        MONMSG MSGID(CPF0000)
+        IF COND(&E_MSG *NE ' ') THEN(DO)
+            CHGVAR VAR(&E_MSGDTA) VALUE(&P_MSGDTA)
+            CHGVAR VAR(&E_MSGID) VALUE(&P_MSGID)
+            CHGVAR VAR(&E_MSGF) VALUE(&P_MSGF)
+            CHGVAR VAR(&E_MSGFLIB) VALUE(&P_MSGFLIB)
+        ENDDO
+    ENDDO
+
+    SNDPGMMSG TOPGMQ(*PRV) MSGID(&E_MSGID) MSGF(&E_MSGFLIB/&E_MSGF) +
+        MSGDTA(&E_MSGDTA) MSGTYPE(&E_MSGTYPE)
+/* Implicit RETURN with the *ESCAPE message type                            */
+/* However, to avoid looping in case the SNDPGMMSG command fails            */
+/* we add a RETURN here.                                                    */
+    MONMSG MSGID(CPF0000) EXEC(RETURN)
+ENDDO
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* This is the first time the program gets in error handling routine, so we */
+/* make sure to avoid looping with setting &E_SWITCH to True.               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CHGVAR VAR(&E_SWITCH) VALUE(&TRUE)
+
+CHGVAR VAR(&E_DIAG) VALUE('02')
+CHGVAR VAR(&E_ESCAPE1) VALUE('15')
+CHGVAR VAR(&E_ESCAPE2) VALUE('17')
+
+/* Record *ESCAPE message key                                               */
+RCVMSG MSGTYPE(*EXCP) RMV(*NO) KEYVAR(&E_KEYVAR)
+/* Receive the last *DIAG message, if any, and send it back to the          */
+/* calling program                                                          */
+RCVMSG MSGTYPE(*PRV) MSGKEY(&E_KEYVAR) RMV(*NO) MSG(&E_MSG) +
+    MSGDTA(&E_MSGDTA) MSGID(&E_MSGID) RTNTYPE(&E_RTNTYPE) MSGF(&E_MSGF) +
+    SNDMSGFLIB(&E_MSGFLIB)
+
+IF COND(&E_RTNTYPE *EQ &E_DIAG) THEN(DO)
+    CHGVAR VAR(&E_MSGTYPE) VALUE('*DIAG')
+    IF COND(&E_MSGID *NE ' ') THEN(SNDPGMMSG TOPGMQ(*PRV) MSGID(&E_MSGID) +
+        MSGF(&E_MSGFLIB/&E_MSGF) MSGDTA(&E_MSGDTA) MSGTYPE(&E_MSGTYPE))
+    ELSE CMD(SNDPGMMSG TOPGMQ(*PRV) MSG(&E_MSG) MSGTYPE(&E_MSGTYPE))
+ENDDO
+/* Send back the *ESCAPE message to the calling program                     */
+/* Implicit RETURN with the *ESCAPE message type                            */
+CHGVAR VAR(&E_MSGTYPE) VALUE('*ESCAPE')
+RCVMSG MSGKEY(&E_KEYVAR) RMV(*NO) MSGDTA(&E_MSGDTA) MSGID(&E_MSGID) +
+    MSGF(&E_MSGF) SNDMSGFLIB(&E_MSGFLIB)
+SNDPGMMSG TOPGMQ(*PRV) MSGID(&E_MSGID) MSGF(&E_MSGFLIB/&E_MSGF) +
+    MSGDTA(&E_MSGDTA) MSGTYPE(*ESCAPE)
+/* Implicit RETURN with the *ESCAPE message type                            */
+/* However, to avoid looping in case the SNDPGMMSG command fails            */
+/* we add a RETURN here.                                                    */
+MONMSG MSGID(CPF0000) EXEC(RETURN)
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* This is the end of the error handling routine. Implicit RETURN with the  */
+/* last *ESCAPE message type, so we will never get to the next step from    */
+/* here.                                                                    */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+STRPROGRAM:
