@@ -1,0 +1,33 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* This is the include file for variables declaration for standard error    */
+/* handling routine.                                                        */
+/*                                                                          */
+/* Dates: 2023/07/24 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+DCL VAR(&E_SWITCH) TYPE(*LGL)
+
+DCL VAR(&E_MSGID) TYPE(*CHAR) LEN(7)
+DCL VAR(&P_MSGID) TYPE(*CHAR) LEN(7)
+DCL VAR(&E_MSGF) TYPE(*CHAR) LEN(10)
+DCL VAR(&P_MSGF) TYPE(*CHAR) LEN(10)
+DCL VAR(&E_MSGFLIB) TYPE(*CHAR) LEN(10)
+DCL VAR(&P_MSGFLIB) TYPE(*CHAR) LEN(10)
+DCL VAR(&E_MSGDTA) TYPE(*CHAR) LEN(512)
+DCL VAR(&P_MSGDTA) TYPE(*CHAR) LEN(512)
+DCL VAR(&E_MSG) TYPE(*CHAR) LEN(132)
+DCL VAR(&E_SECLVL) TYPE(*CHAR) LEN(3000)
+DCL VAR(&E_MSGLEN) TYPE(*DEC) LEN(5 0)
+DCL VAR(&E_SECLVLEN) TYPE(*DEC) LEN(5 0)
+DCL VAR(&E_SEV) TYPE(*DEC) LEN(2 0)
+
+DCL VAR(&E_MSGTYPE) TYPE(*CHAR) LEN(10)
+DCL VAR(&E_MSGKEY) TYPE(*CHAR) LEN(4)
+DCL VAR(&E_KEYVAR) TYPE(*CHAR) LEN(4)
+DCL VAR(&E_RTNTYPE) TYPE(*CHAR) LEN(2)
+DCL VAR(&E_DIAG) TYPE(*CHAR) LEN(2)
+DCL VAR(&E_ESCAPE1) TYPE(*CHAR) LEN(2)
+DCL VAR(&E_ESCAPE2) TYPE(*CHAR) LEN(2)
