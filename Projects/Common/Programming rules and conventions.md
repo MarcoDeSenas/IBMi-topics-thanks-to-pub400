@@ -1,6 +1,12 @@
 In all programs sources and other objects listed in this repository, the rules and conventions below were followed.
 
 # ILE CL standard error handling
+Links to files:
+
+1. [inc_errorhandling_declare.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/be5185c025bc746fa71221515b5c64e8d374b102/Projects/Common/inc_errorhandling_declare.clle)
+2. [inc_errorhandling_routine.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/be5185c025bc746fa71221515b5c64e8d374b102/Projects/Common/inc_errorhandling_routine.clle)
+3. [inc_errorhandling.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/be5185c025bc746fa71221515b5c64e8d374b102/Projects/Common/inc_errorhandling.clle)
+
 The objective of standard error handling routine (let's call it SEHR) is to be executed each time an unexpected error occurs within an ILE CL program. It must be possible as well to use it without taking care of it, other than ensure that our programs are able to take advantage of it. The chosen solution is to use include source files, so that error handling pieces of code is part of the program. Other ways were possible, using modules or service programs but were not selected, mainly because of ILE understanding troubles. However, this method has the main drawback that, every time we need to modifiy the routine, we will have to recompile all programs. With modules/service programs usage, we would only have to update all programs.
 
 Let's call the program which is compiled including the standard error handling sources files, the target program. The SEHR is expected to catch all unexpected errors, and therefore, when an unexpected, e.g. not specifically monitored, *EXCP message is received by the target program, proceed with the following steps:
@@ -52,6 +58,10 @@ Note 4: in case an error occurs within SEHR, the target program will abend with 
 - or, this will be a message id from a message file with message data if P_MSGID, P_MSGF, P_MSGFLIB, P_MSGDTA variables are properly filled up by the target program
 
 # ILE CL error routine within validity checker programs
+Links to files:
+1. [inc_errorhandling_forchecker_declare.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/be5185c025bc746fa71221515b5c64e8d374b102/Projects/Common/inc_errorhandling_forchecker_declare.clle)
+2. [inc_errorhandling_forchecker_routine.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/be5185c025bc746fa71221515b5c64e8d374b102/Projects/Common/inc_errorhandling_forchecker_routine.clle)
+
 The standard error routine does not fit system requirements of a command validity checker program. Indeed, in cas of failures those programs must send a *DIAG message with a special format followed by a CPF0002 *ESCAPE message. The message data of the diagnostic message must start with 4 bytes which are not used in the message first and second level. Checkout [Validity checking program for a CL command](https://www.ibm.com/docs/en/i/7.3?topic=commands-validity-checking-program-cl-command) for some reference.
 
 Here also, the chosen method is to use include source files. However, as opposite to the standard error routine, the processing part of the routine is at the end of the program. Therefore, there are only one way to include those files. The first file contains the variables declaration. The second contains the instructions and must be included at the end of the program. The program flow will always pass through the routine before ending wether an error was detected by the checking instruction or the general monitoring instruction gets activated, or even if there is no error at all.
