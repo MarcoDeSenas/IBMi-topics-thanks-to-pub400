@@ -30,7 +30,7 @@ DCL ...
 INCLUDE SRCSTMF('../../common/includes/inc_errorhandling.clle')
 /* first target program instruction */
 ```
-Or within target program with a DCLF command, source will something like:
+Or within target program with a DCLF command, source will be something like:
 ```
 DCL ...
 DCL ...
@@ -50,4 +50,34 @@ Note 3: SEHR expects that a logical variable &TRUE exists with the value '1', it
 Note 4: in case an error occurs within SEHR, the target program will abend with an *ESCAPE message
 - this will be CPF9898 "Unexpected error when handling errors. Review the joblog"
 - or, this will be a message id from a message file with message data if P_MSGID, P_MSGF, P_MSGFLIB, P_MSGDTA variables are properly filled up by the target program
+
+# ILE CL error routine within validity checker programs
+The standard error routine does not fit system requirements of a command validity checker program. Indeed, in cas of failures those programs must send a *DIAG message with a special format followed by a CPF0002 *ESCAPE message. The message data of the diagnostic message must start with 4 bytes which are not used in the message first and second level. Checkout [Validity checking program for a CL command](https://www.ibm.com/docs/en/i/7.3?topic=commands-validity-checking-program-cl-command) for some reference.
+
+Here also, the chosen method is to use include source files. However, as opposite to the standard error routine, the processing part of the routine is at the end of the program. Therefore, there are only one way to include those files. The first file contains the variables declaration. The second contains the instructions and must be included at the end of the program. The program flow will always pass through the routine before ending wether an error was detected by the checking instruction or the general monitoring instruction gets activated, or even if there is no error at all.
+
+So within the validity checker program source, we have something like that:
+```
+DCL ...
+DCL ...
+DCL ...
+INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_forchecker_declare.clle')
+MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))
+/* first program instruction */
+/* last program instruction */
+INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_forchecker_routine.clle')
+ENDPGM
+```
+
+The error handling routine performs the following steps:
+1. Check to see if there is at least one *EXCP message in the program message queue, which means that some unexpected error occured
+2. If there is one, CPD0006 *DIAG message is sent to calling program with the message text of the *EXCP message as its message data
+3. If there is none, it means that there is no unexpected error
+4. If there is an unexpected error message (decided with &ERROR logical variable set in step 2) or if there is an error based on the command parameters checking (decided with &ERRORPARAM logical variable set during the checkings), CPF0002 *ESCAPE message is sent to the calling program
+
+Note 1: the routine makes use of ERROR tag
+
+Note 2: the routine expects that a logical variable &TRUE exists with the value '1', it does not declare nor it initializes this variable (must be done by the validity checker program)
+
+Note 3: the routine expects that a character variable &BLANK exists with the value ' ', it does not declare nor it initializes this variable (must be done by the validity checker program)
 
