@@ -1,4 +1,4 @@
-The system projects provides the following programs.
+The system project provides the following programs.
 
 # Environment save
 This tool provides a way to save the personal environment on PUB400.com. The initial version is limited to create a zip file with the content of this environment in term of save files. The intent is to upgrade this version with a way to automate the invokation of creating this zip file then downloading it to the workstation.
@@ -20,7 +20,17 @@ Recommended invokation for a regular usage is to keep the default, so either *EN
 If it is needed to only clean the temporary objects, use _ENVSAV SAVELIBB(*NO) SAVELIB1(*NO) SAVELIB2(*NO) SAVEHOME(*NO) INCLJOBLOG(*NO) CLEANTMP(*YES)_.
 
 ### Validity checker actions
-In progress...
+The validity checker redoes all the checks which are done by command interface. It will never detect any issue when it is called by the command interface, but it might detect an issue in case the command processing program is directly used without the command interface. For more information about the standard for a validity checker program, checkout "ILE CL error routine within validity checker programs" in [Programming rules and conventions](../Common/Programming rules and conventions.md).
+
+Basically this program performs the following actions:
+1. if SAVELIBB does not contain expected *YES or *NO value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+2. if SAVELIB1 does not contain expected *YES or *NO value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+3. if SAVELIB2 does not contain expected *YES or *NO value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+4. if SAVEHOME does not contain expected *YES or *NO value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+5. if INCLJOBLOG does not contain expected *YES or *NO value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+6. if CLEANTMP does not contain expected *YES or *NO value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+7. if EXCLUDETMP does not contain expected *YES or *NO value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+8. if there is at least one error, send CPF0002 *ESCAPE message to caller program
 
 ### Behavior of the command
 The command processing program (CPP) makes use of two temporary subdirectories in HOME directory and of the B library to store files and objects. Those subdirectories are named:
