@@ -1,0 +1,25 @@
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* This is the include file for variables initialization.                   */
+/*                                                                          */
+/* Dates: 2023/07/24 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CHGVAR VAR(&BLANK) VALUE(' ')
+CHGVAR VAR(&QUOTE) VALUE('''')
+CHGVAR VAR(&YES) VALUE('*YES')
+CHGVAR VAR(&NO) VALUE('*NO')
+CHGVAR VAR(&TRUE) VALUE('1')
+CHGVAR VAR(&FALSE) VALUE('0')
+CHGVAR VAR(&ERROR) VALUE(&FALSE)
+CHGVAR VAR(&EOF) VALUE(&FALSE)
+CHGVAR VAR(&PRINT) VALUE('*PRINT')
+CHGVAR VAR(&DISPLAY) VALUE('*')
+CHGVAR VAR(&BATCH) VALUE('0')
+CHGVAR VAR(&INTERACT) VALUE('1')
+CHGVAR VAR(&MSG) VALUE(' ')
+CHGVAR VAR(&MSGDTA) VALUE(' ')
+CHGVAR VAR(&MSGID) VALUE(' ')
+CHGVAR VAR(&MSGF) VALUE(' ')
+CHGVAR VAR(&MSGFLIB) VALUE(' ')
