@@ -1,0 +1,12 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* This is the include file for variables declaration for standard error    */
+/* handling routine to be used only for validity checkers programs.         */
+/*                                                                          */
+/* Dates: 2023/07/27 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+DCL VAR(&ERROR) TYPE(*LGL)
+DCL VAR(&ERRORPARAM) TYPE(*LGL)

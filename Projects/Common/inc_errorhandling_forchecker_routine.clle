@@ -1,0 +1,43 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* This is the include file for standard error handling routine to be used  */
+/* only by validity checker programs.                                       */
+/*                                                                          */
+/* Dates: 2023/07/27 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* To decide wether or not we come to this tag after a real error or just   */
+/* because this is the normal end of the program, we try to receive an      */
+/* *ESCAPE message in the program message queue.                            */
+/* If there is one, &MSG will not be blank, and we come here through the    */
+/* general MONMSG initial command.*                                         */
+/* If there is none, &MSG will be blank.                                    */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+ERROR:
+
+CHGVAR VAR(&MSG) VALUE(&BLANK)
+RCVMSG MSGTYPE(*EXCP) RMV(*NO) MSG(&MSG)
+MONMSG MSGID(CPF0000) 
+IF COND(&MSG *NE &BLANK) THEN(DO)
+    CHGVAR VAR(&ERROR) VALUE(&TRUE)
+    CHGVAR VAR(&MSGDTA) VALUE('0000' *TCAT &MSG)
+    SNDPGMMSG TOPGMQ(*PRV) MSGID(CPD0006) MSGF(QCPFMSG) MSGDTA(&MSGDTA) +
+        MSGTYPE(*DIAG)
+    MONMSG MSGID(CPF0000)
+ENDDO
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* If an error was found we send back a CPF0002 escape message.             */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+IF COND(&ERROR *OR &ERRORPARAM) THEN(DO)                                                      
+    SNDPGMMSG TOPGMQ(*PRV) MSGID(CPF0002) MSGF(QCPFMSG) MSGTYPE(*ESCAPE)
+ENDDO

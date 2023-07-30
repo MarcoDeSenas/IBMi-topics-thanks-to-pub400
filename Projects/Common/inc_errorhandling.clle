@@ -1,0 +1,29 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* This is the include file for standard error handling.                    */
+/*                                                                          */
+/* If the target program has at least a DCLF command, it cannot be used.    */
+/*                                                                          */
+/* If it does not, this include can be used immediately after the last DCL  */
+/* command.                                                                 */
+/*                                                                          */
+/* Dates: 2023/07/24 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Include variable declaration                                             */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_declare.clle')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Include routine                                                          */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_routine.clle')

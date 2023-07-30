@@ -1,0 +1,279 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Backup of user environment on PUB400 and prepare for copy from a         */
+/* workstation.                                                             */
+/*                                                                          */
+/* Dates: 2023/07/27 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+PGM PARM(&SAVELIBB &SAVELIB1 &SAVELIB2 &SAVEHOME &INCLJOBLOG &CLEANTMP &EXCLUDETMP)
+
+DCLPRCOPT DFTACTGRP(*NO) ACTGRP(ENVSAV)
+
+DCL VAR(&SAVELIBB) TYPE(*CHAR) LEN(4)
+DCL VAR(&SAVELIB1) TYPE(*CHAR) LEN(4)
+DCL VAR(&SAVELIB2) TYPE(*CHAR) LEN(4)
+DCL VAR(&SAVEHOME) TYPE(*CHAR) LEN(4)
+DCL VAR(&INCLJOBLOG) TYPE(*CHAR) LEN(4)
+DCL VAR(&CLEANTMP) TYPE(*CHAR) LEN(4)
+DCL VAR(&EXCLUDETMP) TYPE(*CHAR) LEN(4)
+
+DCL VAR(&RTNUSRPRF) TYPE(*CHAR) LEN(10)
+DCL VAR(&LIBB) TYPE(*CHAR) LEN(10)
+DCL VAR(&LIB1) TYPE(*CHAR) LEN(10)
+DCL VAR(&LIB2) TYPE(*CHAR) LEN(10)
+DCL VAR(&HOME) TYPE(*CHAR) LEN(17)
+DCL VAR(&DATETIME) TYPE(*CHAR) LEN(20)
+DCL VAR(&BASE) TYPE(*CHAR) LEN(31)
+DCL VAR(&ZIPFILE) TYPE(*CHAR) LEN(59)
+DCL VAR(&JOBLOGFILE) TYPE(*CHAR) LEN(66)
+DCL VAR(&TEMPDIR) TYPE(*CHAR) LEN(53)
+DCL VAR(&TMPDIR) TYPE(*CHAR) LEN(21)
+DCL VAR(&RMVTMPDIR) TYPE(*CHAR) LEN(33)
+DCL VAR(&BACKUPDIR) TYPE(*CHAR) LEN(23)
+DCL VAR(&OBJ) TYPE(*CHAR) LEN(40)
+DCL VAR(&TOOBJ) TYPE(*CHAR) LEN(68)
+DCL VAR(&CMD) TYPE(*CHAR) LEN(860)
+
+INCLUDE SRCSTMF('../../common/includes/inc_variables_declare.clle')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Include error handling standard routine.                                 */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+INCLUDE SRCSTMF('../../common/includes/inc_errorhandling.clle')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Some initializations...                                                  */
+/*                                                                          */
+/* First, we check the number of parameters in case the program was invoked */
+/* directly.                                                                */
+/* Second, we run the command validity checker in case the program was      */
+/* invoked directly. If the checker finds an error, it sends an CPF0006     */
+/* *ESCAPE message which will be catched by the error handling routine.     */
+/* We also need to know the user profile which runs the program to compute  */
+/* libraries and home directory name.                                       */
+/* Finally, we need to have a unique character string which will be the     */
+/* basis for final IFS names.                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+ 
+INCLUDE SRCSTMF('../../common/includes/inc_variables_init.clle')
+
+IF COND(%PARMS() *NE 7) THEN( +
+    SNDPGMMSG TOPGMQ(*SAME) MSGID(CPX6148) MSGF(QCPFMSG) MSGTYPE(*ESCAPE))
+
+CALL PGM(ENVSAV0) +
+    PARM(&SAVELIBB &SAVELIB1 &SAVELIB2 &SAVEHOME &INCLJOBLOG &CLEANTMP &EXCLUDETMP)
+
+RTVUSRPRF RTNUSRPRF(&RTNUSRPRF)
+RTVJOBA JOB(&JOBNAME) USER(&JOBUSER) NBR(&JOBNBR)
+CHGVAR VAR(&LIBB) VALUE(&RTNUSRPRF *TCAT 'B')
+CHGVAR VAR(&LIB1) VALUE(&RTNUSRPRF *TCAT '1')
+CHGVAR VAR(&LIB2) VALUE(&RTNUSRPRF *TCAT '2')
+CHGVAR VAR(&HOME) VALUE('/home/' *TCAT &RTNUSRPRF *TCAT '/')
+RTVSYSVAL SYSVAL(QDATETIME) RTNVAR(&DATETIME)
+CHGVAR VAR(&BASE) VALUE('env_backup_' *TCAT &DATETIME)
+CHGVAR VAR(&BACKUPDIR) VALUE(&HOME *TCAT 'forws/')
+CHGVAR VAR(&TMPDIR) VALUE(&HOME *TCAT 'tmp/')
+CHGVAR VAR(&TEMPDIR) value(&TMPDIR *TCAT &BASE *TCAT '/')
+CHGVAR VAR(&RMVTMPDIR) VALUE(&TMPDIR *TCAT 'env_backup_*')
+CHGVAR VAR(&ZIPFILE) VALUE(&BACKUPDIR *TCAT &BASE *TCAT '.zip')
+CHGVAR VAR(&JOBLOGFILE) VALUE(&TEMPDIR *TCAT 'backup.joblog')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Make sure that TMPDIR (/home/USER/tmp) exists as it can be used by many */
+/* routines.                                                                */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CRTDIR DIR(&TMPDIR)
+MONMSG MSGID(CPF0000)
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* &P_xxx variables are used by the standard error handling routine to send */
+/* an escape message when there is an error within the routine itself.      */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CHGVAR VAR(&P_MSGID) VALUE('CPDA4A8')
+CHGVAR VAR(&P_MSGF) VALUE('QCPFMSG')
+CHGVAR VAR(&P_MSGFLIB) VALUE(*LIBL)
+CHGVAR VAR(&P_MSGDTA) VALUE('SAVENV' *BCAT 'SAVENV SAVELIBB(')
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA  *TCAT &SAVELIBB *TCAT ') SAVELIB1(')
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA  *TCAT &SAVELIB1 *TCAT ') SAVELIB2(')
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA  *TCAT &SAVELIB2 *TCAT ') SAVEHOME(')
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA  *TCAT &SAVEHOME *TCAT ') INCLJOBLOG(')
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA  *TCAT &INCLJOBLOG *TCAT ') CLEANTMP(')
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA  *TCAT &CLEANTMP *TCAT ') EXCLUDETMP(')
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA *TCAT &EXCLUDETMP *TCAT ')')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Clean temporary objects which were eventually remaining after a previous */
+/* invokation. This may happen if a previous invokation fails to complete   */
+/* for any reason.                                                          */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+IF COND(&CLEANTMP *EQ '*YES') THEN(DO)
+    DLTF FILE(&LIBB/&LIBB)
+    MONMSG MSGID(CPF0000)
+    DLTF FILE(&LIBB/&LIB1)
+    MONMSG MSGID(CPF0000)
+    DLTF FILE(&LIBB/&LIB2)
+    MONMSG MSGID(CPF0000)
+    DLTF FILE(&LIBB/&RTNUSRPRF)
+    MONMSG MSGID(CPF0000)
+    RMVDIR DIR(&RMVTMPDIR) SUBTREE(*ALL)
+    MONMSG MSGID(CPF0000)
+    RMVDIR DIR(&BACKUPDIR) SUBTREE(*ALL)
+    MONMSG MSGID(CPF0000)
+ENDDO
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Creation of temporary directory if at least one backup is requested.     */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+IF COND(&SAVELIBB *EQ '*YES' *OR &SAVELIB1 *EQ '*YES' +
+    *OR &SAVELIB2 *EQ '*YES' *OR &SAVEHOME *EQ '*YES') THEN(DO) 
+    CRTDIR DIR(&TEMPDIR)
+ENDDO
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Backup of LIBB's env if requested then copy to temporary directory.      */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+IF COND(&SAVELIBB *EQ '*YES') THEN(DO)
+    CRTSAVF FILE(&LIBB/&LIBB)
+    MONMSG MSGID(CPF0000) EXEC(CLRSAVF FILE(&LIBB/&LIBB))
+    SAVLIB LIB(&LIBB) DEV(*SAVF) SAVF(&LIBB/&LIBB) CLEAR(*ALL) SAVACT(*LIB) +
+        ACCPTH(*YES)  SAVFDTA(*YES) SPLFDTA(*ALL) QDTA(*DTAQ) DTACPR(*ZLIB) +
+        OMITOBJ((&LIBB/&LIBB))
+    CHGVAR VAR(&OBJ) VALUE('/QSYS.LIB/')
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT &LIBB)
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT '.LIB/')
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT &LIBB)
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT '.FILE')
+    CHGVAR VAR(&TOOBJ) VALUE(&TEMPDIR *TCAT &LIBB *TCAT '.SAVF')
+    CPY OBJ(&OBJ) TOOBJ(&TOOBJ)
+    DLTF FILE(&LIBB/&LIBB)
+ENDDO
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Backup of LIB1's env if requested then copy to temporary directory.      */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+IF COND(&SAVELIB1 *EQ '*YES') THEN(DO)
+    CRTSAVF FILE(&LIBB/&LIB1)
+    MONMSG MSGID(CPF0000) EXEC(CLRSAVF FILE(&LIBB/&LIB1))
+    SAVLIB LIB(&LIB1) DEV(*SAVF) SAVF(&LIBB/&LIB1) CLEAR(*ALL) SAVACT(*LIB) +
+        ACCPTH(*YES)  SAVFDTA(*YES) SPLFDTA(*ALL) QDTA(*DTAQ) DTACPR(*ZLIB)
+    CHGVAR VAR(&OBJ) VALUE('/QSYS.LIB/')
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT &LIBB)
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT '.LIB/')
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT &LIB1)
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT '.FILE')
+    CHGVAR VAR(&TOOBJ) VALUE(&TEMPDIR *TCAT &LIB1 *TCAT '.SAVF')
+    CPY OBJ(&OBJ) TOOBJ(&TOOBJ)
+    DLTF FILE(&LIBB/&LIB1)
+ENDDO
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Backup of LIB2's env if requested then copy to temporary directory.      */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+IF COND(&SAVELIB2 *EQ '*YES') THEN(DO)
+    CRTSAVF FILE(&LIBB/&LIB2)
+    MONMSG MSGID(CPF0000) EXEC(CLRSAVF FILE(&LIBB/&LIB2))
+    SAVLIB LIB(&LIB2) DEV(*SAVF) SAVF(&LIBB/&LIB2) CLEAR(*ALL) SAVACT(*LIB) +
+        ACCPTH(*YES)  SAVFDTA(*YES) SPLFDTA(*ALL) QDTA(*DTAQ) DTACPR(*ZLIB)
+    CHGVAR VAR(&OBJ) VALUE('/QSYS.LIB/')
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT &LIBB)
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT '.LIB/')
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT &LIB2)
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT '.FILE')
+    CHGVAR VAR(&TOOBJ) VALUE(&TEMPDIR *TCAT &LIB2 *TCAT '.SAVF')
+    CPY OBJ(&OBJ) TOOBJ(&TOOBJ)
+    DLTF FILE(&LIBB/&LIB2)
+ENDDO
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Backup of home's env if requested then copy to temporary directory.      */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+IF COND(&SAVEHOME *EQ '*YES') THEN(DO)
+    CRTSAVF FILE(&LIBB/&RTNUSRPRF)
+    MONMSG MSGID(CPF0000) EXEC(CLRSAVF FILE(&LIBB/&RTNUSRPRF))
+    CHGVAR VAR(&OBJ) VALUE('/QSYS.LIB/')
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT &LIBB)
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT '.LIB/')
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT &RTNUSRPRF)
+    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT '.FILE')
+
+    IF COND(&EXCLUDETMP *EQ '*YES') THEN(SAV DEV(&OBJ) +
+        OBJ((&HOME *INCLUDE) (&TMPDIR *OMIT)) SUBTREE(*ALL) SAVACT(*SYNC) +
+        CLEAR(*ALL) DTACPR(*ZLIB) ASYNCBRING(*YES))
+    ELSE CMD(SAV DEV(&OBJ) OBJ((&HOME *INCLUDE)) SUBTREE(*ALL) SAVACT(*SYNC) +
+        CLEAR(*ALL) DTACPR(*ZLIB) ASYNCBRING(*YES))
+
+    CHGVAR VAR(&TOOBJ) VALUE(&TEMPDIR *TCAT &RTNUSRPRF *TCAT '.SAVF')
+    CPY OBJ(&OBJ) TOOBJ(&TOOBJ)
+    DLTF FILE(&LIBB/&RTNUSRPRF)
+ENDDO
+
+IF COND(&SAVELIBB *EQ '*YES' *OR &SAVELIB1 *EQ '*YES' +
+    *OR &SAVELIB2 *EQ '*YES' *OR &SAVEHOME *EQ '*YES') THEN(DO) 
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Job log output in a text file in temporary directory.                    */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+    IF COND(&INCLJOBLOG *EQ '*YES') THEN(DO)
+        CHGVAR VAR(&CMD) VALUE('touch -C 1252' *BCAT &JOBLOGFILE)
+        CHGVAR VAR(&CMD) VALUE(&CMD *BCAT '; system "dspjoblog output(*print)')
+        CHGVAR VAR(&CMD) VALUE(&CMD *BCAT 'job(' *TCAT &JOBNBR)
+        CHGVAR VAR(&CMD) VALUE(&CMD *TCAT '/' *TCAT &JOBUSER)
+        CHGVAR VAR(&CMD) VALUE(&CMD *TCAT '/' *TCAT &JOBNAME)
+        CHGVAR VAR(&CMD) VALUE(&CMD *TCAT ')" >' *BCAT &JOBLOGFILE)
+        QSH CMD(&CMD)
+    ENDDO
+
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Copy of temporary files into a single compressed file in HOME/forws/     */
+/* subdirectory                                                             */
+/* Temporary directory is deleted once the copy is complete to reduce       */
+/* storage used.                                                            */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+    CRTDIR DIR(&BACKUPDIR)
+    MONMSG MSGID(CPF0000)
+    CPYTOARCF FROMFILE(&TEMPDIR) TOARCF(&ZIPFILE)
+    RMVDIR DIR(&TEMPDIR) SUBTREE(*ALL)
+
+ENDDO
+
+ENDPGM
+
