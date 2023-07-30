@@ -22,14 +22,14 @@ Regarding the organization in place on PUB400.com to retain the source files, wh
 ||||sources||sources files of system project|
 ||||sqlstmt||SQL statements of system project|
 |||||DDL|Database Definition Language scripts for system project|
-|||||DML|Database Manipulation Language scripts for tools project|
+|||||DML|Database Manipulation Language scripts for system project|
 |||tools|||tools and utilities project|
 ||||docs||documentation about tools project|
 ||||includes||includes files limited to project use|
 ||||scripts||scripts (QSH, PASE, python...) files of tools project|
 ||||sources||sources files of tools project|
 ||||sqlstmt||SQL statements of tools project|
-|||||DDL|Database Definition Language scripts for system project|
+|||||DDL|Database Definition Language scripts for tools project|
 |||||DML|Database Manipulation Language scripts for tools project|
 
 Important notice regarding includes files of common project. If one wants to use the sources files of all projects, and if those files make use of common includes files (which is the case for almost all of them), the directory structure must remain the one described above. Files can be in another home directory but with the same structure. If the structure is not the same, INCLUDE statements must be updated in all sources files prior to compilation.
