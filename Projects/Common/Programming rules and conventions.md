@@ -1,6 +1,14 @@
 In all programs sources and other objects listed in this repository, the rules and conventions below were followed.
 
-# ILE CL standard error handling
+# Standard variables
+## ILE CL standard variables
+Links to files:
+
+1. [inc_variables_declare.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/6d8d8f97ec83803a3c7292b9db743af5014cf67b/Projects/Common/inc_variables_declare.clle)
+2. [inc_variables_init.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/6d8d8f97ec83803a3c7292b9db743af5014cf67b/Projects/Common/inc_variables_init.clle)
+
+# Error handling routines
+## ILE CL standard error handling
 Links to files:
 
 1. [inc_errorhandling_declare.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/be5185c025bc746fa71221515b5c64e8d374b102/Projects/Common/inc_errorhandling_declare.clle)
@@ -57,7 +65,7 @@ Note 4: in case an error occurs within SEHR, the target program will abend with 
 - this will be CPF9898 "Unexpected error when handling errors. Review the joblog"
 - or, this will be a message id from a message file with message data if P_MSGID, P_MSGF, P_MSGFLIB, P_MSGDTA variables are properly filled up by the target program
 
-# ILE CL error routine within validity checker programs
+## ILE CL error routine within validity checker programs
 Links to files:
 1. [inc_errorhandling_forchecker_declare.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/be5185c025bc746fa71221515b5c64e8d374b102/Projects/Common/inc_errorhandling_forchecker_declare.clle)
 2. [inc_errorhandling_forchecker_routine.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/be5185c025bc746fa71221515b5c64e8d374b102/Projects/Common/inc_errorhandling_forchecker_routine.clle)
