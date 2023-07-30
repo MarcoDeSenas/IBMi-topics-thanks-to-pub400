@@ -1,0 +1,35 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* This is the include file for variables declaration.                      */
+/*                                                                          */
+/* Dates: 2023/07/24 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+DCL VAR(&BLANK) TYPE(*CHAR) LEN(1)
+
+DCL VAR(&QUOTE) TYPE(*CHAR) LEN(1)
+DCL VAR(&YES) TYPE(*CHAR) LEN(4)
+DCL VAR(&NO) TYPE(*CHAR) LEN(4)
+
+DCL VAR(&EOF) TYPE(*LGL)
+DCL VAR(&TRUE) TYPE(*LGL)
+DCL VAR(&FALSE) TYPE(*LGL)
+DCL VAR(&ERROR) TYPE(*LGL)
+
+DCL VAR(&PRINT) TYPE(*CHAR) LEN(6)
+DCL VAR(&DISPLAY) TYPE(*CHAR) LEN(6)
+
+DCL VAR(&BATCH) TYPE(*CHAR) LEN(1)
+DCL VAR(&INTERACT) TYPE(*CHAR) LEN(1)
+
+DCL VAR(&MSGDTA) TYPE(*CHAR) LEN(512)
+DCL VAR(&MSG) TYPE(*CHAR) LEN(132)
+DCL VAR(&MSGID) TYPE(*CHAR) LEN(7)
+DCL VAR(&MSGF) TYPE(*CHAR) LEN(10)
+DCL VAR(&MSGFLIB) TYPE(*CHAR) LEN(10)
+
+DCL VAR(&JOBNBR) TYPE(*CHAR) LEN(6)
+DCL VAR(&JOBUSER) TYPE(*CHAR) LEN(10)
+DCL VAR(&JOBNAME) TYPE(*CHAR) LEN(10)
