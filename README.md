@@ -7,3 +7,6 @@ Available here topics are organized in folders, which are independant each other
 
 # HowTo
 This folder contains documents which show how to proceed to perform specific actions. There is mainly no code inside, with sometimes couples of commands to achieve the goal.
+
+# Projects
+This folder retains documentation and sources files related to development done on PUB400.
