@@ -20,7 +20,7 @@ Recommended invokation for a regular usage is to keep the default, so either *EN
 If it is needed to only clean the temporary objects, use _ENVSAV SAVELIBB(*NO) SAVELIB1(*NO) SAVELIB2(*NO) SAVEHOME(*NO) INCLJOBLOG(*NO) CLEANTMP(*YES)_.
 
 ### Validity checker actions
-The validity checker redoes all the checks which are done by command interface. It will never detect any issue when it is called by the command interface, but it might detect an issue in case the command processing program is directly used without the command interface. For more information about the standard for a validity checker program, checkout "ILE CL error routine within validity checker programs" in [Programming rules and conventions](../Common/Programming rules and conventions.md).
+The validity checker redoes all the checks which are done by command interface. It will never detect any issue when it is called by the command interface, but it might detect an issue in case the command processing program is directly used without the command interface. For more information about the standard for a validity checker program, checkout "ILE CL error routine within validity checker programs" in [Programming rules and conventions](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/b52b70f3ebd7653c7503790c6ec5d2dfdccf0e96/Projects/Common/Programming%20rules%20and%20conventions.md).
 
 Basically this program performs the following actions:
 1. if SAVELIBB does not contain expected *YES or *NO value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
