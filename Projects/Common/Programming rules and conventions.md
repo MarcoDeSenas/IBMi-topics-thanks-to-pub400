@@ -1,12 +1,5 @@
 In all programs sources and other objects listed in this repository, the rules and conventions below were followed.
 
-# Standard variables
-## ILE CL standard variables
-Links to files:
-
-1. [inc_variables_declare.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/6d8d8f97ec83803a3c7292b9db743af5014cf67b/Projects/Common/inc_variables_declare.clle)
-2. [inc_variables_init.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/6d8d8f97ec83803a3c7292b9db743af5014cf67b/Projects/Common/inc_variables_init.clle)
-
 # Error handling routines
 ## ILE CL standard error handling
 Links to files:
@@ -98,4 +91,50 @@ Note 1: the routine makes use of ERROR tag
 Note 2: the routine expects that a logical variable &TRUE exists with the value '1', it does not declare nor it initializes this variable (must be done by the validity checker program)
 
 Note 3: the routine expects that a character variable &BLANK exists with the value ' ', it does not declare nor it initializes this variable (must be done by the validity checker program)
+
+# Standard variables
+## ILE CL standard variables
+Links to files:
+
+1. [inc_variables_declare.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/6d8d8f97ec83803a3c7292b9db743af5014cf67b/Projects/Common/inc_variables_declare.clle)
+2. [inc_variables_init.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/6d8d8f97ec83803a3c7292b9db743af5014cf67b/Projects/Common/inc_variables_init.clle)
+
+All ILE CL programs should use those two includes files. The first one contains variables declarations, and the second one contains variables initializations. Most of the times, they are used in conjunction with the error handling includes.
+
+Example when there is no DCLF:
+```
+DCL ...
+DCL ...
+DCL ...
+INCLUDE SRCSTMF('../../common/includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../common/includes/inc_errorhandling.clle')
+INCLUDE SRCSTMF('../../common/includes/inc_variables_init.clle')
+/* first program instruction */
+```
+Example when there is at least one DCLF:
+```
+DCL ...
+DCL ...
+DCL ...
+INCLUDE SRCSTMF('../../common/includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_declare.clle')
+DCLF ...
+INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_routine.clle')
+INCLUDE SRCSTMF('../../common/includes/inc_variables_init.clle')
+/* first program instruction */
+```
+Example for a validity checker program:
+```
+DCL ...
+DCL ...
+DCL ...
+INCLUDE SRCSTMF('../../common/includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_forchecker_declare.clle')
+MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))
+INCLUDE SRCSTMF('../../common/includes/inc_variables_init.clle')
+/* first program instruction */
+/* last program instruction */
+INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_forchecker_routine.clle')
+ENDPGM
+```
 
