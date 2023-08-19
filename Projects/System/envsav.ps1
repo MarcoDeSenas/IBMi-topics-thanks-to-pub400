@@ -39,7 +39,7 @@ Remove older than the $ToKeep parameter versions
 #>
 
 $zipPath = $DownloadDirectory + "\env_backup_*.zip"
-$zipCount = (ls $zipPath).Count
+$zipCount = (Get-ChildItem $zipPath).Count
 if ($ToKeep -lt $zipCount)
 {
 	$ToDelete = $zipCount - $ToKeep
