@@ -25,6 +25,8 @@ Setup main items:
 
 VSCode and **all IBM i related extensions** is used for all development activity applying on PUB400. There is no specific setting within all the various parameters of the software, however there are a couple of ones for the extensions got through the "IBM i Development Pack".
 
+Download site: [Download Visual Studio Code](https://code.visualstudio.com/Download).
+
 - Features
   - Quick Connect: selected
   - Enable SQL: selectd
@@ -55,8 +57,6 @@ VSCode and **all IBM i related extensions** is used for all development activity
   - Temporary IFS directory: /home/MYUSER/tmp
   - Clear temporary data automatically: selected
   - Sort IFS shortcuts automatically: selected
-
-Download site: [Download Visual Studio Code](https://code.visualstudio.com/Download).
 
 ## putty
 
