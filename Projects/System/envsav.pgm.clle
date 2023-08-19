@@ -224,9 +224,6 @@ ENDDO
 /* So we compress HOME directory with zip open source package as we can     */
 /* exclude files.                                                           */
 /*                                                                          */
-
-/* /QOpenSys/pkgs/bin/zip -r9 /tmp/USER.zip /home/DIMARCO -x "/home/DIMARCO/tmp/*"    */
-
 /*--------------------------------------------------------------------------*/
 
 IF COND(&SAVEHOME *EQ '*YES') THEN(DO)
