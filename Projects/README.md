@@ -35,3 +35,20 @@ Regarding the organization in place on PUB400.com to retain the source files, wh
 |||||DML|Database Manipulation Language scripts for tools project|
 
 Important notice regarding includes files of common project. If one wants to use the sources files of all projects, and if those files make use of common includes files (which is the case for almost all of them), the directory structure must remain the one described above. Files can be in another home directory but with the same structure. If the structure is not the same, INCLUDE statements must be updated in all sources files prior to compilation.
+
+Regarding the libraries usage, I have the following organization. We all have three libraries that we can use for what we want. They are named with our user profile with a suffix which is either 1, or 2, or B.
+
+|Library|Content|
+|:---|:---|
+|LIBRARY1|Non-database objects, such as programs, commands, modules, bindig directories, display, printer, source files...|
+|LIBRARY2|Database objects|
+|LIBRARYB|Backup library, not used explicitely, might be used by the programs|
+
+LIBRARY1 is set as the current library of my user profile.
+LIBRARY2, once created by PUB400 administrators, was set almost as a DB2 collection, with STRJRNLIB command and the following settings:
+
+- Journal: LIBRARY2/JRN
+- Journal images: *AFTER
+- Omit journal entries: *NONE
+- New objects inherit journalig: *YES
+- Inherit rules: '*ALL' objects types, '*ALL' objects, '*ALLOPR' journal operations, '*OBJDFT' images and omitted entries
