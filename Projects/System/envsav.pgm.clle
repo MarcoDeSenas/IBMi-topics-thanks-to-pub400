@@ -5,6 +5,8 @@
 /* workstation.                                                             */
 /*                                                                          */
 /* Dates: 2023/07/27 Creation                                               */
+/*        2023/08/19 Remove some messages from job log to keep it clean     */
+/*                   Replace backup of HOME directory with a zip file       */
 /*                                                                          */
 /*--------------------------------------------------------------------------*/
 
@@ -25,6 +27,7 @@ DCL VAR(&LIBB) TYPE(*CHAR) LEN(10)
 DCL VAR(&LIB1) TYPE(*CHAR) LEN(10)
 DCL VAR(&LIB2) TYPE(*CHAR) LEN(10)
 DCL VAR(&HOME) TYPE(*CHAR) LEN(17)
+DCL VAR(&HOMEZIP) TYPE(*CHAR) LEN(19)
 DCL VAR(&DATETIME) TYPE(*CHAR) LEN(20)
 DCL VAR(&BASE) TYPE(*CHAR) LEN(31)
 DCL VAR(&ZIPFILE) TYPE(*CHAR) LEN(59)
@@ -94,7 +97,7 @@ CHGVAR VAR(&JOBLOGFILE) VALUE(&TEMPDIR *TCAT 'backup.joblog')
 /*--------------------------------------------------------------------------*/
 
 CRTDIR DIR(&TMPDIR)
-MONMSG MSGID(CPF0000)
+MONMSG MSGID(CPF0000) EXEC(RCVMSG PGMQ(*SAME (*)) MSGTYPE(*LAST) RMV(*YES))
 
 /*--------------------------------------------------------------------------*/
 /*                                                                          */
@@ -125,17 +128,15 @@ CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA *TCAT &EXCLUDETMP *TCAT ')')
 
 IF COND(&CLEANTMP *EQ '*YES') THEN(DO)
     DLTF FILE(&LIBB/&LIBB)
-    MONMSG MSGID(CPF0000)
+    MONMSG MSGID(CPF0000) EXEC(RCVMSG PGMQ(*SAME (*)) MSGTYPE(*LAST) RMV(*YES))
     DLTF FILE(&LIBB/&LIB1)
-    MONMSG MSGID(CPF0000)
+    MONMSG MSGID(CPF0000) EXEC(RCVMSG PGMQ(*SAME (*)) MSGTYPE(*LAST) RMV(*YES))
     DLTF FILE(&LIBB/&LIB2)
-    MONMSG MSGID(CPF0000)
-    DLTF FILE(&LIBB/&RTNUSRPRF)
-    MONMSG MSGID(CPF0000)
+    MONMSG MSGID(CPF0000) EXEC(RCVMSG PGMQ(*SAME (*)) MSGTYPE(*LAST) RMV(*YES))
     RMVDIR DIR(&RMVTMPDIR) SUBTREE(*ALL)
-    MONMSG MSGID(CPF0000)
+    MONMSG MSGID(CPF0000) EXEC(RCVMSG PGMQ(*SAME (*)) MSGTYPE(*LAST) RMV(*YES))
     RMVDIR DIR(&BACKUPDIR) SUBTREE(*ALL)
-    MONMSG MSGID(CPF0000)
+    MONMSG MSGID(CPF0000) EXEC(RCVMSG PGMQ(*SAME (*)) MSGTYPE(*LAST) RMV(*YES))
 ENDDO
 
 /*--------------------------------------------------------------------------*/
@@ -216,27 +217,31 @@ ENDDO
 /*--------------------------------------------------------------------------*/
 /*                                                                          */
 /* Backup of home's env if requested then copy to temporary directory.      */
+/* We cannot use a backup to a save file because we have no way to restore  */
+/* from a save file as we are not allowed to RST command.                   */
+/* We can use a save file to restore libraries with RESTLIB command or      */
+/* objects with RESTOBJ command.                                            */
+/* So we compress HOME directory with zip open source package as we can     */
+/* exclude files.                                                           */
 /*                                                                          */
+
+/* /QOpenSys/pkgs/bin/zip -r9 /tmp/USER.zip /home/DIMARCO -x "/home/DIMARCO/tmp/*"    */
+
 /*--------------------------------------------------------------------------*/
 
 IF COND(&SAVEHOME *EQ '*YES') THEN(DO)
-    CRTSAVF FILE(&LIBB/&RTNUSRPRF)
-    MONMSG MSGID(CPF0000) EXEC(CLRSAVF FILE(&LIBB/&RTNUSRPRF))
-    CHGVAR VAR(&OBJ) VALUE('/QSYS.LIB/')
-    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT &LIBB)
-    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT '.LIB/')
-    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT &RTNUSRPRF)
-    CHGVAR VAR(&OBJ) VALUE(&OBJ *TCAT '.FILE')
+    CHGVAR VAR(&HOMEZIP) VALUE('/tmp/' *TCAT &RTNUSRPRF *TCAT '.zip')
+    CHGVAR VAR(&CMD) VALUE('/QOpenSys/pkgs/bin/zip -r9')
+    CHGVAR VAR(&CMD) VALUE(&CMD *BCAT &HOMEZIP)
+    CHGVAR VAR(&CMD) VALUE(&CMD *BCAT '/home/' *TCAT &RTNUSRPRF)
 
-    IF COND(&EXCLUDETMP *EQ '*YES') THEN(SAV DEV(&OBJ) +
-        OBJ((&HOME *INCLUDE) (&TMPDIR *OMIT)) SUBTREE(*ALL) SAVACT(*SYNC) +
-        CLEAR(*ALL) DTACPR(*ZLIB) ASYNCBRING(*YES))
-    ELSE CMD(SAV DEV(&OBJ) OBJ((&HOME *INCLUDE)) SUBTREE(*ALL) SAVACT(*SYNC) +
-        CLEAR(*ALL) DTACPR(*ZLIB) ASYNCBRING(*YES))
+    IF COND(&EXCLUDETMP *EQ '*YES') THEN(CHGVAR VAR(&CMD) +
+        VALUE(&CMD *BCAT '-x "/home/' *TCAT &RTNUSRPRF *TCAT '/tmp/*"'))
 
-    CHGVAR VAR(&TOOBJ) VALUE(&TEMPDIR *TCAT &RTNUSRPRF *TCAT '.SAVF')
-    CPY OBJ(&OBJ) TOOBJ(&TOOBJ)
-    DLTF FILE(&LIBB/&RTNUSRPRF)
+    CHGVAR VAR(&CMD) VALUE(&CMD *BCAT '> /dev/null')
+        
+    QSH CMD(&CMD)
+    MOV OBJ(&HOMEZIP) TODIR(&TEMPDIR)
 ENDDO
 
 IF COND(&SAVELIBB *EQ '*YES' *OR &SAVELIB1 *EQ '*YES' +
@@ -276,4 +281,3 @@ IF COND(&SAVELIBB *EQ '*YES' *OR &SAVELIB1 *EQ '*YES' +
 ENDDO
 
 ENDPGM
-
