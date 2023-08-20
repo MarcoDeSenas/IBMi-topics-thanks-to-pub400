@@ -140,9 +140,9 @@ For objects:
 
 1. Extract the desired save file from the desired output zip file
 2. Send it to PUB400
-   - use ftp (or better ftps with FileZilla) to transfer it directly in the target library (suggestion is to use the B library as a recipient of the save file) as provided by PUB400 [To transfer a save file from PUB400 from your PC](https://pub400.com/cgi/faqs.nd/go?yCURCAT=3&yCURFAQ=10)
+   - use ftp (or better ftps with FileZilla) to transfer it directly in the target library (suggestion is to use the B library as a recipient of the save file) as provided by PUB400 [To transfer a save file to PUB400 from your PC](https://pub400.com/cgi/faqs.nd/go?yCURCAT=3&yCURFAQ=10)
      - note that the procedure above __does not work when using sftp__
-   - copy it by any way (sftp, scp, iACS, Windows Explorer if a mapped disk exists...) into an IFS directory then use *CPY TOOBJ(thesavefilenameinIFSformatwithaFILEextension) TOCCSID('*CALC')* command; there is no need to create the save file first and TOCCSID(*CALC) is mandatory for the copy to work
+   - copy it by any way (sftp, scp, iACS, Windows Explorer if a mapped disk exists...) into an IFS directory then use **CPY TOOBJ(thesavefilenameinIFSformatwithaFILEextension) TOCCSID('*CALC')* command; there is no need to create the save file first and TOCCSID(*CALC) is mandatory for the copy to work
 3. Once the save file is in the target library, checkout its content with *DSPSAVF* command to make sure it is using the proper format
 4. Use the procedure provided on PUB400, [how to restore from a save file](https://pub400.com/cgi/faqs.nd/go?yCURCAT=3&yCURFAQ=8).
 
@@ -161,7 +161,7 @@ The requirements for the installation and runtime operations are the following:
    - if it not assigned as home directory (e.g. not done at user profile creation time), it must be done with *CHGPRF HOMEDIR('/home/MYUSER')* command
 2. On PUB400, the user profile must have one the three libraries the user owns, assigned as the current library.
    - if this is not the case (e.g. not done at user profile creation time), it must be done with *CHGPRF CURLIB(MYLIBRARY)* command
-3. On the workstation, the software below must be installed:
+3. On the workstation, the software below must be installed, checkout [Workstation tools](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/main/HowTo/Workstation%20tools.md) for more information:
    - Windows 10 or higher
    - PowerShell 7 or higher
    - IBM i Access Client Solutions (required only for installation)
@@ -176,7 +176,7 @@ The requirements for the installation and runtime operations are the following:
 Several steps are needed for installing the utility.
 The prerequisite is to create the directory structure within HOME directory. This can be done once for all the tools from this GitHub repository.
 
-1. Download into a local workstation directory from Github the [folder structure creation SQL script](Projects\Common\folder_structure_creation.sql) script.
+1. Download into a local workstation directory from Github the [folder structure creation SQL script](..\Common\folder_structure_creation.sql) script.
 2. Execute it from iACS Run SQL Scripts
 
 Further step are specifically related to ENVSAV tool.
@@ -186,7 +186,7 @@ Further step are specifically related to ENVSAV tool.
    [ENVSAV command](envsav.cmd)
    [ENVSAV command processing programe](envsav.pgm.clle)
    [ENVSAV command validity checker](envsav0.pgm.clle)
-3. If it was decided not to keep the same directory structure as described in this [Projects organization](Projects\README.md) document, review all INCLUDE statements in programs sources to handle the modification.
+3. If it was decided not to keep the same directory structure as described in this [Projects organization](..\README.md) document, review all INCLUDE statements in programs sources to handle the modification.
 4. Download into a local workstation directory from Github the [ENVSAV build](envsav_build.sql) script
 5. Execute it from iACS Run SQL Scripts
 6. Download into a workstation directory from Github the [envsav.ps1](envsav.ps1) PowerShell script
