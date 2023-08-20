@@ -85,7 +85,7 @@ Basically, the CPP performs the following tasks:
     - if including joblog is requested, using a QSH system command, output the joblog to a file named *backup.joblog* in the temporary subdirectory
     - copy and compress the content of the temporary subdirectory in a zip file in the backup directory, ready for download or restore process (note: this action is not included in the joblog)
 
-![Example of final zip file content](final zip content example.png)
+![Example of final zip file content](./final%20zip%20content%20example.png)
 
 #### Sources files used
 
