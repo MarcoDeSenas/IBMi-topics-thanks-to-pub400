@@ -183,9 +183,9 @@ Further step are specifically related to ENVSAV tool.
 
 1. Download all inc* files from Github repository into the desired directory on PUB400
 2. Download the sources of objects from Github into the desired directory on PUB400
-   [ENVSAV command](envsav.cmd)
-   [ENVSAV command processing programe](envsav.pgm.clle)
-   [ENVSAV command validity checker](envsav0.pgm.clle)
+   1. [ENVSAV command](envsav.cmd)
+   2. [ENVSAV command processing programe](envsav.pgm.clle)
+   3. [ENVSAV command validity checker](envsav0.pgm.clle)
 3. If it was decided not to keep the same directory structure as described in this [Projects organization](../README.md) document, review all INCLUDE statements in programs sources to handle the modification.
 4. Download into a local workstation directory from Github the [ENVSAV build](envsav_build.sql) script
 5. Execute it from iACS Run SQL Scripts
