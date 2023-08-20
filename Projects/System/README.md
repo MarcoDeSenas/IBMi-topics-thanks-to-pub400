@@ -76,17 +76,16 @@ Basically, the CPP performs the following tasks:
    - save 2 library to this save file with *ZLIB compression
    - copy the save file into the temporary subdirectory
    - delete the save file
-10. if HOME directory backup is requested
-    - create or clear a save file in B library with the name of user profile
+10. if HOME directory backup is requested, the content of the user home directory is "zipped" into a zip file in /tmp directory using zip Open Source package; the reason to proceed this way is that we do not have any way to restore IFS files from a save file on PUB400, as RST command is not allowed
     - if HOME/tmp exclusion is requested
-      - save HOME directory to this save file omitting HOME/tmp with *ZLIB compression
-    - if HOME/tmp exclusion is not requested
-      - save HOME directory to this save file with *ZLIB compression
-    - copy the save file into the temporary subdirectory
-    - delete the save file
+      - add exclusion to QShell command
+    - through a QShell invokation, zip the content of HOME directory
+    - move the zip file to the temporary subdirectory
 11. if at least one backup is requested
     - if including joblog is requested, using a QSH system command, output the joblog to a file named *backup.joblog* in the temporary subdirectory
     - copy and compress the content of the temporary subdirectory in a zip file in the backup directory, ready for download or restore process (note: this action is not included in the joblog)
+
+![Example of final zip file content](final zip content example.png)
 
 #### Sources files used
 
@@ -111,5 +110,13 @@ These sources files make use the following common includes files. For details ab
 In progress...
 
 ### How to restore something
+
+In progress...
+
+### Requirements
+
+In progress...
+
+### Installation and configuration
 
 In progress...

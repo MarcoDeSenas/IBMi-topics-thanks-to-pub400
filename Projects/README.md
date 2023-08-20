@@ -40,12 +40,12 @@ Regarding the libraries usage, I have the following organization. We all have th
 
 |Library|Content|
 |:---|:---|
-|LIBRARY1|Non-database objects, such as programs, commands, modules, bindig directories, display, printer, source files...|
+|LIBRARY1|Non-database objects, such as programs, commands, modules, binding directories, display, printer, source files...|
 |LIBRARY2|Database objects|
 |LIBRARYB|Backup library, not used explicitely, might be used by the programs|
 
 LIBRARY1 is set as the current library of my user profile.
-LIBRARY2, once created by PUB400 administrators, was set almost as a DB2 collection, with STRJRNLIB command and the following settings:
+LIBRARY2, is set almost as a DB2 collection, with STRJRNLIB command and the following settings:
 
 - Journal: LIBRARY2/JRN
 - Journal images: *AFTER
