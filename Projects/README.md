@@ -17,6 +17,7 @@ Regarding the organization in place on PUB400.com to retain the source files, wh
 |||common|||common sources files used by other projects|
 ||||docs||documentation about common project|
 ||||includes||includes files|
+||||scripts||scripts (QSH, PASE, python...) files of common project|
 |||system|||system administration project|
 ||||docs||documentation about system project|
 ||||includes||includes files limited to project use|
