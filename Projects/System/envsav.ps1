@@ -1,7 +1,7 @@
 <#
 .Description
 This script initiates a backup of a user environment on PUB400, then download the output zip file onto the workstation.
-It requires 3 parameters:
+It requires 4 parameters:
 	1- The user profile on PUB400
 	2- The full path to local ssh private key
 	3- The target directory where to download the output file to
