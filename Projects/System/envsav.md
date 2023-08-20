@@ -186,11 +186,12 @@ Further step are specifically related to ENVSAV tool.
    1. [ENVSAV command](envsav.cmd)
    2. [ENVSAV command processing programe](envsav.pgm.clle)
    3. [ENVSAV command validity checker](envsav0.pgm.clle)
-3. If it was decided not to keep the same directory structure as described in this [Projects organization](../README.md) document, review all INCLUDE statements in programs sources to handle the modification.
-4. Download into a local workstation directory from Github the [ENVSAV build](envsav_build.sql) script
+3. Download into a local workstation directory from Github the [ENVSAV build](envsav_build.sql) script
+4. If it was decided not to keep the same directory structure as described in this [Projects organization](../README.md) document, review all INCLUDE statements in programs sources and review build script to update source file location in order to handle the modification.
 5. Execute it from iACS Run SQL Scripts
 6. Download into a workstation directory from Github the [envsav.ps1](envsav.ps1) PowerShell script
    - this workstation directory may be one of PUB400 HOME directory if using SSHFS-Win!
 7. Run the script once from a Windows command window with the appropriate parameters to ensure it works fine; review the joblog and the content of output zip file to ensure it contains the good information
+8. Setup a new Windows scheduler entry if required for full automation
 
 Enjoy backups!
