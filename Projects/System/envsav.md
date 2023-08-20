@@ -176,7 +176,7 @@ The requirements for the installation and runtime operations are the following:
 Several steps are needed for installing the utility.
 The prerequisite is to create the directory structure within HOME directory. This can be done once for all the tools from this GitHub repository.
 
-1. Download into a local workstation directory from Github the [folder structure creation SQL script](..\Common\folder_structure_creation.sql) script.
+1. Download into a local workstation directory from Github the [folder structure creation SQL script](../Common/folder_structure_creation.sql) script.
 2. Execute it from iACS Run SQL Scripts
 
 Further step are specifically related to ENVSAV tool.
@@ -186,7 +186,7 @@ Further step are specifically related to ENVSAV tool.
    [ENVSAV command](envsav.cmd)
    [ENVSAV command processing programe](envsav.pgm.clle)
    [ENVSAV command validity checker](envsav0.pgm.clle)
-3. If it was decided not to keep the same directory structure as described in this [Projects organization](..\README.md) document, review all INCLUDE statements in programs sources to handle the modification.
+3. If it was decided not to keep the same directory structure as described in this [Projects organization](../README.md) document, review all INCLUDE statements in programs sources to handle the modification.
 4. Download into a local workstation directory from Github the [ENVSAV build](envsav_build.sql) script
 5. Execute it from iACS Run SQL Scripts
 6. Download into a workstation directory from Github the [envsav.ps1](envsav.ps1) PowerShell script
