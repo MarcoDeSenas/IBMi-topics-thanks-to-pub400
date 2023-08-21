@@ -93,7 +93,7 @@ Files transfers to/from PUB400 can be easily done with FileZilla Client. I use a
 
 Download site: [FileZilla®, the free FTP solution](https://filezilla-project.org/).
 
-![FileZilla site general](Assets/FileZilla_site_general.png)![FileZilla site advanced](Assets/FileZilla_site_advanced.png)![FileZilla site charset](Assets/FileZilla_site_charset.png)
+![FileZilla site settings](Assets/FileZilla.png)
 
 Below is and xml export of the FileZilla client remote sites configuration.
 
