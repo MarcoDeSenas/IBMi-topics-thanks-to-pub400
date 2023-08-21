@@ -8,4 +8,4 @@ This document provides information about the way to set private/public keys pair
 
 ## Used workstation tools
 
-This is the list and setup of tools used on my Windows workstation in order to work on PUB400. More information [here](Workstation_tools.md).
+This is the list and setup of tools used on my Windows workstation in order to work on PUB400. More information [here](Workstation%20tools.md).
