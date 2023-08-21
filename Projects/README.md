@@ -52,4 +52,4 @@ LIBRARY2, is set almost as a DB2 collection, with STRJRNLIB command and the foll
 - Journal images: *AFTER
 - Omit journal entries: *NONE
 - New objects inherit journalig: *YES
-- Inherit rules: '*ALL' objects types, '*ALL' objects, '*ALLOPR' journal operations, '*OBJDFT' images and omitted entries
+- Inherit rules: \*ALL objects types, \*ALL objects, \*ALLOPR journal operations, \*OBJDFT images and omitted entries
