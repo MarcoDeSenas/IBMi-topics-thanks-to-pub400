@@ -93,6 +93,8 @@ Files transfers to/from PUB400 can be easily done with FileZilla Client. I use a
 
 Download site: [FileZilla®, the free FTP solution](https://filezilla-project.org/).
 
+![FileZilla site general](Assets/FileZilla_site_general.png)![FileZilla site advanced](Assets/FileZilla_site_advanced.png)![FileZilla site charset](Assets/FileZilla_site_charset.png)
+
 Below is and xml export of the FileZilla client remote sites configuration.
 
 ```xml
@@ -123,7 +125,11 @@ Download site: [SSHFS-Win · SSHFS for Windows](https://github.com/winfsp/sshfs-
 
 ## SSHFS-Win Manager
 
-In conjunction with SSHFS-Win, SSHFS-Win Manager provides a graphical interface to set a file system access through sftp. It is quite simple to use as there are only two kinds of parameter to set:
+In conjunction with SSHFS-Win, SSHFS-Win Manager provides a graphical interface to set a file system access through sftp.
+
+Download site: [SSHFS-Win Manager](https://github.com/evsar3/sshfs-win-manager).
+
+It is quite simple to use as there are only two kinds of parameter to set:
 
 Those related to the SSHFS-Win program:
 
@@ -132,6 +138,8 @@ Those related to the SSHFS-Win program:
 - STARTUP WITH WINDOWS: ON
 - DISPLAY SYSTEM TRAY MESSAGE ON CLOSE: ON
 - SHOW DEBUG PANEL: OFF
+
+![Program settings](Assets/sshfs_win_manager_settings.png)
 
 Those related to the connection to the servers:
 
@@ -146,9 +154,14 @@ Those related to the connection to the servers:
   -PATH: /home/MYUSER
 - BASIC/LOCAL
   - DRIVE LETTER: P:
+
+![Connection basic settings](Assets/sshfs_win_manager_connection_basic.png)
+
 - ADVANCED/CONNECT ON STARTUP: ON
 - ADVANCED/TRY TO RECONNECT ON CONNECTION LOST: ON
 - CUSTOM COMMAND LINE PARAMS: OFF
+
+![Connection advanced settings](Assets/sshfs_win_manager_connection_advanced.png)
 
 With both those two SSHFS-Win programs, the workstation has a permanent encrypted and transparent access to my home directory on PUB400. Example below:
 
@@ -177,5 +190,3 @@ P:\>dir
               10 fichier(s)           94 299 octets
                5 Rép(s)  481 482 366 976 octets libres
 ```
-
-Download site: [SSHFS-Win Manager](https://github.com/evsar3/sshfs-win-manager).
