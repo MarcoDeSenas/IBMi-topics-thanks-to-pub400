@@ -1,0 +1,167 @@
+  5770SS1 V7R5M0 220415                        Display Job Log                       PUB400    08/19/23  20:00:07 UTC     Page    1
+   Job name . . . . . . . . . . :   QP0ZSPWP        User  . . . . . . :   QUSER        Number . . . . . . . . . . . :   350456
+   Job description  . . . . . . :   QDFTSVR         Library . . . . . :   QGPL
+ MSGID      TYPE                    SEV  DATE      TIME             FROM PGM     LIBRARY     INST     TO PGM      LIBRARY     INST
+ CPFBC50    Escape                  40   08/19/23  20:00:06,807455  QP0LGS3      QSYS        *STMT    QP0LSOBJSP  QSYS        *STMT
+                                      From user . . . . . . . . . :   DIMARCO
+                                      From module . . . . . . . . :   QP0LSUBTRE
+                                      From procedure  . . . . . . :   Qp0lSubtree2__FP24Qp0l_IN_EXclusion_List_tT1Pc
+                                        P18Qp0l_Pattern_ArrayUiP20Qp0l_User_Function_tPvP6Qus_ECT59Qp0lOrder
+                                      Statement . . . . . . . . . :   21
+                                      To module . . . . . . . . . :   QP0LPRSOBJ
+                                      To procedure  . . . . . . . :   callQp0lSubtree__25Qp0lProcessSubtreeObjectsFv
+                                      Statement . . . . . . . . . :   44
+                                      Message . . . . :   Path name or path names not found.
+                                      Cause . . . . . :   The path name or path names given as input do not match
+                                        any path names of existing objects. Recovery  . . . :   Correct the path
+                                        name or path names and try the request again. Technical description . . . .
+                                        . . . . :   The internal interface which processes directory subtrees could
+                                        not expand any of the input path names to path names to existing objects.
+                                        This could happen if the path names use wildcard characters which do not
+                                        match any objects.
+ CPFA0B7    Completion              40   08/19/23  20:00:06,822660  QP0LCCFN     QSYS        *STMT    ENVSAV      DIMARCO1    *STMT
+                                      From user . . . . . . . . . :   DIMARCO
+                                      From module . . . . . . . . :   QP0LCEXH
+                                      From procedure  . . . . . . :   qgc_sendpm__Fv
+                                      Statement . . . . . . . . . :   17
+                                      To module . . . . . . . . . :   ENVSAV
+                                      To procedure  . . . . . . . :   ENVSAV
+                                      Statement . . . . . . . . . :   39500
+                                      Message . . . . :   2 object links removed.  0 object links not removed.
+                                      Recovery  . . . :   See the job log (DSPJOBLOG command) or press F10 (Display
+                                        messages in job log) for messages on object links not removed.  Correct the
+                                        errors and try the request again.
+ CPCA083    Completion              00   08/19/23  20:00:06,825431  QP0LCCFN     QSYS        *STMT    ENVSAV      DIMARCO1    *STMT
+                                      From user . . . . . . . . . :   DIMARCO
+                                      From module . . . . . . . . :   QP0LCEXH
+                                      From procedure  . . . . . . :   qgc_sendpm__Fv
+                                      Statement . . . . . . . . . :   17
+                                      To module . . . . . . . . . :   ENVSAV
+                                      To procedure  . . . . . . . :   ENVSAV
+                                      Statement . . . . . . . . . :   40700
+                                      Message . . . . :   Directory created.
+                                      Cause . . . . . :   Directory
+                                        /home/DIMARCO/tmp/env_backup_20230819200006806211/ was successfully created.
+ CPC7301    Completion              00   08/19/23  20:00:06,832129  QDDCDF       QSYS        025D     ENVSAV      DIMARCO1    *STMT
+                                      From user . . . . . . . . . :   DIMARCO
+                                      To module . . . . . . . . . :   ENVSAV
+                                      To procedure  . . . . . . . :   ENVSAV
+                                      Statement . . . . . . . . . :   43900
+                                      Message . . . . :   File DIMARCO1 created in library DIMARCOB.
+ CPI3710    Information             00   08/19/23  20:00:06,910646  QSREVTHD     QSYS        0227     QSREVTHD    QSYS        0227
+                                      From user . . . . . . . . . :   DIMARCO
+                                      Message . . . . :   Save-while-active checkpoint processing for library
+                                        DIMARCO1 complete.
+                                      Cause . . . . . :   The checkpoint processing required to save library
+                                        DIMARCO1 has been completed.  The library can be used.  However, some
+                                                    -=* http://pub400.com *=-
+  5770SS1 V7R5M0 220415                        Display Job Log                       PUB400    08/19/23  20:00:07 UTC     Page    2
+   Job name . . . . . . . . . . :   QP0ZSPWP        User  . . . . . . :   QUSER        Number . . . . . . . . . . . :   350456
+   Job description  . . . . . . :   QDFTSVR         Library . . . . . :   QGPL
+ MSGID      TYPE                    SEV  DATE      TIME             FROM PGM     LIBRARY     INST     TO PGM      LIBRARY     INST
+                                        objects may be in use while save-while-active processing is completing.
+ CPC3722    Completion              00   08/19/23  20:00:07,144154  QSRSLCP2     QSYS        04C9     ENVSAV      DIMARCO1    *STMT
+                                      From user . . . . . . . . . :   DIMARCO
+                                      To module . . . . . . . . . :   ENVSAV
+                                      To procedure  . . . . . . . :   ENVSAV
+                                      Statement . . . . . . . . . :   44100
+                                      Message . . . . :   20 objects saved from library DIMARCO1.
+                                      Cause . . . . . :   -- 20 objects were saved. -- 0 spooled files were saved.
+                                        Data was saved from library DIMARCO1 to save file DIMARCO1 in DIMARCOB at
+                                        08/19/23 20:00:06.  If UPDHST(*YES) was specified, the save/restore history
+                                        information was updated for each saved object.
+ CPCA087    Completion              00   08/19/23  20:00:07,194678  QP0LCCFN     QSYS        *STMT    ENVSAV      DIMARCO1    *STMT
+                                      From user . . . . . . . . . :   DIMARCO
+                                      From module . . . . . . . . :   QP0LCEXH
+                                      From procedure  . . . . . . :   qgc_sendpm__Fv
+                                      Statement . . . . . . . . . :   17
+                                      To module . . . . . . . . . :   ENVSAV
+                                      To procedure  . . . . . . . :   ENVSAV
+                                      Statement . . . . . . . . . :   44900
+                                      Message . . . . :   Object copied.
+                                      Cause . . . . . :   Object /QSYS.LIB/DIMARCOB.LIB/DIMARCO1.FILE copied to
+                                        object /home/DIMARCO/tmp/env_backup_20230819200006806211/DIMARCO1.SAVF.
+ CPC2191    Completion              00   08/19/23  20:00:07,204899  QLIDLOBJ     QSYS        0772     ENVSAV      DIMARCO1    *STMT
+                                      From user . . . . . . . . . :   DIMARCO
+                                      To module . . . . . . . . . :   ENVSAV
+                                      To procedure  . . . . . . . :   ENVSAV
+                                      Statement . . . . . . . . . :   45000
+                                      Message . . . . :   Object DIMARCO1 in DIMARCOB type *FILE deleted.
+ CPC7301    Completion              00   08/19/23  20:00:07,211309  QDDCDF       QSYS        025D     ENVSAV      DIMARCO1    *STMT
+                                      From user . . . . . . . . . :   DIMARCO
+                                      To module . . . . . . . . . :   ENVSAV
+                                      To procedure  . . . . . . . :   ENVSAV
+                                      Statement . . . . . . . . . :   46000
+                                      Message . . . . :   File DIMARCO2 created in library DIMARCOB.
+ CPI3710    Information             00   08/19/23  20:00:07,269019  QSREVTHD     QSYS        0227     QSREVTHD    QSYS        0227
+                                      From user . . . . . . . . . :   DIMARCO
+                                      Message . . . . :   Save-while-active checkpoint processing for library
+                                        DIMARCO2 complete.
+                                      Cause . . . . . :   The checkpoint processing required to save library
+                                        DIMARCO2 has been completed.  The library can be used.  However, some
+                                        objects may be in use while save-while-active processing is completing.
+ CPF7080    Information             00   08/19/23  20:00:07,315013  QJOSAVRC     QSYS        023E     QSRSVPST    QSYS        01BA
+                                      From user . . . . . . . . . :   DIMARCO
+                                      Message . . . . :   Receiver JRN0000130 in DIMARCO2 saved while attached.
+                                      Cause . . . . . :   Journal receiver JRN0000130 in library DIMARCO2 was saved
+                                        while it was attached to the journal.  However, this saved copy of journal
+                                        receiver JRN0000130 is not complete because journal entries continue to be
+                                        placed in the receiver after it is saved.  To restore a complete version of
+                                        journal receiver JRN0000130, it should be saved again after it is detached
+                                        from the journal. Technical description . . . . . . . . :   If the receiver
+                                        was detached while a save operation was in progress, the system may not have
+                                        saved a complete copy.  Save the receiver again to ensure that you have a
+                                                    -=* http://pub400.com *=-
+  5770SS1 V7R5M0 220415                        Display Job Log                       PUB400    08/19/23  20:00:07 UTC     Page    3
+   Job name . . . . . . . . . . :   QP0ZSPWP        User  . . . . . . :   QUSER        Number . . . . . . . . . . . :   350456
+   Job description  . . . . . . :   QDFTSVR         Library . . . . . :   QGPL
+ MSGID      TYPE                    SEV  DATE      TIME             FROM PGM     LIBRARY     INST     TO PGM      LIBRARY     INST
+                                        complete copy.
+ CPC3722    Completion              00   08/19/23  20:00:07,316856  QSRSLCP2     QSYS        04C9     ENVSAV      DIMARCO1    *STMT
+                                      From user . . . . . . . . . :   DIMARCO
+                                      To module . . . . . . . . . :   ENVSAV
+                                      To procedure  . . . . . . . :   ENVSAV
+                                      Statement . . . . . . . . . :   46200
+                                      Message . . . . :   7 objects saved from library DIMARCO2.
+                                      Cause . . . . . :   -- 7 objects were saved. -- 0 spooled files were saved.
+                                        Data was saved from library DIMARCO2 to save file DIMARCO2 in DIMARCOB at
+                                        08/19/23 20:00:07.  If UPDHST(*YES) was specified, the save/restore history
+                                        information was updated for each saved object.
+ CPCA087    Completion              00   08/19/23  20:00:07,336255  QP0LCCFN     QSYS        *STMT    ENVSAV      DIMARCO1    *STMT
+                                      From user . . . . . . . . . :   DIMARCO
+                                      From module . . . . . . . . :   QP0LCEXH
+                                      From procedure  . . . . . . :   qgc_sendpm__Fv
+                                      Statement . . . . . . . . . :   17
+                                      To module . . . . . . . . . :   ENVSAV
+                                      To procedure  . . . . . . . :   ENVSAV
+                                      Statement . . . . . . . . . :   47000
+                                      Message . . . . :   Object copied.
+                                      Cause . . . . . :   Object /QSYS.LIB/DIMARCOB.LIB/DIMARCO2.FILE copied to
+                                        object /home/DIMARCO/tmp/env_backup_20230819200006806211/DIMARCO2.SAVF.
+ CPC2191    Completion              00   08/19/23  20:00:07,345596  QLIDLOBJ     QSYS        0772     ENVSAV      DIMARCO1    *STMT
+                                      From user . . . . . . . . . :   DIMARCO
+                                      To module . . . . . . . . . :   ENVSAV
+                                      To procedure  . . . . . . . :   ENVSAV
+                                      Statement . . . . . . . . . :   47100
+                                      Message . . . . :   Object DIMARCO2 in DIMARCOB type *FILE deleted.
+ QSH0005    Completion              00   08/19/23  20:00:07,500053  QZSHRUNC     QSHELL      *STMT    ENVSAV      DIMARCO1    *STMT
+                                      From user . . . . . . . . . :   DIMARCO
+                                      From module . . . . . . . . :   QZSHRUNC
+                                      From procedure  . . . . . . :   main
+                                      Statement . . . . . . . . . :   149
+                                      To module . . . . . . . . . :   ENVSAV
+                                      To procedure  . . . . . . . :   ENVSAV
+                                      Statement . . . . . . . . . :   50000
+                                      Message . . . . :   Command ended normally with exit status 0.
+ CPCA086    Completion              00   08/19/23  20:00:07,501464  QP0LCCFN     QSYS        *STMT    ENVSAV      DIMARCO1    *STMT
+                                      From user . . . . . . . . . :   DIMARCO
+                                      From module . . . . . . . . :   QP0LCEXH
+                                      From procedure  . . . . . . :   qgc_sendpm__Fv
+                                      Statement . . . . . . . . . :   17
+                                      To module . . . . . . . . . :   ENVSAV
+                                      To procedure  . . . . . . . :   ENVSAV
+                                      Statement . . . . . . . . . :   50100
+                                      Message . . . . :   Object moved.
+                                      Cause . . . . . :   Object /tmp/DIMARCO.zip was moved to
+                                        /home/DIMARCO/tmp/env_backup_20230819200006806211//DIMARCO.zip.
+                                                    -=* http://pub400.com *=-

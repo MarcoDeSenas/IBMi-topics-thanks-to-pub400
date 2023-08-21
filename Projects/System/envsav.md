@@ -16,6 +16,8 @@ This action is done with *ENVSAV* command. The description of each parameter is 
 |CLEANTMP|Clean all temporary objects|__*YES__, *NO|Optional, default *YES|
 |EXCLUDETMP|Exclude HOME/tmp subdirectory|__*YES__, \*NO|Optional, default \*YES, prompted with SAVEHOME(\*YES)|
 
+![ENVSAV command prompt](Assets/envsav_command_prompt.png)
+
 Recommended invokation for a regular usage is to keep the default, so either *ENVSAV* or *ENVSAV SAVELIBB(\*NO) SAVELIB1(\*YES) SAVELIB2(\*YES) SAVEHOME(\*YES) INCLJOBLOG(\*YES) CLEANTMP(\*YES) EXCLUDETMP(\*YES)* are both suitable.
 If it is needed to only clean the temporary objects, use *ENVSAV SAVELIBB(\*NO) SAVELIB1(\*NO) SAVELIB2(\*NO) SAVEHOME(\*NO) INCLJOBLOG(\*NO) CLEANTMP(\*YES)*.
 
@@ -81,7 +83,11 @@ Basically, the CPP performs the following tasks:
     - if including joblog is requested, using a QSH system command, output the joblog to a file named *backup.joblog* in the temporary subdirectory
     - copy and compress the content of the temporary subdirectory in a zip file in the backup directory, ready for download or restore process (note: this action is not included in the joblog)
 
-![Example of final zip file content](./envsav_final%20zip%20content%20example.png)
+An example of the content of the final zip file is below.
+
+![Example of final zip file content](Assets/envsav_final_zip_content_example.png)
+
+An example of the content of a successfull job log is in this [file](Assets/envsav_successfull_joblog_example.txt).
 
 ### Sources files used
 
