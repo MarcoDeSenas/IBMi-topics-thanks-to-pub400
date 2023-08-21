@@ -21,19 +21,33 @@ Setup main items:
   - com.ibm.iaccess.PreferredSSHClient=Putty
   - com.ibm.iaccess.SSHClientOpts=-i privatekey.ppk
 
+![iACS](Assets/iACS.png)
+
 ## Visual Studio Code
 
 VSCode and **all IBM i related extensions** is used for all development activity applying on PUB400. There is no specific setting within all the various parameters of the software, however there are a couple of ones for the extensions got through the "IBM i Development Pack".
 
 Download site: [Download Visual Studio Code](https://code.visualstudio.com/Download).
 
-- Features
+- Login settings
+  - Host or IP Address: pub400.com
+  - Port (SSH): 2222
+  - Username: MYUSER
+  - Password: not used
+  - Private key: privatekey.ppk
+
+![VS Code login settings](Assets/VSCode_login_settings.png)
+
+- Connection settings/Features
   - Quick Connect: selected
   - Enable SQL: selectd
   - Show description of libraries in User Library List view: not selected
   - Support EBCDIC streamfiles: selected
   - Errors to ignore: none
   - Auto Save for Actions: selected
+
+![VS Code connection settings features](Assets/VSCode_connection_settings_features.png)
+
 - Source Code
   - Source ASP: none
   - Source File CCSID: *FILE
@@ -41,22 +55,33 @@ Download site: [Download Visual Studio Code](https://code.visualstudio.com/Downl
   - Source date tracking mode: Edit Mode
   - Source Dates in Gutter: not selected
   - Read only mode: not selected
+
+![VS Code connection settings source](Assets/VSCode_connection_settings_source.png.png)
+
 - Terminals (note: 5250 emulation from VSCode is not used)
   - 5250 encoding: default
   - 5250 Terminal Type: default
   - Set Device Name for 5250: not selected
   - Connection String for 5250: ssl:pub400.com 992
+
+![VS Code connection settings terminals](Assets/VSCode_connection_settings_terminals.png)
+
 - Debugger
   - Debug port: 8005
   - Update production files: not selected (note: our libraries are PROD ones)
   - Debug trace: not selected
   - Debug securely: not selected
   - Certificate directory: /QIBM/ProdData/IBMiDebugService/bin/certs
+
+![VS Code connection settings debugger](Assets/VSCode_connection_settings_debugger.png.png)
+
 - Temporary Data
   - Temporary library: DIMARCOB (note: this is important to set as VSCode will create temporary objects in this library, wnad will not properly work if it cannot proceed for any reason (do not forget that we cannot create libraries on PUB400))
   - Temporary IFS directory: /home/MYUSER/tmp
   - Clear temporary data automatically: selected
   - Sort IFS shortcuts automatically: selected
+
+![VS Code connection settings temporary data](Assets/VSCode_connection_settings_temporary_data.png)
 
 ## putty
 
@@ -65,6 +90,8 @@ I use putty for any ssh access to PUB400 when there is no built-in feature in ot
 Download site: [PuTTY: a free SSH and Telnet client](https://www.chiark.greenend.org.uk/~sgtatham/putty/).
 
 I have one pub400.com session set with the parameters below (other parameters keep the default value):
+
+![putty session settings](Assets/putty.png)
 
 - Session
   - Host Name: pub400.com
