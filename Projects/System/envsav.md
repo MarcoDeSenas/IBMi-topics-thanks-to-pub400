@@ -14,10 +14,10 @@ This action is done with *ENVSAV* command. The description of each parameter is 
 |SAVEHOME|Backup home directory|__*YES__, *NO|Optional, default *YES|
 |INCLJOBLOG|Include job log into backup|__*YES__, *NO|Optional, default *YES|
 |CLEANTMP|Clean all temporary objects|__*YES__, *NO|Optional, default *YES|
-|EXCLUDETMP|Exclude HOME/tmp subdirectory|__*YES__, *NO|Optional, default *YES, prompted with SAVEHOME(*YES)|
+|EXCLUDETMP|Exclude HOME/tmp subdirectory|__*YES__, \*NO|Optional, default \*YES, prompted with SAVEHOME(\*YES)|
 
-Recommended invokation for a regular usage is to keep the default, so either _ENVSAV_ or _ENVSAV SAVELIBB('*NO') SAVELIB1('*YES') SAVELIB2('*YES') SAVEHOME('*YES') INCLJOBLOG('*YES') CLEANTMP('*YES') EXCLUDETMP('*YES')_ are both suitable.
-If it is needed to only clean the temporary objects, use _ENVSAV SAVELIBB('*NO') SAVELIB1('*NO') SAVELIB2('*NO') SAVEHOME('*NO') INCLJOBLOG('*NO') CLEANTMP('*YES')_.
+Recommended invokation for a regular usage is to keep the default, so either *ENVSAV* or *ENVSAV SAVELIBB(\*NO) SAVELIB1(\*YES) SAVELIB2(\*YES) SAVEHOME(\*YES) INCLJOBLOG(\*YES) CLEANTMP(\*YES) EXCLUDETMP(\*YES)* are both suitable.
+If it is needed to only clean the temporary objects, use *ENVSAV SAVELIBB(\*NO) SAVELIB1(\*NO) SAVELIB2(\*NO) SAVEHOME(\*NO) INCLJOBLOG(\*NO) CLEANTMP(\*YES)*.
 
 ### Validity checker actions
 
@@ -25,13 +25,13 @@ The validity checker redoes all the checks which are done by command interface. 
 
 Basically this program performs the following actions:
 
-1. if SAVELIBB does not contain expected '*YES' or '*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
-2. if SAVELIB1 does not contain expected '*YES' or '*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
-3. if SAVELIB2 does not contain expected '*YES' or '*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
-4. if SAVEHOME does not contain expected '*YES' or '*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
-5. if INCLJOBLOG does not contain expected '*YES' or '*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
-6. if CLEANTMP does not contain expected '*YES' or '*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
-7. if EXCLUDETMP does not contain expected '*YES' or '*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+1. if SAVELIBB does not contain expected \*YES' or \*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+2. if SAVELIB1 does not contain expected \*YES' or \*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+3. if SAVELIB2 does not contain expected \*YES' or \*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+4. if SAVEHOME does not contain expected \*YES' or \*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+5. if INCLJOBLOG does not contain expected \*YES' or \*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+6. if CLEANTMP does not contain expected \*YES' or \*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
+7. if EXCLUDETMP does not contain expected \*YES' or \*NO' value, set the error parameter status to TRUE and send CPD0084 *DIAG message to caller program
 8. if there is at least one error, send CPF0002 *ESCAPE message to caller program
 
 ### Behavior of the command
@@ -116,7 +116,7 @@ This envsav.ps1 PowerShell script, which runs on the workstation, does the follo
 3. Initiate output zip file download to the workstation
    - download all *.zip files from backup directory into download directory through scp
 4. Initiate cleanup of temporary objects used by environement backup on PUB400
-   - run *ENVSAV SAVELIBB('*NO') SAVELIB1('*NO') SAVELIB2('*NO') SAVEHOME('*NO') INCLJOBLOG('*NO') CLEANTMP('*YES')* command through ssh
+   - run *ENVSAV SAVELIBB(\*NO) SAVELIB1(\*NO) SAVELIB2(\*NO) SAVEHOME(\*NO) INCLJOBLOG(\*NO) CLEANTMP(\*YES)* command through ssh
 5. Perform cleanup of downloaded files
    - we keep only the count of more recent files which is provided as parameter
    - if that count is lower or equal than the parameter, no file is deleted
@@ -142,7 +142,7 @@ For objects:
 2. Send it to PUB400
    - use ftp (or better ftps with FileZilla) to transfer it directly in the target library (suggestion is to use the B library as a recipient of the save file) as provided by PUB400 [To transfer a save file to PUB400 from your PC](https://pub400.com/cgi/faqs.nd/go?yCURCAT=3&yCURFAQ=10)
      - note that the procedure above __does not work when using sftp__
-   - copy it by any way (sftp, scp, iACS, Windows Explorer if a mapped disk exists...) into an IFS directory then use **CPY TOOBJ(thesavefilenameinIFSformatwithaFILEextension) TOCCSID('*CALC')* command; there is no need to create the save file first and TOCCSID(*CALC) is mandatory for the copy to work
+   - copy it by any way (sftp, scp, iACS, Windows Explorer if a mapped disk exists...) into an IFS directory then use *CPY TOOBJ(thesavefilenameinIFSformatwithaFILEextension) TOCCSID(\*CALC)* command; there is no need to create the save file first and TOCCSID(*CALC) is mandatory for the copy to work
 3. Once the save file is in the target library, checkout its content with *DSPSAVF* command to make sure it is using the proper format
 4. Use the procedure provided on PUB400, [how to restore from a save file](https://pub400.com/cgi/faqs.nd/go?yCURCAT=3&yCURFAQ=8).
 
@@ -157,7 +157,7 @@ For IFS:
 The requirements for the installation and runtime operations are the following:
 
 1. On PUB400, the user must have an HOME subdirectory, named /home/MYUSER, which must also be set as its home directory on the user profile.
-   - if this subdirectory does not exist (e.g. not created at user profile creation time), it must be created with *CRTDIR DIR('/home/MYUSER') DTAAUT('*NONE') OBJAUT('*NONE')* command
+   - if this subdirectory does not exist (e.g. not created at user profile creation time), it must be created with *CRTDIR DIR('/home/MYUSER') DTAAUT(\*NONE) OBJAUT(\*NONE)* command
    - if it not assigned as home directory (e.g. not done at user profile creation time), it must be done with *CHGPRF HOMEDIR('/home/MYUSER')* command
 2. On PUB400, the user profile must have one the three libraries the user owns, assigned as the current library.
    - if this is not the case (e.g. not done at user profile creation time), it must be done with *CHGPRF CURLIB(MYLIBRARY)* command
