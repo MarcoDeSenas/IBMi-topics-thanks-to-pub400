@@ -56,7 +56,7 @@ Download site: [Download Visual Studio Code](https://code.visualstudio.com/Downl
   - Source Dates in Gutter: not selected
   - Read only mode: not selected
 
-![VS Code connection settings source](Assets/VSCode_connection_settings_source.png.png)
+![VS Code connection settings source](Assets/VSCode_connection_settings_source.png)
 
 - Terminals (note: 5250 emulation from VSCode is not used)
   - 5250 encoding: default
@@ -73,7 +73,7 @@ Download site: [Download Visual Studio Code](https://code.visualstudio.com/Downl
   - Debug securely: not selected
   - Certificate directory: /QIBM/ProdData/IBMiDebugService/bin/certs
 
-![VS Code connection settings debugger](Assets/VSCode_connection_settings_debugger.png.png)
+![VS Code connection settings debugger](Assets/VSCode_connection_settings_debugger.png)
 
 - Temporary Data
   - Temporary library: DIMARCOB (note: this is important to set as VSCode will create temporary objects in this library, wnad will not properly work if it cannot proceed for any reason (do not forget that we cannot create libraries on PUB400))
