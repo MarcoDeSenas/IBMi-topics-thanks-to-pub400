@@ -1,12 +1,15 @@
+
 /*--------------------------------------------------------------------------*/
 /*                                                                          */
 /* This is the include file for variables initialization.                   */
 /*                                                                          */
 /* Dates: 2023/07/24 Creation                                               */
+/*        2023/08/22 Added &NULL variable initialization                    */
 /*                                                                          */
 /*--------------------------------------------------------------------------*/
 
 CHGVAR VAR(&BLANK) VALUE(' ')
+CHGVAR VAR(&NULL) VALUE(x'00')
 CHGVAR VAR(&QUOTE) VALUE('''')
 CHGVAR VAR(&YES) VALUE('*YES')
 CHGVAR VAR(&NO) VALUE('*NO')
