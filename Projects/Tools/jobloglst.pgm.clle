@@ -1,0 +1,228 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */ 
+/* Display joblog related to run commands retrieved from a table.           */
+/* This program will retrieve the commands from a table, run them and       */
+/* display/print the joblog related to those commands.                      */
+/*                                                                          */
+/* Dates: 2023/07/24 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+PGM PARM(&GROUP &REPORTCMD &OUTPUT)
+
+DCLPRCOPT DFTACTGRP(*NO) ACTGRP(JOBLOGLST)
+
+DCL VAR(&GROUP) TYPE(*CHAR) LEN(10)
+DCL VAR(&REPORTCMD) TYPE(*CHAR) LEN(4)
+DCL VAR(&OUTPUT) TYPE(*CHAR) LEN(6)
+
+DCL VAR(&FRMKEYVAR) TYPE(*CHAR) LEN(4)
+DCL VAR(&TOKEYVAR) TYPE(*CHAR) LEN(4)
+DCL VAR(&FRMKEYVARV) TYPE(*CHAR) LEN(30)
+DCL VAR(&TOKEYVARV) TYPE(*CHAR) LEN(30)
+
+DCL VAR(&KEYVARINT) TYPE(*INT) LEN(8)
+DCL VAR(&KEYVARCHAR) TYPE(*CHAR) LEN(8)
+
+DCL VAR(&LOGCLPGM) TYPE(*CHAR) LEN(10)
+DCL VAR(&JOBTYPE) TYPE(*CHAR) LEN(1)
+
+DCL VAR(&CMD) TYPE(*CHAR) LEN(1024)
+DCL VAR(&CMDLEN) TYPE(*INT)
+DCL VAR(&CMDLENA) TYPE(*CHAR) LEN(2)
+DCL VAR(&CMDLENCMD) TYPE(*DEC) LEN(15 5)
+DCL VAR(&MSGLEN) TYPE(*INT)
+DCL VAR(&MAXMSGLEN) TYPE(*INT)
+DCL VAR(&CMDRUN) TYPE(*LGL)
+
+INCLUDE SRCSTMF('../../common/includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_declare.clle')
+
+DCLF FILE(CMDGRP_IX1) ALWVARLEN(*YES)
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Include error handling standard routine.                                 */
+/* errorhandling variable declaration is included before DCLF               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_routine.clle')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Some initializations...                                                  */
+/*                                                                          */
+/* First, we check the number of parameters in case the program was invoked */
+/* directly.                                                                */
+/* Second, we run the command validity checker in case the program was      */
+/* invoked directly. If the checker finds an error, it sends an CPF0006     */
+/* *ESCAPE message which will be catched by the error handling routine.     */
+/*                                                                          */
+/* We change LOGCLPGM to *NO to avoid program commands to be seen in the    */
+/* report.                                                                  */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+ 
+INCLUDE SRCSTMF('../../common/includes/inc_variables_init.clle')
+
+IF COND(%PARMS() *NE 3) THEN( +
+    SNDPGMMSG TOPGMQ(*SAME) MSGID(CPX6148) MSGF(QCPFMSG) MSGTYPE(*ESCAPE))
+
+CALL PGM(JOBLOGLST0) PARM(&GROUP &REPORTCMD &OUTPUT)
+
+CHGVAR VAR(&CMDRUN) VALUE(&FALSE)
+CHGVAR VAR(&MAXMSGLEN) VALUE(84)
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* &P_xxx variables are used by the standard error handling routine to send */
+/* an escape message when there is an error within the routine itself.      */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CHGVAR VAR(&P_MSGID) VALUE('CPDA4A8')
+CHGVAR VAR(&P_MSGF) VALUE('QCPFMSG')
+CHGVAR VAR(&P_MSGFLIB) VALUE(*LIBL)
+CHGVAR VAR(&P_MSGDTA) VALUE('JOBLOGLST' *BCAT 'JOBLOGLST GROUP(')
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA  *TCAT &GROUP *TCAT ') REPORTCMD(')
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA *TCAT &REPORTCMD *TCAT ') OUTPUT(')
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA *TCAT &OUTPUT *TCAT ')')
+
+RTVJOBA LOGCLPGM(&LOGCLPGM) TYPE(&JOBTYPE)
+IF COND(&LOGCLPGM *EQ &YES) THEN(CHGJOB LOGCLPGM(&NO))
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Send a specific message to mark the beginning of events we want to       */
+/* display. &KEYVAR will receive the essage key value which we will use to  */
+/* narrow the job log output.                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CHGVAR VAR(&MSGDTA) +
+    VALUE('--- This is the beginning of looked at messages ---')
+SNDPGMMSG TOPGMQ(*SAME) MSGTYPE(*INFO) MSGID(CPI3701) MSGF(QSYS/QCPFMSG) +
+    MSGDTA(&MSGDTA) +
+    KEYVAR(&FRMKEYVAR)
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Starting at this point, all messages in the job log will be displayed in */
+/* the job log.                                                             */
+/* We monitor all commands so that the program does not fail here.          */
+/* If requested through &REPORTCMD parameter, we report the command in the  */
+/* job log.                                                                 */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CALLSUBR SUBR(READFILE)
+DOWHILE COND(*NOT &EOF)
+    IF COND(&GROUP *EQ '*ALL' *OR &GROUP *EQ &CMDGRP) +
+        THEN(CALLSUBR SUBR(EXECCMD))
+    CALLSUBR SUBR(READFILE)
+ENDDO
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Send a specific message to mark the end of events we want to display.    */
+/* &KEYVAR will receive the essage key value which we will use to narrow    */
+/* the job log output.                                                      */
+/* Prior to that one, we send a specific message to report that there is no */
+/* command to run if this is the case.                                      */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CHGVAR VAR(&MSGDTA) +
+    VALUE('--- No command to run for' *BCAT &GROUP *BCAT 'group ---')
+IF COND(*NOT &CMDRUN) THEN(+
+    SNDPGMMSG TOPGMQ(*SAME) MSGTYPE(*INFO) MSGID(CPI3701) MSGF(QSYS/QCPFMSG) +
+        MSGDTA(&MSGDTA))
+
+CHGVAR VAR(&MSGDTA) VALUE('--- This is the end of looked at messages ---')
+SNDPGMMSG TOPGMQ(*SAME) MSGTYPE(*INFO) MSGID(CPI3701) MSGF(QSYS/QCPFMSG) +
+    MSGDTA(&MSGDTA) KEYVAR(&TOKEYVAR)
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* We set back LOGCLPGM to its initial value if needed.                     */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+IF COND(&LOGCLPGM *EQ &YES) THEN(CHGJOB LOGCLPGM(&YES))
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* We can now format the variables that we pass to the QM Query.            */
+/* In order to have a better reading, they are all formatted as integer.    */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CHGVAR VAR(&KEYVARINT) VALUE(%BIN(&FRMKEYVAR))
+CHGVAR VAR(&KEYVARCHAR) VALUE(&KEYVARINT)               
+CHGVAR VAR(&FRMKEYVARV) VALUE(&QUOTE *TCAT &KEYVARCHAR *TCAT &QUOTE)
+CHGVAR VAR(&KEYVARINT) VALUE(%BIN(&TOKEYVAR))
+CHGVAR VAR(&KEYVARCHAR) VALUE(&KEYVARINT)               
+CHGVAR VAR(&TOKEYVARV) VALUE(&QUOTE *TCAT &KEYVARCHAR *TCAT &QUOTE)
+          
+IF COND(&OUTPUT *EQ &PRINT *OR &JOBTYPE *EQ &BATCH) THEN(OVRPRTF +
+    FILE(QPQXPRTF) SPLFNAME(JOBLOGLST) PAGESIZE(*N 198) CPI(15) +
+    OVRSCOPE(*CALLLVL))
+STRQMQRY QMQRY(JOBLOGLST) QMFORM(*QMQRY) SETVAR((FROMKEYVAR &FRMKEYVARV) +
+    (TOKEYVAR &TOKEYVARV)) OUTPUT(&OUTPUT)
+IF COND(&OUTPUT *EQ &PRINT *OR &JOBTYPE *EQ &BATCH) THEN( +
+    DLTOVR FILE(QPQXPRTF) LVL(*))
+
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* READFILE subprogram                                                      */
+/* Read the input file while we are not end of file.                        */
+/* CPF0864 exception message must be removed from the joblog.               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+SUBR SUBR(READFILE)
+
+    RCVF
+    MONMSG MSGID(CPF0864) EXEC(DO)
+        RCVMSG MSGTYPE(*EXCP) RMV(*YES)     
+        CHGVAR VAR(&EOF) VALUE(&TRUE)
+    ENDDO
+
+ENDSUBR
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* EXECCMD subprogram                                                       */
+/* Execute a command                                                        */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+SUBR SUBR(EXECCMD)
+
+    IF COND(*NOT &CMDRUN) THEN(CHGVAR VAR(&CMDRUN) VALUE(&TRUE))
+    CHGVAR VAR(&CMDLENA) VALUE(%SST(&CMDSTRING 1 2))
+    CHGVAR VAR(&CMDLEN) VALUE(%BIN(&CMDLENA))
+    CHGVAR VAR(&CMD) VALUE(%SST(&CMDSTRING 3 &CMDLEN))
+    CHGVAR VAR(&CMDLENCMD) VALUE(&CMDLEN)
+    IF COND(&CMDLEN *GT &MAXMSGLEN) THEN(CHGVAR VAR(&MSGLEN) VALUE(&MAXMSGLEN))
+    ELSE CMD(CHGVAR VAR(&MSGLEN) VALUE(&CMDLEN))
+    IF COND(&REPORTCMD *EQ &YES) THEN(DO)
+        CHGVAR VAR(&MSGDTA) VALUE('--- Group')
+        CHGVAR VAR(&MSGDTA) VALUE(&MSGDTA *BCAT &CMDGRP)
+        CHGVAR VAR(&MSGDTA) VALUE(&MSGDTA *TCAT ', sequence')
+        CHGVAR VAR(&MSGDTA) VALUE(&MSGDTA *BCAT %CHAR(&SEQNUMBER))
+        CHGVAR VAR(&MSGDTA) VALUE(&MSGDTA *TCAT ',')
+        CHGVAR VAR(&MSGDTA) VALUE(&MSGDTA *BCAT %SST(&CMDSTRING 3 &MSGLEN))
+        CHGVAR VAR(&MSGDTA) VALUE(&MSGDTA *BCAT '---')
+        SNDPGMMSG TOPGMQ(*SAME) MSGTYPE(*INFO) MSGID(CPI3701) +
+            MSGF(QSYS/QCPFMSG) MSGDTA(&MSGDTA)
+    ENDDO
+    CALL PGM(QCMDEXC) PARM(&CMD &CMDLENCMD)
+    MONMSG MSGID(CPF0000)
+
+ENDSUBR
+
+ENDPGM

@@ -1,0 +1,11 @@
+  Time stamp                  Message Id  Message type   Message subtype         Program     Message text
+  --------------------------  ----------  -------------  ----------------------  ----------  --------------------------------------------------------------------------------
+  2023-08-24-10.07.12.171834  CPI3701     INFORMATIONAL  -                       JOBLOGLST   --- This is the beginning of looked at messages ---.
+  2023-08-24-10.07.12.172678  CPI3701     INFORMATIONAL  -                       JOBLOGLST   --- Group TEST, sequence 10, DSPLIBL OUTPUT(*PRINT) ---.
+  2023-08-24-10.07.12.176577  CPI3701     INFORMATIONAL  -                       JOBLOGLST   --- Group TEST, sequence 20, CALL PGM(XXXX) ---.
+  2023-08-24-10.07.12.176700  CPD0170     DIAGNOSTIC     -                       JOBLOGLST   Program XXXX in library *LIBL not found.
+  2023-08-24-10.07.12.176707  CPF0001     ESCAPE         EXCEPTION HANDLED       QCMDEXC     Error found on CALL command.
+  2023-08-24-10.07.12.176733  CPF0006     ESCAPE         EXCEPTION HANDLED       JOBLOGLST   Errors occurred in command.
+  2023-08-24-10.07.12.177026  CPI3701     INFORMATIONAL  -                       JOBLOGLST   --- This is the end of looked at messages ---.
+08/24/23 10:07:12                                                                                                                                                                             1
+                                                                                    -=* http://pub400.com *=-
