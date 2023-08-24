@@ -83,7 +83,7 @@ Basically, the CPP performs the following tasks:
    - for
      - either each record of the command group received in GROUP paramater
      - or all records if GROUP parameter contains the \*ALL special value
-   - if requested with REMPORTCMD(\*YES) parameter, send a market message to recall the group, sequence and command string
+   - if requested with REMPORTCMD(\*YES) parameter, send a marker message to recall the group, sequence and command string
    - execute the command
    - note that the program may read more records than needed if GROUP parameter does not contain *ALL special value
 6. send a specific message to the joblog to mark the end of events that we want to review; the message key of this message is used by the QM Query to narrow the joblog
@@ -117,7 +117,7 @@ The print output for the same example is in this [file](Assets/jobloglst_example
 
 Note about \*QMQRY and \*QMFORM sources and objects:
 
-- there is no IBM i support for creating those objects types from an IFS stream file; however, I have a personal requirement to use github.com (and Github Gesktop) for sources follow-up and repository, therefore it is much more easy within VSCode to use IFS files; howevern they sshould not be directly updated but rather, in case of needed modification, they should be copied from a physical source file member created with RTVQMQRY and RTVQMFORM commands
+- there is no IBM i support for creating those objects types from an IFS stream file; however, I have a personal requirement to use github.com (and Github Gesktop) for sources follow-up and repository, therefore it is much more easy within VSCode to use IFS files; however they should not be directly updated but rather, in case of needed modification, they should be copied from a physical source file member created with RTVQMQRY and RTVQMFORM commands
 - those objects were initially created from STRQM command, then their source was created in a physical source file with RTVQMQRY and RTVQMFORM commands, then the sources were copied in IFS stream files
 - the Installation section below provides instructions on the way to create the objects from those IFS stream files
 
@@ -137,7 +137,7 @@ Several steps are needed for installing the utility.
 The prerequisite is to create the directory structure within HOME directory. This can be done once for all the tools from this GitHub repository.
 
 1. Download into a local workstation directory from Github the [folder structure creation SQL script](../Common/folder_structure_creation.sql) script.
-   - __important notice__: the script assumes that the projects directory will be a subdirectory of HOME directory __and__ that this HOME directory is named /home/USERPROFILE; however, as long as its internal structure remains the same, the projects directory can be anywhere, and INCLUDE statements in the sources should work; but, if is decided to install projects directory elsewhere than below /home/USERPROFILE, script must be updated to set the parent directory as the current directory before running the CRTDIR CL commands
+   - __important notice__: the script assumes that the projects directory will be a subdirectory of HOME directory __and__ that this HOME directory is named /home/USERPROFILE; however, as long as its internal structure remains the same, the projects directory can be anywhere, and INCLUDE statements in the sources should work; but, if it is decided to install projects directory elsewhere than below /home/USERPROFILE, script must be updated to set the parent directory as the current directory before running the CRTDIR CL commands
 2. Execute it from iACS Run SQL Scripts
 
 Further step are specifically related to JOBLOG tool.
@@ -145,7 +145,7 @@ Further step are specifically related to JOBLOG tool.
 1. Download all inc* files from Github repository into the desired directory on the system
 2. Download into a local workstation directory from Github the [CMDGRP database](cmdgrp.sql) script
 3. Execute it from iACS Run SQL Scripts; it will ask for the library to create the database into
-   - Warning, the script first deletes CMDGRP table if it exists; make sure to keep a copy somewhere of existing data somewhere
+   - Warning, the script first deletes CMDGRP table if it exists; make sure to keep a copy somewhere of existing data somewhere; in a future version, it is planned to avoid deleting the table
 4. Download the sources of objects from Github into the desired directory on the system
    1. [JOBLOGLST command](jobloglst.cmd)
    2. [JOBLOGLST command processing programe](jobloglst.pgm.clle)
