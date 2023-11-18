@@ -18,9 +18,7 @@ The scripts are described below and should be used in the order:
 
 1. [Clean](sample_clean.sql) the database; all objects are deleted (dropped)
 2. [Create](sample_create.sql) the database; all objects are created (tables, index, basic data integrity created)
-3. [Populate](sample_populate.sql) the database; all tables are populated witha bunch of insert statements
-    Notice that some data is not exactly the same as in the documentation; this is the case of text which contains the ' character replaced with a space.
-4. [Set](sample_integrity.sql) database integrity; all referential integrity constraints are created
-    Make sure to set the integrity after populating, because some rows insertion might not work (for instance, the DEPARTMENT table integrity requires that a department reports to another one, which prevents the inserttion of the very first one).
+3. [Populate](sample_populate.sql) the database; all tables are populated with a bunch of insert statements. Notice that some data is not exactly the same as in the documentation; this is the case of text which contains the ' character replaced with a space.
+4. [Set](sample_integrity.sql) database integrity; all referential integrity constraints are created. Make sure to set the integrity after populating, because some rows insertion might not work (for instance, the DEPARTMENT table integrity requires that a department reports to another one, which prevents the insertion of the very first one).
 
-Enjoy the sample database!
+Enjoy playing with this sample database!
