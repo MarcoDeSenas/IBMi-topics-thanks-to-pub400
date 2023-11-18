@@ -5,11 +5,13 @@
 /*                                                                          */
 /* Dates: 2023/07/24 Creation                                               */
 /*        2023/08/22 Added &NULL variable initialization                    */
+/*        2023/08/25 Added &ZERO variable initialization                    */
 /*                                                                          */
 /*--------------------------------------------------------------------------*/
 
 CHGVAR VAR(&BLANK) VALUE(' ')
 CHGVAR VAR(&NULL) VALUE(x'00')
+CHGVAR VAR(&ZERO) VALUE(0)
 CHGVAR VAR(&QUOTE) VALUE('''')
 CHGVAR VAR(&YES) VALUE('*YES')
 CHGVAR VAR(&NO) VALUE('*NO')
