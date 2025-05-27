@@ -4,8 +4,8 @@ This HowTo folder provides information about how to proceed to perform specific 
 
 ## Setting ssh keys for authentication
 
-This document provides information about the way to set private/public keys pair so that ssh (and ) workstation tools can use them for authentication. More information [here](Using%20an%20ssh%20keys%20pair%20to%20login.md).
+This document provides information about the way to set private/public keys pair so that ssh (and ) workstation tools can use them for authentication. More information [Using an ssh keys pair](Using%20an%20ssh%20keys%20pair%20to%20login.md).
 
 ## Used workstation tools
 
-This is the list and setup of tools used on my Windows workstation in order to work on PUB400. More information [here](Workstation%20tools.md).
+This is the list and setup of tools used on my Windows workstation in order to work on PUB400. More information [Workstation tools](Workstation%20tools.md).
