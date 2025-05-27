@@ -6,6 +6,7 @@ The tool is based on the standard setup on PUB400.com with three libraries, name
 ## Save on PUB400.com
 
 This action is done with *ENVSAV* command. The description of each parameter is the following:
+
 |Parameter|Description|Choices|Notes|
 |---------|-----------|-------|-----|
 |SAVELIBB|Backup library B|*YES, __*NO__|Optional, default *NO|
@@ -130,7 +131,7 @@ This envsav.ps1 PowerShell script, which runs on the workstation, does the follo
 Typical usage of the script is below provided that the Windows command session starts in the directory where envsav.ps1 script resides:
 
 ```PowerShell
-pwrsh envsav.ps1 -Pub400UserProfile MYUSER -sshKey "privatekey.ppk" -DownloadDirectory "DownloadDirectoryPath" -ToKeep 7
+pwsh envsav.ps1 -Pub400UserProfile MYUSER -sshKey "privatekey.ppk" -DownloadDirectory "DownloadDirectoryPath" -ToKeep 7
 ```
 
 This script is very basic and, more specifically, does not provide any error handling except for the number of parameters. Therefore, it is a good practice to review from time to time the content of the download directory to make sure it works as expected.
