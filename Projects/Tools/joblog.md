@@ -43,6 +43,7 @@ With the first version of the tool, there is no other way to perform any databas
 ## List job log
 
 This action is done with *JOBLOGLST* command. The description of each parameter is the following:
+
 |Parameter|Description|Choices|Notes|
 |---------|-----------|-------|-----|
 |GROUP|Group of commands||Mandatory, any value, special value \*ALL|
