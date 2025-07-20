@@ -4,7 +4,7 @@ The tools project provides the following programs.
 
 ## Job log
 
-This tool provides a way to show the job log which is generated when running a set of commands. Checkout [Job log](./Jobloglist/joblog.md) for more information.
+This tool provides a way to show the job log which is generated when running a set of commands. Checkout [Job log](./JoblogList/joblog.md) for more information.
 
 ## Sample database
 
@@ -12,4 +12,4 @@ This tool provides to create and populate a sample database to play with. Checko
 
 ## User spaces
 
-This tool provides to create and handle user spaces to play with. Checkout [User Dpaces](./UserSpaces/user_spaces.md) for more information.
+This tool provides to create and handle user spaces to play with. Checkout [User Spaces](./UserSpaces/user_spaces.md) for more information.
