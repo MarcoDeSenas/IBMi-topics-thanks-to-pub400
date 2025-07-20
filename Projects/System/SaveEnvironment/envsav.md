@@ -17,14 +17,14 @@ This action is done with *ENVSAV* command. The description of each parameter is 
 |CLEANTMP|Clean all temporary objects|__*YES__, *NO|Optional, default *YES|
 |EXCLUDETMP|Exclude HOME/tmp subdirectory|__*YES__, \*NO|Optional, default \*YES, prompted with SAVEHOME(\*YES)|
 
-![ENVSAV command prompt](Assets/envsav_command_prompt.png)
+![ENVSAV command prompt](../Assets/envsav_command_prompt.png)
 
 Recommended invokation for a regular usage is to keep the default, so either *ENVSAV* or *ENVSAV SAVELIBB(\*NO) SAVELIB1(\*YES) SAVELIB2(\*YES) SAVEHOME(\*YES) INCLJOBLOG(\*YES) CLEANTMP(\*YES) EXCLUDETMP(\*YES)* are both suitable.
 If it is needed to only clean the temporary objects, use *ENVSAV SAVELIBB(\*NO) SAVELIB1(\*NO) SAVELIB2(\*NO) SAVEHOME(\*NO) INCLJOBLOG(\*NO) CLEANTMP(\*YES)*.
 
 ### Validity checker actions
 
-The validity checker redoes all the checks which are done by command interface. It will never detect any issue when it is called by the command interface, but it might detect an issue in case the command processing program is directly used without the command interface. For more information about the standard for a validity checker program, checkout "ILE CL error routine within validity checker programs" in [Programming rules and conventions](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/b52b70f3ebd7653c7503790c6ec5d2dfdccf0e96/Projects/Common/Programming%20rules%20and%20conventions.md).
+The validity checker redoes all the checks which are done by command interface. It will never detect any issue when it is called by the command interface, but it might detect an issue in case the command processing program is directly used without the command interface. For more information about the standard for a validity checker program, checkout "ILE CL error routine within validity checker programs" in [Programming rules and conventions](../../Common/Programming%20rules%20and%20conventions.md).
 
 Basically this program performs the following actions:
 
@@ -86,9 +86,9 @@ Basically, the CPP performs the following tasks:
 
 An example of the content of the final zip file is below.
 
-![Example of final zip file content](Assets/envsav_final_zip_content_example.png)
+![Example of final zip file content](../Assets/envsav_final_zip_content_example.png)
 
-An example of the content of a successfull job log is in this [file](Assets/envsav_successfull_joblog_example.txt).
+An example of the content of a successfull job log is in this [file](../Assets/envsav_successfull_joblog_example.txt).
 
 ### Sources files used
 
@@ -168,12 +168,12 @@ The requirements for the installation and runtime operations are the following:
    - if it not assigned as home directory (e.g. not done at user profile creation time), it must be done with *CHGPRF HOMEDIR('/home/MYUSER')* command
 2. On PUB400, the user profile must have one the three libraries the user owns, assigned as the current library.
    - if this is not the case (e.g. not done at user profile creation time), it must be done with *CHGPRF CURLIB(MYLIBRARY)* command
-3. On the workstation, the software below must be installed, checkout [Workstation tools](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/main/HowTo/Workstation%20tools.md) for more information:
+3. On the workstation, the software below must be installed, checkout [Workstation tools](../../../HowTo/Workstation%20tools.md) for more information:
    - Windows 10 or higher
    - PowerShell 7 or higher
    - IBM i Access Client Solutions (required only for installation)
    - Putty 0.76 or higher
-     - ssh keys pair exchange must be set so that authentication with key can be used (checkout [How to setup ssh keys exchange to login from a workstation to an IBM i system](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/main/HowTo/Using%20an%20ssh%20keys%20pair%20to%20login.md) for more information)
+     - ssh keys pair exchange must be set so that authentication with key can be used (checkout [How to setup ssh keys exchange to login from a workstation to an IBM i system](../../../HowTo/Using%20an%20ssh%20keys%20pair%20to%20login.md) for more information)
 4. On the workstation, additional software may be used but is not mandatory
    - SSHFS-Win Manager 1.3.1 or higher
    - SSHFS-Win 3.5 or higher
@@ -183,7 +183,9 @@ The requirements for the installation and runtime operations are the following:
 Several steps are needed for installing the utility.
 The prerequisite is to create the directory structure within HOME directory. This can be done once for all the tools from this GitHub repository.
 
-1. Download into a local workstation directory from Github the [folder structure creation SQL script](../Common/folder_structure_creation.sql) script.
+__Warning : needs an update because of folder structure change!__
+
+1. Download into a local workstation directory from Github the [folder structure creation SQL script](../../Common/folder_structure_creation.sql) script.
 2. Execute it from iACS Run SQL Scripts
 
 Further step are specifically related to ENVSAV tool.
@@ -194,7 +196,7 @@ Further step are specifically related to ENVSAV tool.
    2. [ENVSAV command processing programe](envsav.pgm.clle)
    3. [ENVSAV command validity checker](envsav0.pgm.clle)
 3. Download into a local workstation directory from Github the [ENVSAV build](envsav_build.sql) script
-4. If it was decided not to keep the same directory structure as described in this [Projects organization](../README.md) document, review all INCLUDE statements in programs sources and review build script to update source file location in order to handle the modification.
+4. If it was decided not to keep the same directory structure as described in this [Projects organization](../../README.md) document, review all INCLUDE statements in programs sources and review build script to update source file location in order to handle the modification.
 5. Execute it from iACS Run SQL Scripts
 6. Download into a workstation directory from Github the [envsav.ps1](envsav.ps1) PowerShell script
    - this workstation directory may be one of PUB400 HOME directory if using SSHFS-Win!

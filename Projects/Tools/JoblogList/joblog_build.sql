@@ -10,6 +10,8 @@
 --     We need the library where the database was created in the library list
 --
 
+-- __Warning : needs an update because of folder structure change!__
+
 create or replace variable CMD char(150);
 create or replace variable PARENTDIR char(100);
 create or replace variable CURLIB char(10);

@@ -8,9 +8,9 @@ In all programs sources and other objects listed in this repository, the rules a
 
 Links to files:
 
-1. [inc_errorhandling_declare.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/be5185c025bc746fa71221515b5c64e8d374b102/Projects/Common/inc_errorhandling_declare.clle)
-2. [inc_errorhandling_routine.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/be5185c025bc746fa71221515b5c64e8d374b102/Projects/Common/inc_errorhandling_routine.clle)
-3. [inc_errorhandling.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/be5185c025bc746fa71221515b5c64e8d374b102/Projects/Common/inc_errorhandling.clle)
+1. [inc_errorhandling_declare.clle](./Includes/inc_errorhandling_declare.clle)
+2. [inc_errorhandling_routine.clle](./Includes/inc_errorhandling_routine.clle)
+3. [inc_errorhandling.clle](./Includes/inc_errorhandling.clle)
 
 The objective of standard error handling routine (let's call it SEHR) is to be executed each time an unexpected error occurs within an ILE CL program. It must be possible as well to use it without taking care of it, other than ensure that our programs are able to take advantage of it. The chosen solution is to use include source files, so that error handling pieces of code is part of the program. Other ways were possible, using modules or service programs but were not selected, mainly because of ILE understanding troubles. However, this method has the main drawback that, every time we need to modifiy the routine, we will have to recompile all programs. With modules/service programs usage, we would only have to update all programs.
 
@@ -42,7 +42,7 @@ So within target programs without a DCLF command, source will be something like:
 DCL ...
 DCL ...
 DCL ...
-INCLUDE SRCSTMF('../../common/includes/inc_errorhandling.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling.clle')
 /* first target program instruction */
 ```
 
@@ -52,9 +52,9 @@ Or within target program with a DCLF command, source will be something like:
 DCL ...
 DCL ...
 DCL ...
-INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_declare.clle')
 DCLF ...
-INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_routine.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_routine.clle')
 /* first target program instruction */
 ```
 
@@ -73,8 +73,8 @@ Note 4: in case an error occurs within SEHR, the target program will abend with 
 
 Links to files:
 
-1. [inc_errorhandling_forchecker_declare.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/be5185c025bc746fa71221515b5c64e8d374b102/Projects/Common/inc_errorhandling_forchecker_declare.clle)
-2. [inc_errorhandling_forchecker_routine.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/be5185c025bc746fa71221515b5c64e8d374b102/Projects/Common/inc_errorhandling_forchecker_routine.clle)
+1. [inc_errorhandling_forchecker_declare.clle](./Includes/inc_errorhandling_forchecker_declare.clle)
+2. [inc_errorhandling_forchecker_routine.clle](./Includes/inc_errorhandling_forchecker_routine.clle)
 
 The standard error routine does not fit system requirements of a command validity checker program. Indeed, in cas of failures those programs must send a \*DIAG message with a special format followed by a CPF0002 \*ESCAPE message. The message data of the diagnostic message must start with 4 bytes which are not used in the message first and second level. Checkout [Validity checking program for a CL command](https://www.ibm.com/docs/en/i/7.3?topic=commands-validity-checking-program-cl-command) for some reference.
 
@@ -86,11 +86,11 @@ So within the validity checker program source, we have something like that:
 DCL ...
 DCL ...
 DCL ...
-INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_forchecker_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_forchecker_declare.clle')
 MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))
 /* first program instruction */
 /* last program instruction */
-INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_forchecker_routine.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_forchecker_routine.clle')
 ENDPGM
 ```
 
@@ -113,8 +113,8 @@ Note 3: the routine expects that a character variable &BLANK exists with the val
 
 Links to files:
 
-1. [inc_variables_declare.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/6d8d8f97ec83803a3c7292b9db743af5014cf67b/Projects/Common/inc_variables_declare.clle)
-2. [inc_variables_init.clle](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/6d8d8f97ec83803a3c7292b9db743af5014cf67b/Projects/Common/inc_variables_init.clle)
+1. [inc_variables_declare.clle](./Includes/inc_variables_declare.clle)
+2. [inc_variables_init.clle](./Includes/inc_variables_init.clle)
 
 All ILE CL programs should use those two includes files. The first one contains variables declarations, and the second one contains variables initializations. Most of the times, they are used in conjunction with the error handling includes.
 
@@ -124,9 +124,9 @@ Example when there is no DCLF:
 DCL ...
 DCL ...
 DCL ...
-INCLUDE SRCSTMF('../../common/includes/inc_variables_declare.clle')
-INCLUDE SRCSTMF('../../common/includes/inc_errorhandling.clle')
-INCLUDE SRCSTMF('../../common/includes/inc_variables_init.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_init.clle')
 /* first program instruction */
 ```
 
@@ -136,11 +136,11 @@ Example when there is at least one DCLF:
 DCL ...
 DCL ...
 DCL ...
-INCLUDE SRCSTMF('../../common/includes/inc_variables_declare.clle')
-INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_declare.clle')
 DCLF ...
-INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_routine.clle')
-INCLUDE SRCSTMF('../../common/includes/inc_variables_init.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_routine.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_init.clle')
 /* first program instruction */
 ```
 
@@ -150,12 +150,12 @@ Example for a validity checker program:
 DCL ...
 DCL ...
 DCL ...
-INCLUDE SRCSTMF('../../common/includes/inc_variables_declare.clle')
-INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_forchecker_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_forchecker_declare.clle')
 MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))
-INCLUDE SRCSTMF('../../common/includes/inc_variables_init.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_init.clle')
 /* first program instruction */
 /* last program instruction */
-INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_forchecker_routine.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_forchecker_routine.clle')
 ENDPGM
 ```

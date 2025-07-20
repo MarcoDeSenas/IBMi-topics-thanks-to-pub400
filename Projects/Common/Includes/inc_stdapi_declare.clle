@@ -1,0 +1,16 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* This is the include file for variables declaration for standard API      */
+/* information.                                                             */
+/*                                                                          */
+/* Dates: 2025/06/23 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+DCL VAR(&ERRC0100) TYPE(*CHAR) LEN(3024)
+DCL VAR(&BYTEPROVA) TYPE(*CHAR) LEN(4) STG(*DEFINED) DEFVAR(&ERRC0100 1)
+DCL VAR(&BYTEAVAIA) TYPE(*CHAR) LEN(4) STG(*DEFINED) DEFVAR(&ERRC0100 5)
+DCL VAR(&EXCEPTID) TYPE(*CHAR) LEN(7) STG(*DEFINED) DEFVAR(&ERRC0100 9)
+DCL VAR(&RESERVED) TYPE(*CHAR) LEN(1) STG(*DEFINED) DEFVAR(&ERRC0100 16)
+DCL VAR(&EXCEPTDTA) TYPE(*CHAR) LEN(3000) STG(*DEFINED) DEFVAR(&ERRC0100 17)

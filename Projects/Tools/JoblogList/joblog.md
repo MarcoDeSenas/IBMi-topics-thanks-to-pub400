@@ -34,7 +34,7 @@ The linked history table due to the temporal table setup is CMDGRP_HST. The syst
 
 A graphical output of CMDGRP table is below.
 
-![CMDGRP table](Assets/CMDGRP_table.png)
+![CMDGRP table](../Assets/CMDGRP_table.png)
 
 ## Database changes
 
@@ -50,14 +50,14 @@ This action is done with *JOBLOGLST* command. The description of each parameter 
 |REPORTCMD|Report commands|__*YES__, \*NO|Optional, default \*YES|
 |OUTPUT|Output|__*__, *PRINT|Optional, default \*|
 
-![JOBLOGLST command prompt](Assets/jobloglst_command_prompt.png)
+![JOBLOGLST command prompt](../Assets/jobloglst_command_prompt.png)
 
 Recommended invokation for a regular usage is to keep the default, so either *JOBLOGLST GROUP(yourgroup)* or *JOBLOGLST GROUP(yourgroup) REPORTCMD(\*YES) OUTPUT(\*)* are both suitable.
 Like regular operating system commands with such a parameter, if the command runs in batch, OUTPUT's parameter value is overriden to \*PRINT.
 
 ### Validity checker actions
 
-The validity checker redoes all the checks which are done by command interface. It will never detect any issue when it is called by the command interface, but it might detect an issue in case the command processing program is directly used without the command interface. For more information about the standard for a validity checker program, checkout "ILE CL error routine within validity checker programs" in [Programming rules and conventions](https://github.com/MarcoDeSenas/IBMi-topics-thanks-to-pub400/blob/b52b70f3ebd7653c7503790c6ec5d2dfdccf0e96/Projects/Common/Programming%20rules%20and%20conventions.md).
+The validity checker redoes all the checks which are done by command interface. It will never detect any issue when it is called by the command interface, but it might detect an issue in case the command processing program is directly used without the command interface. For more information about the standard for a validity checker program, checkout "ILE CL error routine within validity checker programs" in [Programming rules and conventions](../../Common/Programming%20rules%20and%20conventions.md).
 
 Basically this program performs the following actions:
 
@@ -102,9 +102,9 @@ Below are some examples with the TEST commands group as below.
 
 An example of the output of the JOBLOGLST GROUP(TEST) REPORTCMD(\*YES) OUTPUT(\*) is below.
 
-![Example 1](Assets/jobloglst_example1.png)![Example 1 (next)](Assets/jobloglst_example1_next.png)
+![Example 1](../Assets/jobloglst_example1.png)![Example 1 (next)](../Assets/jobloglst_example1_next.png)
 
-The print output for the same example is in this [file](Assets/jobloglst_example1.txt).
+The print output for the same example is in this [file](../Assets/jobloglst_example1.txt).
 
 ### Sources files used
 
@@ -134,10 +134,12 @@ These sources files make use the following common includes files. For details ab
 
 ## Installation
 
+__Warning : needs an update because of folder structure change!__
+
 Several steps are needed for installing the utility.
 The prerequisite is to create the directory structure within HOME directory. This can be done once for all the tools from this GitHub repository.
 
-1. Download into a local workstation directory from Github the [folder structure creation SQL script](../Common/folder_structure_creation.sql) script.
+1. Download into a local workstation directory from Github the [folder structure creation SQL script](../../Common/folder_structure_creation.sql) script.
    - __important notice__: the script assumes that the projects directory will be a subdirectory of HOME directory __and__ that this HOME directory is named /home/USERPROFILE; however, as long as its internal structure remains the same, the projects directory can be anywhere, and INCLUDE statements in the sources should work; but, if it is decided to install projects directory elsewhere than below /home/USERPROFILE, script must be updated to set the parent directory as the current directory before running the CRTDIR CL commands
 2. Execute it from iACS Run SQL Scripts
 
@@ -154,7 +156,7 @@ Further step are specifically related to JOBLOG tool.
    4. [JOBLOGLST QM Query](jobloglst.qmqry)
    5. [JOBLOGLST QM Form](jobloglst.qmform)
 5. Download into a local workstation directory from Github the [JOBLOG build](joblog_build.sql) script
-6. If it was decided not to keep the same directory structure as described in this [Projects organization](../README.md) document, review all INCLUDE statements in programs sources and review build script to update source file location in order to handle the modification
+6. If it was decided not to keep the same directory structure as described in this [Projects organization](../../README.md) document, review all INCLUDE statements in programs sources and review build script to update source file location in order to handle the modification
 7. Execute it from iACS Run SQL Scripts; it will ask for the projects parent directory fullpath and library to create the objects into; the script runs CRTQMQRY and CRTQMFORM commands which seem to have an issue with REPLACE(*YES) parameter on PUB400, which means that the commands send an inquiry message to ask for replacement confirmation; to avoid that, the script includes two commented DLTOBJ commands which must be uncommented if the script runs more than one time for the same library
 8. Populate CMDGRP table with a couple of commands and run a test
 

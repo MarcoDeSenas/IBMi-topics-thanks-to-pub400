@@ -9,6 +9,8 @@
 --      Current library must be USERNAME1, which means the library named with 1 as a suffix of the user name
 --
 
+-- __Warning : needs an update because of folder structure change!__
+
 create or replace variable cmd char(33);
 create or replace variable homedir char(16);
 create or replace variable curlib char(10);

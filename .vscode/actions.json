@@ -47,6 +47,15 @@
   },
   {
     "extensions": [
+      "CLLE"
+    ],
+    "name": "Create CLLE Module",
+    "command": "CRTCLMOD MODULE(&CURLIB/&NAME) SRCSTMF('&RELATIVEPATH') OPTION(*EVENTF) DBGVIEW(*SOURCE)",
+    "deployFirst": true,
+    "environment": "ile"    
+  },
+  {
+    "extensions": [
       "cmd"
     ],
     "name": "Create Command",

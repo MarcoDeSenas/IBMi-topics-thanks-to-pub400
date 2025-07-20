@@ -18,7 +18,7 @@
 /*                                                                          */
 /*--------------------------------------------------------------------------*/
 
-INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_declare.clle')
 
 /*--------------------------------------------------------------------------*/
 /*                                                                          */
@@ -26,4 +26,4 @@ INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_declare.clle')
 /*                                                                          */
 /*--------------------------------------------------------------------------*/
 
-INCLUDE SRCSTMF('../../common/includes/inc_errorhandling_routine.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_routine.clle')
