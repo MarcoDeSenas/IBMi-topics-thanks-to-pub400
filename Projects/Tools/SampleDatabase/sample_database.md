@@ -12,7 +12,7 @@ Four SQL scripts are available to create this sample database. SQL statements do
 1. Directly from iACS Run SQL Scripts feature, once the CURRENT SCHEMA is properly set using either "set schema" instruction or through the "default SQL schema" of JDBC configuration.
 2. Or with RUNSQLSTM SRCSTMF(yourSQLscript) COMMIT(\*CHG) NAMING(\*SQL) DATFMT(\*ISO) DATSEP('-') TIMFMT(\*ISO) TIMSEP(':') DFTRDBCOL(yourlib) DECMPT(\*PERIOD) command on an IBM i 5250 session, once the scripts are uploaded into an IFS directory.
 
-Though, we can use any of our 3 libraries as the schema for creating the sample database. However, this library must be set like an SQL collection would be, which is not the case by default when they are created when we request our user profile. Refer to [Projects ReadMe](../README.md) to learn how to make a library working as an SQL collection.
+Though, we can use any of our 3 libraries as the schema for creating the sample database. However, this library must be set like an SQL collection would be, which is not the case by default when they are created when we request our user profile. Refer to [Projects ReadMe](../../README.md) to learn how to make a library working as an SQL collection.
 
 The scripts are described below and should be used in the order:
 

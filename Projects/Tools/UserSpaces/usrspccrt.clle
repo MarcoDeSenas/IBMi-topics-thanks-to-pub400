@@ -1,0 +1,81 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */ 
+/* Create a user space.                                                     */
+/*                                                                          */
+/* Dates: 2025/06/23 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+PGM PARM(&USRSPCQUAL &USRSPCATT &USRSPCTEXT)
+
+DCLPRCOPT DFTACTGRP(*NO) ACTGRP(USRSPC) BNDDIR(USRSPCAPI)
+
+DCL VAR(&USRSPCQUAL) TYPE(*CHAR) LEN(20)
+DCL VAR(&USRSPCATT) TYPE(*CHAR) LEN(10)
+DCL VAR(&USRSPCTEXT) TYPE(*CHAR) LEN(50)
+
+DCL VAR(&USRSPC) TYPE(*CHAR) LEN(10) STG(*DEFINED) DEFVAR(&USRSPCQUAL 1)
+DCL VAR(&USRSPCLIB) TYPE(*CHAR) LEN(10) STG(*DEFINED) DEFVAR(&USRSPCQUAL 11)
+
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_stdapi_declare.clle')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Include error handling standard routine.                                 */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling.clle')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Some initializations...                                                  */
+/*                                                                          */
+/* First, we check the number of parameters in case the program was invoked */
+/* directly.                                                                */
+/* Second, we run the command validity checker in case the program was      */
+/* invoked directly. If the checker finds an error, it sends an CPF0006     */
+/* *ESCAPE message which will be catched by the error handling routine.     */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+ 
+INCLUDE SRCSTMF('../../Common/includes/inc_variables_init.clle')
+
+IF COND(%PARMS() *NE 3) THEN( +
+    SNDPGMMSG TOPGMQ(*SAME) MSGID(CPX6148) MSGF(QCPFMSG) MSGTYPE(*ESCAPE))
+
+CALL PGM(USRSPCCRT0) PARM(&USRSPCQUAL &USRSPCATT &USRSPCTEXT)
+
+CHGVAR VAR(&USRSPC) VALUE(%SST(&USRSPCQUAL 1 10))
+CHGVAR VAR(&USRSPCLIB) VALUE(%SST(&USRSPCQUAL 11 10))
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* &P_xxx variables are used by the standard error handling routine to send */
+/* an escape message when there is an error within the routine itself.      */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CHGVAR VAR(&P_MSGID) VALUE('CPDA4A8')
+CHGVAR VAR(&P_MSGF) VALUE('QCPFMSG')
+CHGVAR VAR(&P_MSGFLIB) VALUE(*LIBL)
+CHGVAR VAR(&P_MSGDTA) VALUE('USRSPCCRT' *BCAT 'USRSPCCRT USRSPC(')
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA  *TCAT &USRSPCLIB *TCAT '/' *TCAT &USRSPC)
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA  *TCAT ') ATTRIBUTE(' *TCAT &USRSPCATT)
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA *TCAT ') TEXT(' *TCAT &USRSPCTEXT *TCAT ')')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Invoke user space creation procedure.                                    */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CALLPRC PRC('USERSPACECRT') PARM(&USRSPC &USRSPCLIB &USRSPCATT &USRSPCTEXT) RTNVAL(&ERRC0100)
+
+IF COND(&EXCEPTID *NE &BLANK) THEN( +
+    SNDPGMMSG TOPGMQ(*SAME) MSGID(&EXCEPTID) MSGDTA(&EXCEPTDTA) MSGF(QCPFMSG) MSGTYPE(*ESCAPE))
+ELSE CMD(SNDPGMMSG TOPGMQ(*PRV) MSGID(USP0101) MSGDTA(&USRSPCQUAL) MSGF(TOOMSGF) MSGTYPE(*COMP))
+
+ENDPGM

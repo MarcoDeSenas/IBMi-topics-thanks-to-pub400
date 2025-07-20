@@ -1,0 +1,118 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Validity checker program for USRSPCCRT command.                          */
+/*                                                                          */
+/* Dates: 2025/06/28 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+PGM PARM(&USRSPCQUAL &USRSPCATT &USRSPCTEXT)
+
+DCLPRCOPT DFTACTGRP(*NO) ACTGRP(USRSPC)
+
+DCL VAR(&USRSPCQUAL) TYPE(*CHAR) LEN(20)
+DCL VAR(&USRSPCATT) TYPE(*CHAR) LEN(10)
+DCL VAR(&USRSPCTEXT) TYPE(*CHAR) LEN(50)
+
+DCL VAR(&USRSPC) TYPE(*CHAR) LEN(10) STG(*DEFINED) DEFVAR(&USRSPCQUAL 1)
+DCL VAR(&USRSPCLIB) TYPE(*CHAR) LEN(10) STG(*DEFINED) DEFVAR(&USRSPCQUAL 11)
+
+DCL VAR(&PARAM1) TYPE(*CHAR) LEN(10) VALUE('USRSPC')
+DCL VAR(&PARAM2) TYPE(*CHAR) LEN(10) VALUE('ATTRIBUTE')
+DCL VAR(&PARAM3) TYPE(*CHAR) LEN(10) VALUE('TEXT')
+
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_declare.clle')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* We cannot include the standard error handling routine because system     */
+/* programs which run the validity checker expect only CPF0002 escape       */
+/* when they call it.                                                       */
+/* So, if an unexpected error occurs we handle it just like if it was an    */
+/* error from one of the checks. And a specific error handling routine      */
+/* exists for validity checker programs.                                    */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+INCLUDE +
+    SRCSTMF('../../Common/Includes/inc_errorhandling_forchecker_declare.clle')
+
+MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Some initializations...                                                  */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_init.clle')
+CHGVAR VAR(&ERROR) VALUE(&FALSE)
+CHGVAR VAR(&ERRORPARAM) VALUE(&FALSE)
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Checkings are the following:                                             */
+/*                                                                          */
+/* USRSPC and ATTRIBUTE parameters must be valid names.                     */
+/* User space library can be *CURLIB                                        */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CHGVAR VAR(&USRSPC) VALUE(%SST(&USRSPCQUAL 1 10))
+CHGVAR VAR(&USRSPCLIB) VALUE(%SST(&USRSPCQUAL 11 10))
+
+CHKOBJ OBJ(QTEMP/&USRSPC) OBJTYPE(*USRPRF)
+MONMSG MSGID(CPF0000) EXEC(DO)
+    RCVMSG MSGTYPE(*EXCP) RMV(*YES)
+    CHGVAR VAR(&MSGID) VALUE(&BLANK)
+    RCVMSG MSGTYPE(*DIAG) MSGID(&MSGID) RMV(*YES)
+    IF COND(&MSGID *EQ 'CPD0078') THEN(DO)
+        CHGVAR VAR(&ERRORPARAM) VALUE(&TRUE)
+        CHGVAR VAR(&MSGDTA) VALUE('0000')
+        CHGVAR VAR(%SST(&MSGDTA 5 10)) VALUE(&PARAM1)
+        CHGVAR VAR(%SST(&MSGDTA 15 10)) VALUE(&USRSPC)
+        SNDPGMMSG MSGID(CPD0084) MSGF(QCPFMSG) MSGTYPE(*DIAG) MSGDTA(&MSGDTA)
+    ENDDO
+ENDDO
+
+IF COND(&USRSPCLIB *NE '*CURLIB') THEN(DO)
+    CHKOBJ OBJ(QTEMP/&USRSPCLIB) OBJTYPE(*USRPRF)
+    MONMSG MSGID(CPF0000) EXEC(DO)
+        RCVMSG MSGTYPE(*EXCP) RMV(*YES)
+        CHGVAR VAR(&MSGID) VALUE(&BLANK)
+        RCVMSG MSGTYPE(*DIAG) MSGID(&MSGID) RMV(*YES)
+        IF COND(&MSGID *EQ 'CPD0078') THEN(DO)
+            CHGVAR VAR(&ERRORPARAM) VALUE(&TRUE)
+            CHGVAR VAR(&MSGDTA) VALUE('0000')
+            CHGVAR VAR(%SST(&MSGDTA 5 10)) VALUE(&PARAM1)
+            CHGVAR VAR(%SST(&MSGDTA 15 10)) VALUE(&USRSPCLIB)
+            SNDPGMMSG MSGID(CPD0084) MSGF(QCPFMSG) MSGTYPE(*DIAG) MSGDTA(&MSGDTA)
+        ENDDO
+    ENDDO
+ENDDO
+
+CHKOBJ OBJ(QTEMP/&USRSPCATT) OBJTYPE(*USRPRF)
+MONMSG MSGID(CPF0000) EXEC(DO)
+    RCVMSG MSGTYPE(*EXCP) RMV(*YES)
+    CHGVAR VAR(&MSGID) VALUE(&BLANK)
+    RCVMSG MSGTYPE(*DIAG) MSGID(&MSGID) RMV(*YES)
+    IF COND(&MSGID *EQ 'CPD0078') THEN(DO)
+        CHGVAR VAR(&ERRORPARAM) VALUE(&TRUE)
+        CHGVAR VAR(&MSGDTA) VALUE('0000')
+        CHGVAR VAR(%SST(&MSGDTA 5 10)) VALUE(&PARAM2)
+        CHGVAR VAR(%SST(&MSGDTA 15 10)) VALUE(&USRSPCATT)
+        SNDPGMMSG MSGID(CPD0084) MSGF(QCPFMSG) MSGTYPE(*DIAG) MSGDTA(&MSGDTA)
+    ENDDO
+ENDDO
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Error hangling.                                                          */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+INCLUDE +
+    SRCSTMF('../../Common/Includes/inc_errorhandling_forchecker_routine.clle')
+
+ENDPGM

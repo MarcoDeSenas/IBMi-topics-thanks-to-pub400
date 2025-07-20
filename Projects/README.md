@@ -12,28 +12,22 @@ Regarding the organization in place on PUB400.com to retain the source files, wh
 
 |Home directory|Sub-level 1|Sub-level 2|Sub-level 3|Sub-level 4|Content|
 |:---:|:---|:---|:---|:---|:---|
-|~|||||home directory|
-||projects||||directory of projects files|
-|||common|||common sources files used by other projects|
-||||docs||documentation about common project|
-||||includes||includes files|
-||||scripts||scripts (QSH, PASE, python...) files of common project|
-|||system|||system administration project|
-||||docs||documentation about system project|
-||||includes||includes files limited to project use|
-||||scripts||scripts (QSH, PASE, python...) files of system project|
-||||sources||sources files of system project|
-||||sqlstmt||SQL statements of system project|
-|||||DDL|Database Definition Language scripts for system project|
-|||||DML|Database Manipulation Language scripts for system project|
-|||tools|||tools and utilities project|
-||||docs||documentation about tools project|
-||||includes||includes files limited to project use|
-||||scripts||scripts (QSH, PASE, python...) files of tools project|
-||||sources||sources files of tools project|
-||||sqlstmt||SQL statements of tools project|
-|||||DDL|Database Definition Language scripts for tools project|
-|||||DML|Database Manipulation Language scripts for tools project|
+|~/builds/IBMi-topics-thanks-to-pub400|||||home directory|
+||Projects||||directory of projects files|
+|||Common|||common sources files used by other projects|
+||||Includes||includes files|
+|||System|||system administration project|
+||||Assets||assets files such as pictures, images...|
+||||System1||System 1 utility files...|
+||||System2||System 2 utility files...|
+||||SystemN||System N utility files...|
+|||Tools|||tools and utilities project|
+||||Assets||assets files such as pictures, images...|
+||||Tool1||Tool 1 files|
+||||Tool2||Tool 2 files|
+||||ToolN||Tool N files|
+
+In order to use Code4i local development and build capabilities, all files are retained in "~/builds/IBMi-topics-thanks-to-pub400". And Code4i creates the basic structure when setting up the deploy directory.
 
 Important notice regarding includes files of common project. If one wants to use the sources files of all projects, and if those files make use of common includes files (which is the case for almost all of them), the directory structure must remain the one described above. Files can be in another home directory but with the same structure. If the structure is not the same, INCLUDE statements must be updated in all sources files prior to compilation.
 
