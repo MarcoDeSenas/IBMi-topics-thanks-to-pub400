@@ -118,7 +118,7 @@ In order to detect name validity, the program does the following. It tries to ch
 
 ### Behavior of the command
 
-The command processing program (CPP) is quite simple. It invokes the UserSpaceCrt procedure, then check the return code value. If there is no error, it sends back a USP0101 completion message from TOOMSGF message file.
+The command processing program (CPP) is quite simple. It invokes the UserSpaceCrt procedure, then check the return code value. If there is no error, it sends back a USP0101 completion message from TOOMSGF message file. If there is an error, the exception id found in API error structure is sent back as an exception message.
 
 ### Source files used
 
@@ -139,16 +139,24 @@ These sources files make use the following common includes files. For details ab
 - inc_errorhandling.clle
 - inc_stdapi_declare.clle
 
-## Installation
+### Installation
 
-Prior to perform any installation tasks, make sure that a TOOMSGF message file exists in the library where the programs reside.
+Prior to perform any installation tasks, make sure that a TOOMSGF message file exists in the library where the programs reside. If needed, run the [TOOMSGF creation SQL](../toomsgf.msgf.sql) to create it.
 
-The message identifiers below must be added to the messages file.
+Using Code4i and its local development and deployment capabilities, and Git/GitHub Desktopn are the easest ways to proceed.
 
-USP0101
-
-```CLLE
-ADDMSGD MSGID(USP0101) MSGF(TOOMSGF) MSG('User space &2/&1 successfully created.') FMT((*CHAR 10) (*CHAR 10))
-```
-
-__Warning : to be continued!__
+1. Make sure to fork the repository from GitHub on your workstation
+2. Deploy the project on your IBM i system
+3. Make sure to properly set your current library
+4. Run Actions on the sources below:
+    - usp0101.msgid.sql
+        Run SQL Statements
+    - usrspc.srvpgm.rpgle
+        Create RPG Module
+        Create Service Program (with EXPORT(*ALL))
+    - usrspccrt.clle
+        Create Bound CL Program
+    - usrspccrt0.clle
+        Create Bound CL Program
+    - usrspccrt.cmd
+        Create Command
