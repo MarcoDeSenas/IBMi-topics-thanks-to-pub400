@@ -281,3 +281,87 @@ dcl-proc UserSpaceRtvInf export;
     return;
 
 end-proc;
+
+//--------------------------------------------------------------------------*/
+//                                                                          */
+// UserSpaceRtvEnt: retrieving one list based API user space entry          */
+//                                                                          */
+// Output parameters: ERRC0100 is the standard API error structure          */
+//                    Entry data                                            */
+// Input parameters: User space name                                        */
+//                   User space library                                     */
+//                   Starting position                                     */
+//                   Length of an entry                                    */
+// ERRC0100 is populated as soon as an error is found when calling          */
+//                                                                          */
+//  Typical usage in RPGLE:                                                 */
+//      Sources to include:                                                 */
+//         inc_basic_declare.rpgle                                          */
+//         inc_stdapi_declare.rpgle                                         */
+//         inc_usrspc_declare.rpgle                                         */
+//      Invoke the function:                                                */
+//         UserSpaceEnt(UserSpace:Library:Start:Length:ERRC0100:EntryData)  */
+//      Handle ERRC0100 content                                             */
+//                                                                          */
+//--------------------------------------------------------------------------*/
+
+dcl-proc UserSpaceRtvEnt export;
+    dcl-pi *n;
+        InUsrSpc                                    like(ObjectName)        const;
+        InUsrSpcLib                                 like(ObjectName)        const;
+        InStartingPosition                          like(FourBytes)         const;
+        InEntryLength                               like(FourBytes)         const;
+        OutERRC0100                                 like(ERRC0100);
+        OutEntryData                                like(EntryData);
+    end-pi;
+    
+    dcl-pr QUSRTVUS extpgm('QUSRTVUS');
+        QualifiedName                               like(QualifiedObject)   const;
+        StartingPosition                            like(FourBytes)         const;
+        DataLength                                  like(FourBytes)         const;
+        EntryData                                   like(EntryData);
+        APIErrorCode                                likeds(ERRC0100)        options(*nopass: *varsize);
+    end-pr;
+
+//                                                                          */
+// Initialization of procedure parameters                                   */
+//                                                                          */
+
+    clear OutERRC0100;
+    clear OutEntryData;
+
+//                                                                          */
+// Initialization of API parameters                                         */
+//                                                                          */
+
+    clear ERRC0100;
+    ERRC0100.BytesProvided = 116;
+    QualUsrSpc = InUsrSpc + InUsrSpcLib;
+
+//                                                                          */
+// Retrieve entry data                                                      */
+//                                                                          */
+
+    StartingPosition = InStartingPosition;
+    DataLength = InEntryLength;
+    clear EntryData;
+
+    QUSRTVUS(QualUsrSpc:
+            StartingPosition:
+            DataLength:
+            EntryData:
+            ERRC0100);
+    if ERRC0100.ExceptionId <> Blank;
+        OutERRC0100 = ERRC0100;
+        return;
+    endif;
+
+//                                                                          */
+// Populate parameters back                                                 */
+//                                                                          */
+
+    OutEntryData = EntryData;
+
+    return;
+
+end-proc;
