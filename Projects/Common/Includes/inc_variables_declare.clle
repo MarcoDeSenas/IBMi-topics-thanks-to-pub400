@@ -6,12 +6,14 @@
 /* Dates: 2023/07/24 Creation                                               */
 /*        2023/08/22 Added &NULL                                            */
 /*        2023/08/25 Added &ZERO                                            */
+/*        2025/08/03 Added &I                                               */
 /*                                                                          */
 /*--------------------------------------------------------------------------*/
 
 DCL VAR(&BLANK) TYPE(*CHAR) LEN(1)
 DCL VAR(&NULL) TYPE(*CHAR) LEN(1)
 DCL VAR(&ZERO) TYPE(*UINT)
+DCL VAR(&I) TYPE(*UINT) LEN(8)
 
 DCL VAR(&QUOTE) TYPE(*CHAR) LEN(1)
 DCL VAR(&YES) TYPE(*CHAR) LEN(4)
