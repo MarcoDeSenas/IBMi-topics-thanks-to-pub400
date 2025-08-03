@@ -1,0 +1,112 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */ 
+/* Retrieve the information of a user space populated with a list API       */
+/*                                                                          */
+/* Dates: 2025/07/31 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+PGM PARM(&USRSPCQUAL &ERRC0100 &APIUSED &FORMATNAME &STARTPOS &ENTRYNB &ENTRYLG)
+
+DCLPRCOPT DFTACTGRP(*NO) ACTGRP(USRSPC) BNDDIR(USRSPCAPI)
+
+DCL VAR(&USRSPCQUAL) TYPE(*CHAR) LEN(20)
+
+DCL VAR(&USRSPC) TYPE(*CHAR) LEN(10) STG(*DEFINED) DEFVAR(&USRSPCQUAL 1)
+DCL VAR(&USRSPCLIB) TYPE(*CHAR) LEN(10) STG(*DEFINED) DEFVAR(&USRSPCQUAL 11)
+
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_stdapi_declare.clle')
+
+DCL VAR(&VAR1) TYPE(*CHAR) LEN(3024)
+DCL VAR(&VAR2) TYPE(*CHAR) LEN(10)
+DCL VAR(&VAR3) TYPE(*CHAR) LEN(8)
+DCL VAR(&VAR4) TYPE(*UINT) LEN(4)
+DCL VAR(&VAR5) TYPE(*UINT) LEN(4)
+DCL VAR(&VAR6) TYPE(*UINT) LEN(4)
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Include error handling standard routine.                                 */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling.clle')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Some initializations...                                                  */
+/*                                                                          */
+/* First, we check the number of parameters in case the program was invoked */
+/* directly.                                                                */
+/* Second, we run the command validity checker in case the program was      */
+/* invoked directly. If the checker finds an error, it sends an CPF0006     */
+/* *ESCAPE message which will be catched by the error handling routine.     */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+ 
+INCLUDE SRCSTMF('../../Common/includes/inc_variables_init.clle')
+
+IF COND(%PARMS() *NE 7) THEN( +
+    SNDPGMMSG TOPGMQ(*SAME) MSGID(CPX6148) MSGF(QCPFMSG) MSGTYPE(*ESCAPE))
+
+CALL PGM(USRSPCRTI0) PARM(&USRSPCQUAL &ERRC0100 &APIUSED &FORMATNAME &STARTPOS &ENTRYNB &ENTRYLG)
+
+CHGVAR VAR(&USRSPC) VALUE(%SST(&USRSPCQUAL 1 10))
+CHGVAR VAR(&USRSPCLIB) VALUE(%SST(&USRSPCQUAL 11 10))
+RTVOBJD OBJ(&USRSPCLIB/&USRSPC) OBJTYPE(*USRSPC) RTNLIB(&USRSPCLIB)
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* &P_xxx variables are used by the standard error handling routine to send */
+/* an escape message when there is an error within the routine itself.      */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CHGVAR VAR(&P_MSGID) VALUE('CPDA4A8')
+CHGVAR VAR(&P_MSGF) VALUE('QCPFMSG')
+CHGVAR VAR(&P_MSGFLIB) VALUE(*LIBL)
+CHGVAR VAR(&P_MSGDTA) VALUE('USRSPCRTVI' *BCAT 'USRSPCRTVI USRSPC(')
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA  *TCAT &USRSPCLIB *TCAT '/' *TCAT &USRSPC *TCAT ')')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Invoke user space information retrieve procedure.                        */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+/*                                                                          */
+/* Why do we use intermediate variables (&VARx) in place of variables       */
+/* declared as program parameters ?                                         */
+/* A strange behavior was detected during development, when calling         */
+/* the UserSpaceRtvInf procedure with the same variables as those received  */
+/* as parameters. If we use the normal way, which is to use the command,    */
+/* everything runs fine. However, if we call the command processing program */
+/* directly, the parameters receive unexpected value. This is the reason    */
+/* why intermediate variables (&VARx) were used and their content was       */
+/* tested to detect more errors.                                            */
+/*                                                                          */
+
+CALLPRC PRC('USERSPACERTVINF') PARM(&USRSPC &USRSPCLIB &VAR1 +
+                &VAR2 &VAR3 &VAR4 &VAR5 &VAR6)
+
+CHGVAR VAR(&ERRC0100) VALUE(&VAR1)
+CHGVAR VAR(&APIUSED) VALUE(&VAR2)
+CHGVAR VAR(&FORMATNAME) VALUE(&VAR3)
+CHGVAR VAR(&STARTPOS) VALUE(&VAR4)
+CHGVAR VAR(&ENTRYNB) VALUE(&VAR5)
+CHGVAR VAR(&ENTRYLG) VALUE(&VAR6)
+
+IF (&ERRC0100 *NE &VAR1) THEN(DO)
+    CHGVAR VAR(&EXCEPTID) VALUE('USP0211')
+    CHGVAR VAR(&EXCEPTDTA) VALUE(&USRSPC *CAT &USRSPCLIB)
+ENDDO
+
+IF COND(&EXCEPTID *NE &BLANK) THEN(DO)
+    CHGVAR VAR(&MSGF) VALUE('QCPFMSG')
+    IF (%SST(&EXCEPTID 1 3) *EQ 'USP') THEN(CHGVAR VAR(&MSGF) VALUE(TOOMSGF))
+    SNDPGMMSG TOPGMQ(*PRV) MSGID(&EXCEPTID) MSGDTA(&EXCEPTDTA) MSGF(&MSGF) MSGTYPE(*ESCAPE)
+ENDDO
+
+ENDPGM

@@ -6,6 +6,7 @@
 // Dates: 2023/08/27 Creation                                               */
 //        2024/06/04 Updated with some constant declarations                */
 //        2025/06/22 Updated with names related declarations                */
+//        2025/08/01 Updated with hexDigits declaration                     */
 //                                                                          */
 //--------------------------------------------------------------------------*/
 
@@ -21,6 +22,7 @@ dcl-c Quote '''';
 dcl-c OpenBracket '(';
 dcl-c CloseBracket ')';
 dcl-c Zero 0;
+dcl-c hexDigits '0123456789ABCDEFabcdef';
 
 dcl-ds PgmDs psds qualified;
     PgmName                                         *proc;
