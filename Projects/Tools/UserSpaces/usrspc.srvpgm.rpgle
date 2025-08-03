@@ -1,4 +1,5 @@
 **free
+
 //--------------------------------------------------------------------------*/
 //                                                                          */
 // This is the service program to use when dealing with user spaces.        */
@@ -14,6 +15,8 @@
 // functions is therefore responsible to handle any error.                  */
 //                                                                          */
 // Dates: 2025/06/23 Creation                                               */
+//        2025/07/31 Retrieve info procedure                                */
+//        2025/08/02 Retrieve entry procedure                               */
 //                                                                          */
 //--------------------------------------------------------------------------*/
 
@@ -80,11 +83,9 @@ dcl-proc UserSpaceCrt export;
         Extendibility                               char(1)                 options(*nopass)            const;
     end-pr;
 
-//--------------------------------------------------------------------------*/
 //                                                                          */
 // Initialization of API parameters                                         */
 //                                                                          */
-//--------------------------------------------------------------------------*/
 
     clear ERRC0100;
     ERRC0100.BytesProvided = 116;
@@ -104,5 +105,179 @@ dcl-proc UserSpaceCrt export;
             *on);
 
     return ERRC0100;
+
+end-proc;
+
+//--------------------------------------------------------------------------*/
+//                                                                          */
+// UserSpaceRtvInf: retrieving user space information for list based APIs   */
+//                                                                          */
+// Output parameters: ERRC0100 is the standard API error structure          */
+//                    API Used                                              */
+//                    Format name                                           */
+//                    Starting position                                     */
+//                    Number of entries                                     */
+//                    Length of an entry                                    */
+// Input parameters: User space name                                        */
+//                   User space library                                     */
+//                                                                          */
+// ERRC0100 is populated as soon as an error is found when calling          */
+// QUSRTVUS API is called several times and ERRC0100 is populated as soon   */
+//    as an error is found                                                  */ 
+//                                                                          */
+//  Typical usage in RPGLE:                                                 */
+//      Sources to include:                                                 */
+//         inc_basic_declare.rpgle                                          */
+//         inc_stdapi_declare.rpgle                                         */
+//         inc_usrspc_declare.rpgle                                         */
+//      Invoke the function:                                                */
+//         UserSpaceInf(UserSpace:Library:ERRC0100:API:                     */
+//                                       Format:Start:Number:Length);       */
+//      Handle ERRC0100 content                                             */
+//                                                                          */
+//--------------------------------------------------------------------------*/
+
+dcl-proc UserSpaceRtvInf export;
+    dcl-pi *n;
+        InUsrSpc                                    like(ObjectName)        const;
+        InUsrSpcLib                                 like(ObjectName)        const;
+        OutERRC0100                                 like(ERRC0100);
+        OutAPIUsed                                  like(APIListHeader.APIUsed);
+        OutFormatName                               like(APIListHeader.FormatName);
+        OutStartPos                                 like(FourBytes);
+        OutEntriesCount                             like(FourBytes);
+        OutEntryLength                              like(FourBytes);
+    end-pi;
+    
+    dcl-pr QUSRTVUS extpgm('QUSRTVUS');
+        QualifiedName                               like(QualifiedObject)   const;
+        StartingPosition                            like(FourBytes)         const;
+        DataLength                                  like(FourBytes)         const;
+        StdHeaderData                               char(192);
+        APIErrorCode                                likeds(ERRC0100)        options(*nopass: *varsize);
+    end-pr;
+
+//                                                                          */
+// Initialization of procedure parameters                                   */
+//                                                                          */
+
+    clear OutERRC0100;
+    clear OutAPIUsed;
+    clear OutFormatName;
+    OutStartPos = Zero;
+    OutEntriesCount = Zero;
+    OutEntryLength  = Zero;
+
+//                                                                          */
+// Initialization of API parameters                                         */
+//                                                                          */
+
+    clear ERRC0100;
+    ERRC0100.BytesProvided = 116;
+    QualUsrSpc = InUsrSpc + InUsrSpcLib;
+
+//                                                                          */
+// Retrieve list API standard header                                        */
+//                                                                          */
+
+    StartingPosition = 1;
+    DataLength = %size(StdHeaderData);
+    clear StdHeaderData;
+
+    QUSRTVUS(QualUsrSpc:
+            StartingPosition:
+            DataLength:
+            StdHeaderData:
+            ERRC0100);
+    if ERRC0100.ExceptionId <> Blank;
+        OutERRC0100 = ERRC0100;
+        return;
+    endif;
+
+//                                                                          */
+// Handle API used                                                          */
+// (the code below does not check all the possible errors; will be fixed    */
+// with the next release; right now we consider that if the API is not      */
+// blank, then this is a correct value)                                     */
+//                                                                          */
+
+    if %subst(StdHeaderData:81:10:*natural) = Blank;
+        ERRC0100.ExceptionId = 'USP0201';
+        ERRC0100.ExceptionData = %subst(StdHeaderData:81:10:*natural) + QualUsrSpc;
+        OutERRC0100 = ERRC0100;
+        return;
+    endif;
+
+//                                                                          */
+// Handle format name                                                       */
+// (the code below does not check all the possible errors; will be fixed    */
+// with the next release; right now we consider that if the format is not   */
+// blank, then this is a correct value)                                     */
+//                                                                          */
+
+    if %subst(StdHeaderData:73:8:*natural) = Blank;
+        ERRC0100.ExceptionId = 'USP0202';
+        ERRC0100.ExceptionData = %subst(StdHeaderData:73:8:*natural) + QualUsrSpc;
+        OutERRC0100 = ERRC0100;
+        return;
+    endif;
+
+//                                                                          */
+// Handle starting position                                                 */
+// (the code below does not work properly, will be fixed with the next      */
+// release; right now we consider that if API and format name are correct,  */
+// then others parameters will be correct as well)                          */
+//                                                                          */
+
+//monitor;
+//    APIListHeader.OffsetListData = %int(%subst(StdHeaderData:125:4:*natural));
+//    on-error;
+//        ERRC0100.ExceptionId = 'USP0203';
+//        ERRC0100.ExceptionData = %subst(StdHeaderData:125:4:*natural) + QualUsrSpc;
+//        return;
+//endmon;
+
+//                                                                          */
+// Handle number of entries                                                 */
+// (the code below does not work properly, will be fixed with the next      */
+// release; right now we consider that if API and format name are correct,  */
+// then others parameters will be correct as well)                          */
+//                                                                          */
+
+//monitor;
+//    APIListHeader.OffsetListData = %int(%subst(StdHeaderData:133:4:*natural));
+//    on-error;
+//        ERRC0100.ExceptionId = 'USP0204';
+//        ERRC0100.ExceptionData = %subst(StdHeaderData:133:4:*natural) + QualUsrSpc;
+//        return;
+//endmon;
+
+//                                                                          */
+// Handle entry length                                                      */
+// (the code below does not work properly, will be fixed with the next      */
+// release; right now we consider that if API and format name are correct,  */
+// then others parameters will be correct as well)                          */
+//                                                                          */
+
+//monitor;
+//    APIListHeader.OffsetListData = %int(%subst(StdHeaderData:137:4:*natural));
+//    on-error;
+//        ERRC0100.ExceptionId = 'USP0205';
+//        ERRC0100.ExceptionData = %subst(StdHeaderData:137:4:*natural) + QualUsrSpc;
+//        return;
+//endmon;
+
+//                                                                          */
+// Populate parameters back                                                 */
+//                                                                          */
+
+    APIListHeader = StdHeaderData;
+    OutAPIUsed = APIListHeader.APIUsed;
+    OutFormatName = APIListHeader.FormatName;
+    OutStartPos = APIListHeader.OffsetListData + 1;
+    OutEntriesCount = APIListHeader.NumberListEntries;
+    OutEntryLength = APIListHeader.SizeEachEntry;
+
+    return;
 
 end-proc;

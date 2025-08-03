@@ -7,7 +7,7 @@ Two kinds of tools are expected in this topic.
 The first one provides functions within an RPGLE service program, named USRSPC to create a user space, retrieve its information and attributes and retrieve its entries. They are intended to be used from a program. Let's start to name those functions:
 
 1. UserSpaceCrt() to create a user space
-2. UserSpaceRtvInf() to retrieve the information and attributes of a user space
+2. UserSpaceRtvInf() to retrieve the information of a user space
 3. UserSpaceRtvEnt() to retrieve the content of an entry of a user space
 
 The second one provides CL commands to fulfill the same objectives. They are intended to be used from a CL(LE) program. They are using the functions as described above. Let's name those commands.
@@ -18,7 +18,7 @@ The second one provides CL commands to fulfill the same objectives. They are int
 
 ## USRSPC service program
 
-The service program contains the procedures related to user spaces management which are available for use by ILE programs.
+The service program contains the procedures related to user spaces management which are available for use by ILE programs. Programs will address it through USRSPCAPI binding directory.
 
 ### Common includes files used
 
@@ -28,7 +28,7 @@ The service program source makes use of the following includes files.
 - inc_stdapi_declare.rpgle
 - inc_usrspc_declare.rpgle
 
-### UserSpaceCrt() procedure
+### UserSpaceCrt procedure
 
 Input parameters are the following :
 
@@ -55,9 +55,15 @@ Some of the parameters are forced as shown below :
 
 Other API parameters come from procedure parameters.
 
-Error structure Bytes Provided value is set to 116 in order to optimize the content of ERRC0100 parameter.
+Error structure Bytes Provided value is set to 116 in order to optimize the content of ERRC0100 parameter. In case of an error, Exception Id and Exception data will contain:
 
-#### Typical usage in RPGLE programs
+- any value provided back by the API.
+
+#### UserSpaceCrt() typical usage in RPGLE programs
+
+Special control option to set:
+
+- bnddir('USRSPCAPI')
 
 Sources files to include:
 
@@ -77,7 +83,11 @@ endif;
 
 ```
 
-#### Typical usage in CLLE programs
+#### UserSpaceCrt() typical usage in CLLE programs
+
+Special processing option to declare:
+
+- BNDDIR(USRSPCAPI)
 
 Source files to include:
 
@@ -87,6 +97,72 @@ Invocation (notice to code the procedure name in upper case) followed by ERRC010
 
 ```CLLE
 CALLPRC PRC('USERSPACECRT') PARM(&USRSPC &USRSPCLIB &USRSPCATT &USRSPCTEXT) RTNVAL(&ERRC0100)
+IF COND(&EXCEPTID *NE &BLANK) THEN( dosomething)
+ELSE CMD(dosomethingelse)
+```
+
+### UserSpaceRtvInf procedure
+
+Input parameters are the following :
+
+1. User space name
+2. User space library
+
+Output parameters are the following :
+
+1. Standard API error structure [ERRC0100](https://www.ibm.com/docs/en/i/7.5.0?topic=parameter-error-code-format#errorcodeformat__title__2)
+2. Name of the API used to populate the user space
+3. Format of the API used to populate the user space
+4. Starting position of the list provided by the API in the user space
+5. Number of entries of the list
+6. Size of an entry
+
+The procedure makes use of [QUSRTVUS](https://www.ibm.com/docs/en/i/7.5.0?topic=ssw_ibm_i_75/apis/qusrtvus.html) API.
+
+Error structure Bytes Provided value is set to 116 in order to optimize the content of ERRC0100 parameter. In case of an error, Exception Id and Exception data will contain:
+
+- any value provided back by the API
+- USP0201 message id from TOOMSGF message file and related data if the API used is not valid
+- USP0202 message id from TOOMSGF message file and related data if the format name is not valid
+
+#### UserSpaceRtvInf() typical usage in RPGLE programs
+
+Special control option to set:
+
+- bnddir('USRSPCAPI')
+
+Sources files to include:
+
+- inc_basic_declare.rpgle
+- inc_stdapi_declare.rpgle
+- inc_usrspc_declare.rpgle
+
+Invocation followed by ERRC0100 content handling to detect any error:
+
+```RPGLE
+UserSpaceRtvInf(UserSpace:Library:ERRC0100:APIUsed:FormatName:StartingPosition:EntryNumber:EntryLength);
+if ExceptId <> Blank;
+    dosomething;
+else;
+    dosomething;
+endif;
+
+```
+
+#### UserSpaceRtvInf() typical usage in CLLE programs
+
+Special processing option to declare:
+
+- BNDDIR(USRSPCAPI)
+
+Source files to include:
+
+- inc_stdapi_declare.clle
+
+Invocation (notice to code the procedure name in upper case) followed by ERRC0100 content handling to detect any error:
+
+```CLLE
+CALLPRC PRC('USERSPACERTVINF') PARM(&USRSPC &USRSPCLIB &ERRC0100 &APIUSED &FORMATNAME &STARTPOS &ENTRYNB &ENTRYLG)
 IF COND(&EXCEPTID *NE &BLANK) THEN( dosomething)
 ELSE CMD(dosomethingelse)
 ```
@@ -103,7 +179,7 @@ This action is done with USRSPCCRT command. The description of each parameter is
 
 ![USRSPCCRT command prompt](../Assets/usrspccrt_command_prompt.png)
 
-### Validity checker actions
+### USRSPCCRT command Validity checker actions
 
 The validity checker redoes all the checks which are done by command interface. It will never detect any issue when it is called by the command interface, but it might detect an issue in case the command processing program is directly used without the command interface. For more information about the standard for a validity checker program, checkout "ILE CL error routine within validity checker programs" in [Programming rules and conventions](../../Common/Programming%20rules%20and%20conventions.md).
 
@@ -116,11 +192,15 @@ Basically this program performs the following actions:
 
 In order to detect name validity, the program does the following. It tries to check the existence of a user profile object in QTEMP library with the value to check as the user profile name. There will never be a user profile outside of QSYS library. Therefore, if the name is valid, the program will detect a CPF9801 exception, and if the name is not valid, it will detect a CPD0078 diagnostic.
 
-### Behavior of the command
+### Behavior of USRSPCCRT command
 
 The command processing program (CPP) is quite simple. It invokes the UserSpaceCrt procedure, then check the return code value. If there is no error, it sends back a USP0101 completion message from TOOMSGF message file. If there is an error, the exception id found in API error structure is sent back as an exception message.
 
-### Source files used
+#### Exception messages sent by USRSPCCRT command
+
+- any message provided back by the API
+
+### Source files used in USRSPCCRT command
 
 |File|Object|Object type|Object attribute|Description|
 |----|------|-----------|----------------|-----------|
@@ -128,7 +208,7 @@ The command processing program (CPP) is quite simple. It invokes the UserSpaceCr
 |usrspccrt.pgm.clle|USRSPCCRT|*PGM|CLLE|Create a user space command processing program|
 |usrspccrt0.pgm.clle|USRSPCCRT0|*PGM|CLLE|Create a user space command validity checker|
 
-### Include files used
+### Include files used in USRSPCCRT command
 
 These sources files make use the following common includes files. For details about which one uses which one, review the sources.
 
@@ -139,7 +219,7 @@ These sources files make use the following common includes files. For details ab
 - inc_errorhandling.clle
 - inc_stdapi_declare.clle
 
-### Installation
+### Installation of USRSPCCRT command
 
 Prior to perform any installation tasks, make sure that a TOOMSGF message file exists in the library where the programs reside. If needed, run the [TOOMSGF creation SQL](../toomsgf.msgf.sql) to create it.
 
@@ -150,13 +230,104 @@ Using Code4i and its local development and deployment capabilities, and Git/GitH
 3. Make sure to properly set your current library
 4. Run Actions on the sources below:
     - usp0101.msgid.sql
-        Run SQL Statements
+        - Run SQL Statements
     - usrspc.srvpgm.rpgle
-        Create RPG Module
-        Create Service Program (with EXPORT(*ALL))
+        - Create RPG Module
+        - Create Service Program (with EXPORT(*ALL))
+    - usrspcapi.bnddir.sql
+        - Run SQL Statements
     - usrspccrt.clle
-        Create Bound CL Program
+        - Create Bound CL Program
     - usrspccrt0.clle
-        Create Bound CL Program
+        - Create Bound CL Program
     - usrspccrt.cmd
-        Create Command
+        - Create Command
+
+## User space information retrieval command
+
+This action is done with USRSPCRTVI command. This command __must__ be used in a CL (or REXX) program in order to receive the valuess into variables (i.e. it cannot be used outside of a program). The description of each parameter is the following:
+
+|Parameter|Description|Choices|Notes|
+|---------|-----------|-------|-----|
+|USRSPC|User space and user space library||Mandatory, must be valid names, special value \*CURLIB or \*LIBL for the library|
+|ERRC0100|CL variable for error structure||Mandatory, must be a 3024 characters variable value|
+|APIUSED|CL variable for API used||Mandatory, must be a 10 characters variable value|
+|FORMATNAME|CL variable for format name||Mandatory, must be a 8 characters variable value|
+|STARTPOS|CL variable for list starting position||Mandatory, must be a 4 unsigned integer variable value|
+|ENTRYNB|CL variable for entries number||Mandatory, must be a 4 unsigned integer variable value|
+|ENTRYLG|CL variable for entry length||Mandatory, must be a 4 unsigned integer variable value|
+
+![USRSPCRTVI command prompt](../Assets/usrspcrtvi_command_prompt.png)
+
+### USRSPCRTVI command Validity checker actions
+
+The validity checker redoes all the checks which are done by command interface. It will never detect any issue when it is called by the command interface, but it might detect an issue in case the command processing program is directly used without the command interface. For more information about the standard for a validity checker program, checkout "ILE CL error routine within validity checker programs" in [Programming rules and conventions](../../Common/Programming%20rules%20and%20conventions.md).
+
+Basically this program performs the following actions:
+
+1. if USRSPC is not a valid name, set the error parameter status to TRUE and send CPD0071 \*DIAG message to caller program
+2. if user space library is not \*LIBL, \*CURLIB and not a valid name, set the error parameter status to TRUE and send CPD0071 \*DIAG message to caller program
+
+Notice that we do not check anything in relation to the parameters expected to be a variable, because the command does not send any value for those parameters. Therefore, there is no way to determine if the command processing program was properly called through using the command, or was directly called without using the command.
+
+In order to detect name validity, the program does the following. It tries to check the existence of a user profile object in QTEMP library with the value to check as the user profile name. There will never be a user profile outside of QSYS library. Therefore, if the name is valid, the program will detect a CPF9801 exception, and if the name is not valid, it will detect a CPD0078 diagnostic.
+
+### Behavior of USRSPCRTVI command
+
+The command processing program (CPP) is quite simple. It invokes the UserSpaceInf procedure, then check the return code value. If there is no error, the variables provided as parameters contain the expected value, ready to be used by the calling program. If there is an error, the exception id found in API error structure is sent back as an exception message. See [User Space retrieve information procedure](#userspacertvinf-procedure) for more details on the possible errors. In particular, it expects messages ids only from QCPFMSG and TOOMSGF (and USPxxxx message ids in this case) message files.
+
+A strange behavior was detected during development, when calling the UserSpaceRtvInf procedure with the same variables as those received as parameters. If we use the normal way, which is to use the command, everything runs fine. However, if we call the command processing program directly, the parameters receive unexpected value. This is the reason why, intermediate variables (&VARx) were used and their content was tested to detect more errors.
+
+#### Exception messages sent by USRSPCRTVI command
+
+- any message provided back by the API
+- USP0201 message id from TOOMSGF message file and related data if the API used is not valid
+- USP0202 message id from TOOMSGF message file and related data if the format name is not valid
+- USP0211 message id from TOOMSGF message file and related data if any unexpected value is detected from the user space
+
+### Source files used in USRSPCRTVI command
+
+|File|Object|Object type|Object attribute|Description|
+|----|------|-----------|----------------|-----------|
+|usrspcrtvi.cmd|USRSPCRTVI|*CMD||Get user space information|
+|usrspcrtvi.pgm.clle|USRSPCRTVI|*PGM|CLLE|Get user space information command processing program|
+|usrspccrti0.pgm.clle|USRSPCRTI0|*PGM|CLLE|Get user space information command validity checker|
+
+### Include files used in USRSPCRTVI command
+
+These sources files make use the following common includes files. For details about which one uses which one, review the sources.
+
+- inc_variables_declare.clle
+- inc_variables_init.clle
+- inc_errorhandling_forchecker_declare.clle
+- inc_errorhandling_forchecker_routine.clle
+- inc_errorhandling.clle
+- inc_stdapi_declare.clle
+
+### Installation of USRSPCRTVI command
+
+Prior to perform any installation tasks, make sure that a TOOMSGF message file exists in the library where the programs reside. If needed, run the [TOOMSGF creation SQL](../toomsgf.msgf.sql) to create it.
+
+Using Code4i and its local development and deployment capabilities, and Git/GitHub Desktopn are the easest ways to proceed.
+
+1. Make sure to fork the repository from GitHub on your workstation
+2. Deploy the project on your IBM i system
+3. Make sure to properly set your current library
+4. Run Actions on the sources below:
+    - usp0201.msgid.sql
+        - Run SQL Statements
+    - usp0202.msgid.sql
+        - Run SQL Statements
+    - usp0211.msgid.sql
+        - Run SQL Statements
+    - if not already done previously, usrspc.srvpgm.rpgle
+        - Create RPG Module
+        - Create Service Program (with EXPORT(*ALL))
+    - if not already done previously, usrspcapi.bnddir.sql
+        - Run SQL Statements
+    - usrspcrtvi.clle
+        - Create Bound CL Program
+    - usrspccrti0.clle
+        - Create Bound CL Program
+    - usrspcrtvi.cmd
+        - Create Command
