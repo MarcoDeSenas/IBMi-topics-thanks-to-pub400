@@ -97,6 +97,19 @@ ENDDO
 IF COND(&EXCEPTID *NE &BLANK) THEN(DO)
     CHGVAR VAR(&MSGF) VALUE('QCPFMSG')
     IF (%SST(&EXCEPTID 1 3) *EQ 'USP') THEN(CHGVAR VAR(&MSGF) VALUE(TOOMSGF))
+
+/*                                                                          */
+/* If we receive any CPFxxxx message it might be interesting to provide     */
+/* the exact value found in the user space which drives to the error.       */
+/* Because the CPFxxxx message might be confused when interpreting numeric  */
+/* values from the user space data.                                         */
+/* Example: Exception data /\(; is converted to 1632128438 by CPF3C0F       */
+/* Therefore, CPI3701 is additionnally sent as diagnostic message with the  */
+/* exact value from the user space which drices the error.                  */
+/*                                                                          */
+
+    ELSE (SNDPGMMSG TOPGMQ(*SAME) MSGID(CPI3701) +
+        MSGDTA('To help diagnosis, Exception Data is "' *TCAT &EXCEPTDTA *TCAT '"') MSGF(QCPFMSG) MSGTYPE(*DIAG))
     SNDPGMMSG TOPGMQ(*PRV) MSGID(&EXCEPTID) MSGDTA(&EXCEPTDTA) MSGF(&MSGF) MSGTYPE(*ESCAPE)
 ENDDO
 

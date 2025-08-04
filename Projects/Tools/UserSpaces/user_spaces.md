@@ -129,6 +129,7 @@ Error structure Bytes Provided value is set to 116 in order to optimize the cont
 - any value provided back by the API
 - USP0201 message id from TOOMSGF message file and related data if the API used is not valid
 - USP0202 message id from TOOMSGF message file and related data if the format name is not valid
+- USP0203 message id from TOOMSGF message file and related data if unexpected value is found in one of the numeric fields
 
 #### UserSpaceRtvInf() typical usage in RPGLE programs
 

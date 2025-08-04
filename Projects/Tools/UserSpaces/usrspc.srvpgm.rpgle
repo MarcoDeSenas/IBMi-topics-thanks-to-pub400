@@ -223,60 +223,21 @@ dcl-proc UserSpaceRtvInf export;
     endif;
 
 //                                                                          */
-// Handle starting position                                                 */
-// (the code below does not work properly, will be fixed with the next      */
-// release; right now we consider that if API and format name are correct,  */
-// then others parameters will be correct as well)                          */
+// Populate parameters back, monitor any unexpected error when updating     */
+// variables                                                                */
 //                                                                          */
 
-//monitor;
-//    APIListHeader.OffsetListData = %int(%subst(StdHeaderData:125:4:*natural));
-//    on-error;
-//        ERRC0100.ExceptionId = 'USP0203';
-//        ERRC0100.ExceptionData = %subst(StdHeaderData:125:4:*natural) + QualUsrSpc;
-//        return;
-//endmon;
-
-//                                                                          */
-// Handle number of entries                                                 */
-// (the code below does not work properly, will be fixed with the next      */
-// release; right now we consider that if API and format name are correct,  */
-// then others parameters will be correct as well)                          */
-//                                                                          */
-
-//monitor;
-//    APIListHeader.OffsetListData = %int(%subst(StdHeaderData:133:4:*natural));
-//    on-error;
-//        ERRC0100.ExceptionId = 'USP0204';
-//        ERRC0100.ExceptionData = %subst(StdHeaderData:133:4:*natural) + QualUsrSpc;
-//        return;
-//endmon;
-
-//                                                                          */
-// Handle entry length                                                      */
-// (the code below does not work properly, will be fixed with the next      */
-// release; right now we consider that if API and format name are correct,  */
-// then others parameters will be correct as well)                          */
-//                                                                          */
-
-//monitor;
-//    APIListHeader.OffsetListData = %int(%subst(StdHeaderData:137:4:*natural));
-//    on-error;
-//        ERRC0100.ExceptionId = 'USP0205';
-//        ERRC0100.ExceptionData = %subst(StdHeaderData:137:4:*natural) + QualUsrSpc;
-//        return;
-//endmon;
-
-//                                                                          */
-// Populate parameters back                                                 */
-//                                                                          */
-
-    APIListHeader = StdHeaderData;
-    OutAPIUsed = APIListHeader.APIUsed;
-    OutFormatName = APIListHeader.FormatName;
-    OutStartPos = APIListHeader.OffsetListData + 1;
-    OutEntriesCount = APIListHeader.NumberListEntries;
-    OutEntryLength = APIListHeader.SizeEachEntry;
+    monitor;
+        APIListHeader = StdHeaderData;
+        OutAPIUsed = APIListHeader.APIUsed;
+        OutFormatName = APIListHeader.FormatName;
+        OutStartPos = APIListHeader.OffsetListData + 1;
+        OutEntriesCount = APIListHeader.NumberListEntries;
+        OutEntryLength = APIListHeader.SizeEachEntry;
+        on-error;
+            ERRC0100.ExceptionId = 'USP0203';
+            ERRC0100.ExceptionData = QualUsrSpc;
+    endmon;
 
     return;
 
