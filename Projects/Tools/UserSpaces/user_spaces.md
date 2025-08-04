@@ -354,6 +354,7 @@ A strange behavior was detected during development, when calling the UserSpaceRt
 - any message provided back by the API
 - USP0201 message id from TOOMSGF message file and related data if the API used is not valid
 - USP0202 message id from TOOMSGF message file and related data if the format name is not valid
+- USP0203 message id from TOOMSGF message file and related data if unexpected value is found in one of the numeric fields
 - USP0211 message id from TOOMSGF message file and related data if any unexpected value is detected from the user space
 
 ### Source files used in USRSPCRTVI command
@@ -410,8 +411,8 @@ This action is done with USRSPCRTVE command. This command __must__ be used in a 
 |Parameter|Description|Choices|Notes|
 |---------|-----------|-------|-----|
 |USRSPC|User space and user space library||Mandatory, must be valid names, special value \*CURLIB or \*LIBL for the library|
-|STARTPOS|CL variable for list starting position||Mandatory, must be a 4 unsigned integer variable value|
-|ENTRYLG|CL variable for entry length||Mandatory, must be a 4 unsigned integer variable value|
+|STARTPOS|List starting position||Mandatory, must be a 4 unsigned integer value|
+|ENTRYLG|Entry length||Mandatory, must be a 4 unsigned integer value|
 |ERRC0100|CL variable for error structure||Mandatory, must be a 3024 characters variable value|
 |ENTRYDTA|CL variable for entry data||Mandatory, must be a 2000 characters variable value|
 
