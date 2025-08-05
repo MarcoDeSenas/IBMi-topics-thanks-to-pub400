@@ -45,11 +45,12 @@ These sources files make use the following common includes files. For details ab
 
 ### USRSPCCRT Installation
 
-Ensure USRSPC service program is deployed and built
+Ensure USRSPC service program is deployed and built.
+Run Actions on the sources below:
 
 - usrspccrt.clle (with Create Bound CL Program)
 - usrspccrt0.clle (with Create Bound CL Program)
-- usrspccrt.cmd (with Create Bound CL Program)
+- usrspccrt.cmd (with Create Command)
 
 ## USRSPCRTVI command
 
@@ -71,7 +72,7 @@ Run Actions on the sources below:
 
 - usrspcrtvi.clle (with Create Bound CL Program)
 - usrspcrti0.clle (with Create Bound CL Program)
-- usrspcrtvi.cmd (with Create Bound CL Program)
+- usrspcrtvi.cmd (with Create Command)
 
 ## USRSPCRTVE command
 
@@ -93,4 +94,4 @@ Run Actions on the sources below:
 
 - usrspcrtve.clle (with Create Bound CL Program)
 - usrspcrte0.clle (with Create Bound CL Program)
-- usrspcrtve.cmd (with Create Bound CL Program)
+- usrspcrtve.cmd (with Create Command)
