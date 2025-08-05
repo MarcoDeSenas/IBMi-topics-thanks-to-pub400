@@ -1,7 +1,10 @@
 # Installation and configuration
 
-Several steps are needed for installing the utility.
-The prerequisite is to create the directory structure within HOME directory. This can be done once for all the tools from this GitHub repository.
+Using Code4i and its local development and deployment capabilities, and Git/GitHub Desktop are the easest ways to proceed.
+
+1. Make sure to fork the repository from GitHub on your workstation
+2. Deploy the project on your IBM i system
+3. Make sure to properly set your current library
 
 ## Requirements
 
@@ -15,7 +18,6 @@ The requirements for the installation and runtime operations are the following:
 3. On the workstation, the software below must be installed, checkout [Workstation tools](../../../HowTo/Workstation%20tools.md) for more information:
    - Windows 10 or higher
    - PowerShell 7 or higher
-   - IBM i Access Client Solutions (required only for installation)
    - Putty 0.76 or higher
      - ssh keys pair exchange must be set so that authentication with key can be used (checkout [How to setup ssh keys exchange to login from a workstation to an IBM i system](../../../HowTo/Using%20an%20ssh%20keys%20pair%20to%20login.md) for more information)
 4. On the workstation, additional software may be used but is not mandatory
@@ -32,26 +34,19 @@ These sources files make use the following common includes files. For details ab
 - inc_errorhandling_forchecker_routine.clle
 - inc_errorhandling.clle
 
-## Installation
+## Installation on PUB400 side
 
-__Warning : needs an update because of folder structure change!__
+Run Actions on the sources below:
 
-1. Download into a local workstation directory from Github the [folder structure creation SQL script](../../Common/folder_structure_creation.sql) script.
-2. Execute it from iACS Run SQL Scripts
+- envsav.clle (with Create Bound CL Program)
+- envsav0.clle (with Create Bound CL Program)
+- envsav.cmd (with Create Command)
 
-Further step are specifically related to ENVSAV tool.
+## Installation on Windows side (if Windows is used)
 
-1. Download all inc* files from Github repository into the desired directory on PUB400
-2. Download the sources of objects from Github into the desired directory on PUB400
-   1. [ENVSAV command](envsav.cmd)
-   2. [ENVSAV command processing programe](envsav.pgm.clle)
-   3. [ENVSAV command validity checker](envsav0.pgm.clle)
-3. Download into a local workstation directory from Github the [ENVSAV build](envsav_build.sql) script
-4. If it was decided not to keep the same directory structure as described in this [Projects organization](../../README.md) document, review all INCLUDE statements in programs sources and review build script to update source file location in order to handle the modification.
-5. Execute it from iACS Run SQL Scripts
-6. Download into a workstation directory from Github the [envsav.ps1](envsav.ps1) PowerShell script
+1. Download into a workstation directory from Github the [envsav.ps1](envsav.ps1) PowerShell script
    - this workstation directory may be one of PUB400 HOME directory if using SSHFS-Win!
-7. Run the script once from a Windows command window with the appropriate parameters to ensure it works fine; review the joblog and the content of output zip file to ensure it contains the good information
-8. Setup a new Windows scheduler entry if required for full automation
+2. Run the script once from a Windows command window with the appropriate parameters to ensure it works fine; review the joblog and the content of output zip file to ensure it contains the good information
+3. Setup a new Windows scheduler entry if required for full automation
 
 Enjoy backups!

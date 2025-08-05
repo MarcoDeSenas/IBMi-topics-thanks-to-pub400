@@ -38,6 +38,8 @@ A graphical output of CMDGRP table is below.
 
 ![CMDGRP table](../Assets/CMDGRP_table.png)
 
+And an example of table content is ![CMDGRP content](../Assets/CMDGRP%20content%20example.xlsx).
+
 ## Database changes
 
 With the first version of the tool, there is no other way to perform any database record change than using DFU or SQL.
@@ -122,44 +124,6 @@ Note about \*QMQRY and \*QMFORM sources and objects:
 
 - there is no IBM i support for creating those objects types from an IFS stream file; however, I have a personal requirement to use github.com (and Github Gesktop) for sources follow-up and repository, therefore it is much more easy within VSCode to use IFS files; however they should not be directly updated but rather, in case of needed modification, they should be copied from a physical source file member created with RTVQMQRY and RTVQMFORM commands
 - those objects were initially created from STRQM command, then their source was created in a physical source file with RTVQMQRY and RTVQMFORM commands, then the sources were copied in IFS stream files
-- the Installation section below provides instructions on the way to create the objects from those IFS stream files
-
-### Common includes files used
-
-These sources files make use the following common includes files. For details about which one uses which one, review the sources.
-
-- inc_variables_declare.clle
-- inc_variables_init.clle
-- inc_errorhandling_forchecker_declare.clle
-- inc_errorhandling_forchecker_routine.clle
-- inc_errorhandling.clle
-
-## Installation
-
-__Warning : needs an update because of folder structure change!__
-
-Several steps are needed for installing the utility.
-The prerequisite is to create the directory structure within HOME directory. This can be done once for all the tools from this GitHub repository.
-
-1. Download into a local workstation directory from Github the [folder structure creation SQL script](../../Common/folder_structure_creation.sql) script.
-   - __important notice__: the script assumes that the projects directory will be a subdirectory of HOME directory __and__ that this HOME directory is named /home/USERPROFILE; however, as long as its internal structure remains the same, the projects directory can be anywhere, and INCLUDE statements in the sources should work; but, if it is decided to install projects directory elsewhere than below /home/USERPROFILE, script must be updated to set the parent directory as the current directory before running the CRTDIR CL commands
-2. Execute it from iACS Run SQL Scripts
-
-Further step are specifically related to JOBLOG tool.
-
-1. Download all inc* files from Github repository into the desired directory on the system
-2. Download into a local workstation directory from Github the [CMDGRP database](cmdgrp.sql) script
-3. Execute it from iACS Run SQL Scripts; it will ask for the library to create the database into
-   - Warning, the script first deletes CMDGRP table if it exists; make sure to keep a copy somewhere of existing data somewhere; in a future version, it is planned to avoid deleting the table
-4. Download the sources of objects from Github into the desired directory on the system
-   1. [JOBLOGLST command](jobloglst.cmd)
-   2. [JOBLOGLST command processing programe](jobloglst.pgm.clle)
-   3. [JOBLOGLST command validity checker](jobloglst0.pgm.clle)
-   4. [JOBLOGLST QM Query](jobloglst.qmqry)
-   5. [JOBLOGLST QM Form](jobloglst.qmform)
-5. Download into a local workstation directory from Github the [JOBLOG build](joblog_build.sql) script
-6. If it was decided not to keep the same directory structure as described in this [Projects organization](../../README.md) document, review all INCLUDE statements in programs sources and review build script to update source file location in order to handle the modification
-7. Execute it from iACS Run SQL Scripts; it will ask for the projects parent directory fullpath and library to create the objects into; the script runs CRTQMQRY and CRTQMFORM commands which seem to have an issue with REPLACE(*YES) parameter on PUB400, which means that the commands send an inquiry message to ask for replacement confirmation; to avoid that, the script includes two commented DLTOBJ commands which must be uncommented if the script runs more than one time for the same library
-8. Populate CMDGRP table with a couple of commands and run a test
+- the [Installation document](installation) provides instructions on the way to create the objects from those IFS stream files
 
 Enjoy looking at your job log!
