@@ -2,11 +2,11 @@
 
 The Projects folder retains documentation and sources files of programs written on PUB400.com. There are three main sections related to project groups.
 
-The first Project is named **Common**. It contains all resources which are shared by all other projects such as standard includes files.
+The first Project is named **Common**. It contains all [shared resources](Common/README.md) by all other projects such as standard includes files.
 
-The second Project is named **System**. It contains resources related to system administration topics. In a real world they could be used by system administrators.
+The second Project is named **System**. It contains resources related to [system administration](System/README.md) topics. In a real world they could be used by system administrators.
 
-The third Project is named **Tools**. It contains resources related to common usage on an IBM i system, not necessarily related to system administration. In a real world they could be used by every user.
+The third Project is named **Tools**. It contains resources related to [common usage](Tools/README.md) on an IBM i system, not necessarily related to system administration. In a real world they could be used by every user.
 
 Regarding the organization in place on PUB400.com to retain the source files, which are as much as possible IFS files in place of regular physical source files, all the projects have the same structure described below.
 
