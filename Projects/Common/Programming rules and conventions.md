@@ -1,4 +1,4 @@
-# Rules and conventions
+# Programming Rules and conventions
 
 In all programs sources and other objects listed in this repository, the rules and conventions below were followed.
 

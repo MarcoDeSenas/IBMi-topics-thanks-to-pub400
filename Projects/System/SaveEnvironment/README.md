@@ -100,16 +100,6 @@ An example of the content of a successfull job log is in this [file](../Assets/e
 |envsav.pgm.clle|ENVSAV|*PGM|CLLE|Save environment command processing program|
 |envsav0.pgm.clle|ENVSAV0|*PGM|CLLE|Save environment command validity checker|
 
-### Common includes files used
-
-These sources files make use the following common includes files. For details about which one uses which one, review the sources.
-
-- inc_variables_declare.clle
-- inc_variables_init.clle
-- inc_errorhandling_forchecker_declare.clle
-- inc_errorhandling_forchecker_routine.clle
-- inc_errorhandling.clle
-
 ## Automation from the workstation
 
 The way which was selected in order to automate the backup process __and at the same time__ move the backup media out of PUB400 (if it was remaining on PUB400, we cannot say for sure that this is a proper backup...) was to initiate *ENVSAV* command using an ssh session, then to download the output zip file it produces to the workstation using an scp session. This way, it becomes possible to create a script (a PowerShell script in our case), and to configure a new scheduled task in Windows scheduler which calls this script.
