@@ -3,6 +3,8 @@
 This tool provides a way to report on display or print file the joblog which is related to run a set of commands. It was initiated after a [thread on Midrange.com mailing list](https://archive.midrange.com/midrange-l/202306/msg00354.html) where a gentleman was looking for a solution to display a joblog after running some commands.
 The first version of this tool provides only a display (or print) output, based on a list of commands which exist in an SQL table (e.g. a physical file). In a future version there will be more stuff related to maintaining this table.
 
+More information about the way to [install the tool here](installation.md).
+
 ## Database definition
 
 There is one table which is used to store the commands which are members of the same set or group. This is this group which is invoked by the tool.
