@@ -22,6 +22,18 @@ The requirements for the installation and runtime operations are the following:
    - SSHFS-Win Manager 1.3.1 or higher
    - SSHFS-Win 3.5 or higher
 
+## Common includes files used
+
+These sources files make use the following common includes files. For details about which one uses which one, review the sources.
+
+- inc_variables_declare.clle
+- inc_variables_init.clle
+- inc_errorhandling_forchecker_declare.clle
+- inc_errorhandling_forchecker_routine.clle
+- inc_errorhandling.clle
+
+## Installation
+
 __Warning : needs an update because of folder structure change!__
 
 1. Download into a local workstation directory from Github the [folder structure creation SQL script](../../Common/folder_structure_creation.sql) script.
