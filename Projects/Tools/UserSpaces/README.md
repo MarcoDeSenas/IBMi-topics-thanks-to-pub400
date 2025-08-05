@@ -21,17 +21,11 @@ The second one provides CL commands to fulfill the same objectives. They are int
 
 USRSPCRTVI and USRSPCRTVE commands work together. It is expected to use one with the other. Typically, a program will run the USRSPCRTVI command then use the returned value to run the USRSPCRTVE command.
 
+More information about the way to [install the tool here](installation.md).
+
 ## USRSPC service program
 
-The service program contains the procedures related to user spaces management which are available for use by ILE programs. Programs will address it through USRSPCAPI binding directory.
-
-### Common includes files used
-
-The service program source makes use of the following includes files.
-
-- inc_basic_declare.rpgle
-- inc_stdapi_declare.rpgle
-- inc_usrspc_declare.rpgle
+The service program contains the procedures related to user spaces management which are available for use by ILE programs. Programs will address them through USRSPCAPI binding directory.
 
 ### UserSpaceCrt procedure
 
@@ -271,49 +265,6 @@ The command processing program (CPP) is quite simple. It invokes the UserSpaceCr
 
 - any message provided back by the API
 
-### Source files used in USRSPCCRT command
-
-|File|Object|Object type|Object attribute|Description|
-|----|------|-----------|----------------|-----------|
-|usrspccrt.cmd|USRSPCCRT|*CMD||Create a user space command|
-|usrspccrt.pgm.clle|USRSPCCRT|*PGM|CLLE|Create a user space command processing program|
-|usrspccrt0.pgm.clle|USRSPCCRT0|*PGM|CLLE|Create a user space command validity checker|
-
-### Include files used in USRSPCCRT command
-
-These sources files make use the following common includes files. For details about which one uses which one, review the sources.
-
-- inc_variables_declare.clle
-- inc_variables_init.clle
-- inc_errorhandling_forchecker_declare.clle
-- inc_errorhandling_forchecker_routine.clle
-- inc_errorhandling.clle
-- inc_stdapi_declare.clle
-
-### Installation of USRSPCCRT command
-
-Prior to perform any installation tasks, make sure that a TOOMSGF message file exists in the library where the programs reside. If needed, run the [TOOMSGF creation SQL](../toomsgf.msgf.sql) to create it.
-
-Using Code4i and its local development and deployment capabilities, and Git/GitHub Desktop are the easest ways to proceed.
-
-1. Make sure to fork the repository from GitHub on your workstation
-2. Deploy the project on your IBM i system
-3. Make sure to properly set your current library
-4. Run Actions on the sources below:
-    - usp0101.msgid.sql
-        - Run SQL Statements
-    - usrspc.srvpgm.rpgle
-        - Create RPG Module
-        - Create Service Program (with EXPORT(*ALL))
-    - usrspcapi.bnddir.sql
-        - Run SQL Statements
-    - usrspccrt.clle
-        - Create Bound CL Program
-    - usrspccrt0.clle
-        - Create Bound CL Program
-    - usrspccrt.cmd
-        - Create Command
-
 ## User space information retrieval command
 
 This action is done with USRSPCRTVI command. This command __must__ be used in a CL (or REXX) program in order to receive the valuess into variables (i.e. it cannot be used outside of a program). The description of each parameter is the following:
@@ -365,45 +316,6 @@ A strange behavior was detected during development, when calling the UserSpaceRt
 |usrspcrtvi.pgm.clle|USRSPCRTVI|*PGM|CLLE|Get user space information command processing program|
 |usrspccrti0.pgm.clle|USRSPCRTI0|*PGM|CLLE|Get user space information command validity checker|
 
-### Include files used in USRSPCRTVI command
-
-These sources files make use the following common includes files. For details about which one uses which one, review the sources.
-
-- inc_variables_declare.clle
-- inc_variables_init.clle
-- inc_errorhandling_forchecker_declare.clle
-- inc_errorhandling_forchecker_routine.clle
-- inc_errorhandling.clle
-- inc_stdapi_declare.clle
-
-### Installation of USRSPCRTVI command
-
-Prior to perform any installation tasks, make sure that a TOOMSGF message file exists in the library where the programs reside. If needed, run the [TOOMSGF creation SQL](../toomsgf.msgf.sql) to create it.
-
-Using Code4i and its local development and deployment capabilities, and Git/GitHub Desktop are the easest ways to proceed.
-
-1. Make sure to fork the repository from GitHub on your workstation
-2. Deploy the project on your IBM i system
-3. Make sure to properly set your current library
-4. Run Actions on the sources below:
-    - usp0201.msgid.sql
-        - Run SQL Statements
-    - usp0202.msgid.sql
-        - Run SQL Statements
-    - usp0211.msgid.sql
-        - Run SQL Statements
-    - if not already done previously, usrspc.srvpgm.rpgle
-        - Create RPG Module
-        - Create Service Program (with EXPORT(*ALL))
-    - if not already done previously, usrspcapi.bnddir.sql
-        - Run SQL Statements
-    - usrspcrtvi.clle
-        - Create Bound CL Program
-    - usrspccrti0.clle
-        - Create Bound CL Program
-    - usrspcrtvi.cmd
-        - Create Command
-
 ## User space list entry retrieval command
 
 This action is done with USRSPCRTVE command. This command __must__ be used in a CL (or REXX) program in order to receive the valuess into variables (i.e. it cannot be used outside of a program). The description of each parameter is the following:
@@ -449,38 +361,3 @@ A strange behavior was detected during development, when calling the UserSpaceRt
 |usrspcrtve.cmd|USRSPCRTVE|*CMD||Get one user space list entry|
 |usrspcrtve.pgm.clle|USRSPCRTVE|*PGM|CLLE|Get one user space list entry command processing program|
 |usrspccrte0.pgm.clle|USRSPCRTE0|*PGM|CLLE|Get one user space list entry command validity checker|
-
-### Include files used in USRSPCRTVE command
-
-These sources files make use the following common includes files. For details about which one uses which one, review the sources.
-
-- inc_variables_declare.clle
-- inc_variables_init.clle
-- inc_errorhandling_forchecker_declare.clle
-- inc_errorhandling_forchecker_routine.clle
-- inc_errorhandling.clle
-- inc_stdapi_declare.clle
-
-### Installation of USRSPCRTVE command
-
-Prior to perform any installation tasks, make sure that a TOOMSGF message file exists in the library where the programs reside. If needed, run the [TOOMSGF creation SQL](../toomsgf.msgf.sql) to create it.
-
-Using Code4i and its local development and deployment capabilities, and Git/GitHub Desktop are the easest ways to proceed.
-
-1. Make sure to fork the repository from GitHub on your workstation
-2. Deploy the project on your IBM i system
-3. Make sure to properly set your current library
-4. Run Actions on the sources below:
-    - usp0212.msgid.sql
-        - Run SQL Statements
-    - if not already done previously, usrspc.srvpgm.rpgle
-        - Create RPG Module
-        - Create Service Program (with EXPORT(*ALL))
-    - if not already done previously, usrspcapi.bnddir.sql
-        - Run SQL Statements
-    - usrspcrtve.clle
-        - Create Bound CL Program
-    - usrspccrte0.clle
-        - Create Bound CL Program
-    - usrspcrtve.cmd
-        - Create Command
