@@ -95,3 +95,61 @@ Run Actions on the sources below:
 - usrspcrtve.clle (with Create Bound CL Program)
 - usrspcrte0.clle (with Create Bound CL Program)
 - usrspcrtve.cmd (with Create Command)
+
+## SPLFDLT command
+
+### Include files used in SPLFDLT command
+
+These sources files make use the following common includes files. For details about which one uses which one, review the sources.
+
+- inc_variables_declare.clle
+- inc_variables_init.clle
+- inc_errorhandling_forchecker_declare.clle
+- inc_errorhandling_forchecker_routine.clle
+- inc_errorhandling.clle
+- inc_stdapi_declare.clle
+- inc_QUSLSPL_SPLF0300_declare.clle
+
+### SPLFDLT Installation
+
+Ensure USRSPCCRT, USRSPCRTVE and USRSPCRTVI commands are deployed and built.
+Run Actions on the sources below:
+
+- splfdlt.clle (with Create Bound CL Program)
+- splfdlt0.clle (with Create Bound CL Program)
+- splfdlt.cmd (with Create Command)
+- usp0301.msgid.sql (with Run SQL statements)
+- usp0302.msgid.sql (with Run SQL statements)
+- usp0303.msgid.sql (with Run SQL statements)
+- usp0304.msgid.sql (with Run SQL statements)
+- usp0311.msgid.sql (with Run SQL statements)
+- usp0312.msgid.sql (with Run SQL statements)
+
+## USRSPCDSP command
+
+### Common includes files used in USRSPCDSP command
+
+The program sources make use of the following includes files.
+
+- inc_basic_declare.rpgle
+- inc_stdapi_declare.rpgle
+- inc_usrspc_declare.rpgle
+- inc_QUSLSPL_SPLF0300_declare.rpgle
+- inc_wrkstn_declare.rpgle
+- inc_variables_declare.clle
+- inc_variables_init.clle
+- inc_errorhandling_forchecker_declare.clle
+- inc_errorhandling_forchecker_routine.clle
+- inc_errorhandling.clle
+- inc_stdapi_declare.clle
+- inc_QUSLSPL_SPLF0300_declare.clle
+
+### USRSPCDSP Installation
+
+Run Actions on the sources below:
+
+- usrspcdsp.clle (with Create Bound CL Program)
+- usrspcdsp0.clle (with Create Bound CL Program)
+- usrspcdsp.cmd (with Create Command)
+- usrspcdsp.dspf (with Create a Display File)
+- usrspcdsp1.rpgle (with Create aRPGLE program)

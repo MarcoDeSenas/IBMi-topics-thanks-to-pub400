@@ -1,7 +1,9 @@
 # User spaces Management
 
-This set of tools provides ways to handle user spaces content from a program. It gets some inspiration from the famous TAATOOL suite of utilities, and more specifically, the [user spaces category](https://www.taatool.com/document/C_usrspc.html). These tools are intended to help managing the content of a user space filled up with the output of List APIs, such as QUSLJOB.
-There is no SQL IBM i service in place in this set of tools. This is intended as only APIs were expected to be used.
+This set of tools provides ways to handle user spaces content from a program. It gets some inspiration from the famous TAATOOL suite of utilities, and more specifically, the [user spaces category](https://www.taatool.com/document/C_usrspc.html). These tools are intended to help managing the content of a user space filled up with the output of List APIs, such as QUSLJOB. Because of that, they expect to find a standard [List APIs](https://www.ibm.com/docs/en/i/7.5.0?topic=concepts-list-apis-overview) Header which they use to properly retrieve the content of the user space.
+There is no SQL IBM i service in place in this set of tools. This is intended as it was decided to use only APIs.
+
+Notice that all programs of this toolset enable and use USRSPC ILE activation group.
 
 Two kinds of tools are expected in this topic.
 
@@ -20,6 +22,11 @@ The second one provides CL commands to fulfill the same objectives. They are int
 3. USRSPCRTVE to retrieve an entry of a user space
 
 USRSPCRTVI and USRSPCRTVE commands work together. It is expected to use one with the other. Typically, a program will run the USRSPCRTVI command then use the returned value to run the USRSPCRTVE command.
+
+Using those tools are demonstrated in:
+
+- [delete a bunch of spool files](demonstration_SPLFDLT.md), which makes use of the commands
+- [display the content of a user space](demonstration_USRSPCDSP) in a properly formatted way, which makes use of the service program procedures
 
 More information about the way to [install the tool here](installation.md).
 

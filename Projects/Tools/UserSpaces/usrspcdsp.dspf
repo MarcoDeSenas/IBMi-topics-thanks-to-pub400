@@ -1,0 +1,160 @@
+     A                                      INDARA
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      CA03(03 'F3=Exit')
+     A                                      CA12(12 'F12=Cancel')
+     A          R SFLDTA                    SFL
+     A            $RRN           4Y 0H
+     A            $OPT           1A  B 10  3VALUES('1' ' ')
+     A                                      DSPATR(&$ATTRIBUTE)
+     A            $STARTPOS      6Y 0O 10  5EDTCDE(4)
+     A                                      DSPATR(&$ATTRIBUTE)
+     A            $ATTRIBUTE     1A  P
+     A* values of DSPATR attribute here (concatenate the two parts)
+     A* https://www.ibm.com/docs/en/i/7.5.0?
+     A* topic=80-dspatr-display-attribute-keyword-display-files
+     A            $ROW          68A  O 10 12
+     A          R SFLCTL                    SFLCTL(SFLDTA)
+     A                                      SFLPAG(0011)
+     A                                      SFLSIZ(9999)
+     A                                      OVERLAY
+     A                                      CA05(05 'F5 = Refresh')
+     A  31                                  SFLDSPCTL
+     A  30                                  SFLDSP
+     A  30                                  SFLEND(*MORE)
+     A N30                                  SFLCLR
+     A            $SFLRRN        4S 0H      SFLRCDNBR(CURSOR)    
+     A*
+     A            $USRSPC       10A  H
+     A            $USRSPCLIB    10A  H  
+     A            $SCREEN       19A  O  1  2COLOR(BLU)
+     A                                  1 32'Display user space content'
+     A                                      DSPATR(HI)
+     A                                  1 70DATE EDTCDE(Y)
+     A                                  2  2USER
+     A                                  2 32'User space'
+     A            $USRSPCQUA    21A  O  2 43
+     A                                  2 70TIME
+     A                                  3 70SYSNAME
+     A                                  4  2'API name  . . . . . . . :'
+     A            $APINAME      10A  O  4 28 
+     A                                  4 42'Entry length  . . . . . :'
+     A            $ENTLG         6Y 0O  4 68EDTCDE(Z) 
+     A                                  5  2'Format name . . . . . . :'
+     A            $FMTNAME       8A  O  5 28 
+     A                                  5 42'Entries count . . . . . :'
+     A            $ENTNB         6Y 0O  5 68EDTCDE(Z)
+     A                                  6  2'Type options, press Enter.'
+     A                                      COLOR(BLU)
+     A                                  7  4'1=Details'
+     A                                      COLOR(BLU)
+     A                                  9  2'Opt'
+     A                                      DSPATR(HI)
+     A                                  9  8'Pos'
+     A                                      DSPATR(HI)
+     A                                  9 12'Entry content'
+     A                                      DSPATR(HI)
+     A          R SFLFOOTER                 OVERLAY
+     A                                 22  2'F3=Exit   F5=Refresh   F12=Cancel'
+     A                                      COLOR(BLU)
+     A          R DSPF                      OVERLAY
+     A*
+     A            $USRSPC       10A  H
+     A            $USRSPCLIB    10A  H  
+     A            $SCREEN       19A  O  1  2COLOR(BLU)
+     A                                  1 32'Display user space content'
+     A                                      DSPATR(HI)
+     A                                  1 70DATE EDTCDE(Y)
+     A                                  2  2USER
+     A                                  2 32'User space'
+     A            $USRSPCQUA    21A  O  2 43
+     A                                  2 70TIME
+     A                                  3 70SYSNAME
+     A                                  4  2'API name  . . . . . . . :'
+     A            $APINAME      10A  O  4 28 
+     A                                  5  2'Format name . . . . . . :'
+     A            $FMTNAME       8A  O  5 28 
+     A                                  9 12'API and/or Format name are not'
+     A                                      DSPATR(HI)
+     A                                  9 43'handled by this program.'
+     A                                      DSPATR(HI)
+     A                                 11 12'Press Enter key to view the'
+     A                                      DSPATR(HI)
+     A                                 11 40'user space with DSPF command.'
+     A                                      DSPATR(HI)
+     A                                 22  2'F3=Exit   F12=Cancel'
+     A                                      COLOR(BLU)
+     A          R DETAIL01                  OVERLAY
+     A* for QUSLSPL, SPLF0300
+     A            $USRSPC       10A  H
+     A            $USRSPCLIB    10A  H  
+     A            $SCREEN       19A  O  1  2COLOR(BLU)
+     A                                  1 32'Display spool file details'
+     A                                      DSPATR(HI)
+     A                                  1 70DATE EDTCDE(Y)
+     A                                  2  2USER
+     A                                  2 70TIME
+     A                                  2 32'User space'
+     A            $USRSPCQUA    21A  O  2 43
+     A                                  3 70SYSNAME
+     A                                  4  2'API name  . . . . . . . :'
+     A            $APINAME      10A  O  4 28 
+     A                                  4 42'Entry length  . . . . . :'
+     A            $ENTLG         6Y 0O  4 68EDTCDE(Z) 
+     A                                  5  2'Format name . . . . . . :'
+     A            $FMTNAME       8A  O  5 28 
+     A                                  5 42'Entry position  . . . . :'
+     A            $ENTPOS        6Y 0O  5 68EDTCDE(Z)
+     A                                  7  2'Entry . . . . . . . . . :'
+     A            $ENTRY        10A  O  7 28
+     A  90                              9  2'Unexpected error found'
+     A                                      DSPATR(HI)
+     A  90                              9 25'when retrieving entry data.'
+     A                                      DSPATR(HI)
+     A N90                              9  2'Job name  . . . . . . . :'
+     A N90        $QUSLPB       10A  O  9 28                                    
+     A N90                              9 42'Output queue name . . . :'
+     A N90        $QUSLPQ       10A  O  9 68                                    
+     A  90                             10  2'A program dump is produced.'
+     A                                      DSPATR(HI)
+     A N90                             10  2'Job user  . . . . . . . :' 
+     A N90        $QUSLPC       10A  O 10 28                                    
+     A N90                             10 42'Output queue library  . :' 
+     A N90        $QUSLPR       10A  O 10 68                                    
+     A N90                             11  2'Job number  . . . . . . :'
+     A N90        $QUSLPD        6A  O 11 28
+     A N90                             11 42'Auxiliary storage pool  :' 
+     A N90        $QUSLPS       10Y 0O 11 68EDTCDE(Z)
+     A N90                             12  2'Spool file name . . . . :'
+     A N90        $QUSLPF       10A  O 12 28
+     A N90                             12 42'Spool file size . . . . :' 
+     A N90        $QUSLPT       10Y 0O 12 68EDTCDE(Z)
+     A N90                             13  2'Spool file number . . . :' 
+     A N90        $QUSLPG       10Y 0O 13 28EDTCDE(Z)
+     A N90                             13 42'Size multiplier . . . . :' 
+     A N90        $QUSLPV       10Y 0O 13 68EDTCDE(Z)
+     A N90                             14  2'Spool file status . . . :'
+     A N90        $QUSLPH       10Y 0O 14 28EDTCDE(Z)
+     A N90                             14 42'Total pages . . . . . . :' 
+     A N90        $QUSLPW       10Y 0O 14 68EDTCDE(Z)
+     A N90                             15  2'Date created  . . . . . :'
+     A N90        $QUSLPJ        7A  O 15 28
+     A N90                             15 42'Copies let to produce . :' 
+     A N90        $QUSLPX       10Y 0O 15 68EDTCDE(Z)
+     A N90                             16  2'Time created  . . . . . :'
+     A N90        $QUSLPK        6A  O 16 28
+     A N90                             16 42'Priority . . . . . .  . :' 
+     A N90        $QUSLPY        1A  O 16 68
+     A N90                             17  2'Spool file schedule . . :'
+     A N90        $QUSLPL        1A  O 17 28
+     A N90                             17 42'Reserved . . . . . .  . :' 
+     A N90        $QUSLPZ        3A  O 17 68
+     A N90                             18  2'Spool file system name  :'
+     A N90        $QUSLPM       10A  O 18 28
+     A N90                             18 42'IPP job indentifier   . :' 
+     A N90        $QUSLP0       10Y 0O 18 68
+     A N90                             19  2'User-specified data . . :'
+     A N90        $QUSLPN       10A  O 19 28
+     A N90                             20  2'Form type . . . . . . . :' 
+     A N90        $QUSLPP       10A  O 20 28
+     A                                 22  2'F3=Exit   F12=Cancel'
+     A                                      COLOR(BLU)
