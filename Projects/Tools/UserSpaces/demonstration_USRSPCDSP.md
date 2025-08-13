@@ -41,7 +41,7 @@ It includes the following local subprocedures:
 - ReturnProc; used to properly end the program
 - InvokeDSPF; handle special display format when there is an unexpected API/Format in the user space
 
-### Programming general considerations
+### General Programming considerations
 
 The behavior of F3 exit key is to get out of the program whatever the display file format.
 The behavior of F12 cancel key is to cancel the actual action and go back to the previous display file format.
@@ -217,7 +217,7 @@ The screenshot below describes the information specific to DSPF screen.
 
 ![usrspcdsp_DSPF_screen](../Assets/usrspcdsp_DSPF_screen.png)
 
-### Using general considerations
+### General Using considerations
 
 Function keys usage:
 

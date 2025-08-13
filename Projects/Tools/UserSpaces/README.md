@@ -26,7 +26,7 @@ USRSPCRTVI and USRSPCRTVE commands work together. It is expected to use one with
 Using those tools are demonstrated in:
 
 - [delete a bunch of spool files](demonstration_SPLFDLT.md), which makes use of the commands
-- [display the content of a user space](demonstration_USRSPCDSP) in a properly formatted way, which makes use of the service program procedures
+- [display the content of a user space](demonstration_USRSPCDSP.md) in a properly formatted way, which makes use of the service program procedures
 
 More information about the way to [install the tool here](installation.md).
 
