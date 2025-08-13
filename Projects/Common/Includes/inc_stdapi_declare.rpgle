@@ -10,8 +10,6 @@
 
 /DEFINE StdAPIImported
 
-dcl-s FourBytes                                     int(10);
-
 dcl-ds ERRC0100 qualified inz;
     BytesProvided                                   like(FourBytes) inz(%size(ERRC0100));
     BytesAvailable                                  like(FourBytes);

@@ -6,6 +6,7 @@
 /*                                                                          */
 /* Dates: 2025/06/23 Creation                                               */
 /*        2025/07/31 Variables used by user space information retrieve      */
+/*        2025/08/06 CURRPOS, position in a user space                      */
 /*                                                                          */
 /*--------------------------------------------------------------------------*/
 
@@ -22,3 +23,5 @@ DCL VAR(&STARTPOS) TYPE(*UINT) LEN(4)
 DCL VAR(&ENTRYNB) TYPE(*UINT) LEN(4)
 DCL VAR(&ENTRYLG) TYPE(*UINT) LEN(4)
 DCL VAR(&ENTRYDTA) TYPE(*CHAR) LEN(2000)
+
+DCL VAR(&CURRPOS) TYPE(*UINT) LEN(4)

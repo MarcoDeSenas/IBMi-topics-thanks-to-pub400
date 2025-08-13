@@ -1,0 +1,94 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */ 
+/* Display a user space                                                     */
+/*                                                                          */
+/* Dates: 2025/08/07 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+PGM PARM(&USRSPCQUAL)
+
+DCLPRCOPT DFTACTGRP(*NO) ACTGRP(USRSPC)                     
+
+DCL VAR(&USRSPCQUAL) TYPE(*CHAR) LEN(20)
+
+DCL VAR(&USRSPC) TYPE(*CHAR) LEN(10) STG(*DEFINED) DEFVAR(&USRSPCQUAL 1)
+DCL VAR(&USRSPCLIB) TYPE(*CHAR) LEN(10) STG(*DEFINED) DEFVAR(&USRSPCQUAL 11)
+
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_stdapi_declare.clle')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Include error handling standard routine.                                 */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling.clle')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Some initializations...                                                  */
+/*                                                                          */
+/* First, we check the number of parameters in case the program was invoked */
+/* directly.                                                                */
+/* Second, we run the command validity checker in case the program was      */
+/* invoked directly. If the checker finds an error, it sends an CPF0006     */
+/* *ESCAPE message which will be catched by the error handling routine.     */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+ 
+INCLUDE SRCSTMF('../../Common/includes/inc_variables_init.clle')
+
+IF COND(%PARMS() *NE 1) THEN( +
+    SNDPGMMSG TOPGMQ(*SAME) MSGID(CPX6148) MSGF(QCPFMSG) MSGTYPE(*ESCAPE))
+
+CALL PGM(USRSPCDSP0) PARM(&USRSPCQUAL)
+
+CHGVAR VAR(&USRSPC) VALUE(%SST(&USRSPCQUAL 1 10))
+CHGVAR VAR(&USRSPCLIB) VALUE(%SST(&USRSPCQUAL 11 10))
+RTVOBJD OBJ(&USRSPCLIB/&USRSPC) OBJTYPE(*USRSPC) RTNLIB(&USRSPCLIB)
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* &P_xxx variables are used by the standard error handling routine to send */
+/* an escape message when there is an error within the routine itself.      */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CHGVAR VAR(&P_MSGID) VALUE('CPDA4A8')
+CHGVAR VAR(&P_MSGF) VALUE('QCPFMSG')
+CHGVAR VAR(&P_MSGFLIB) VALUE(*LIBL)
+CHGVAR VAR(&P_MSGDTA) VALUE('USRSPCDSP' *BCAT 'USRSPCDSP USRSPC(')
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA  *TCAT &USRSPCLIB *TCAT '/' *TCAT &USRSPC)
+CHGVAR VAR(&P_MSGDTA) VALUE(&P_MSGDTA *TCAT ')')
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Invoke user space display                                                */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CALL PGM(USRSPCDSP1) PARM(&USRSPC &USRSPCLIB &ERRC0100)
+
+IF COND(&EXCEPTID *NE &BLANK) THEN(DO)
+    CHGVAR VAR(&MSGF) VALUE('QCPFMSG')
+    IF (%SST(&EXCEPTID 1 3) *EQ 'USP') THEN(CHGVAR VAR(&MSGF) VALUE(TOOMSGF))
+
+/*                                                                          */
+/* If we receive any CPFxxxx message it might be interesting to provide     */
+/* the exact value found in the user space which drives to the error.       */
+/* Because the CPFxxxx message might be confused when interpreting numeric  */
+/* values from the user space data.                                         */
+/* Example: Exception data /\(; is converted to 1632128438 by CPF3C0F       */
+/* Therefore, CPI3701 is additionnally sent as diagnostic message with the  */
+/* exact value from the user space which drices the error.                  */
+/*                                                                          */
+
+    ELSE (SNDPGMMSG TOPGMQ(*SAME) MSGID(CPI3701) +
+        MSGDTA('To help diagnosis, Exception Data is "' *TCAT &EXCEPTDTA *TCAT '"') MSGF(QCPFMSG) MSGTYPE(*DIAG))
+    SNDPGMMSG TOPGMQ(*PRV) MSGID(&EXCEPTID) MSGDTA(&EXCEPTDTA) MSGF(&MSGF) MSGTYPE(*ESCAPE)
+ENDDO
+
+ENDPGM

@@ -21,7 +21,7 @@ dcl-pr UserSpaceCrt                                 like(ERRC0100);
     UsrSpcTxt                                       like(ObjectText)        const;
 end-pr;
 
-dcl-pr UserSpaceRtvInfo;
+dcl-pr UserSpaceRtvInf;
     UsrSpc                                          like(ObjectName)        const;
     UsrSpcLib                                       like(ObjectName)        const;
     ErrorCode                                       like(ERRC0100);
@@ -30,4 +30,13 @@ dcl-pr UserSpaceRtvInfo;
     StartPos                                        like(FourBytes);
     EntriesCount                                    like(FourBytes);
     EntryLength                                     like(FourBytes);
+end-pr;
+
+dcl-pr UserSpaceRtvEnt;
+    UsrSpc                                          like(ObjectName)        const;
+    UsrSpcLib                                       like(ObjectName)        const;
+    StartPos                                        like(FourBytes)         const;
+    EntryLength                                     like(FourBytes)         const;
+    ErrorCode                                       like(ERRC0100);
+    EntryData                                       like(EntryData);
 end-pr;

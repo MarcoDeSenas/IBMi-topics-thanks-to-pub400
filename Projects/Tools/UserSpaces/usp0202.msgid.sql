@@ -34,7 +34,7 @@ begin
     set seclvl = rtrim(seclvl) concat rtrim(work);
     set work = ' Correct the issue, then run again the API which populates the user space.';
     set seclvl = rtrim(seclvl) concat rtrim(work);
-    set fmt = '(*CHAR 10) (*CHAR 10) (*CHAR 8)'; -- set to *NONE if message id has no variable
+    set fmt = '(*CHAR 8) (*CHAR 10) (*CHAR 10)'; -- set to *NONE if message id has no variable
     set sev = '40';
 
     set quote = '''';
