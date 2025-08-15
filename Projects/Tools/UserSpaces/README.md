@@ -257,8 +257,8 @@ The validity checker redoes all the checks which are done by command interface. 
 
 Basically this program performs the following actions:
 
-1. if USRSPC is not a valid name, set the error parameter status to TRUE and send CPD0071 \*DIAG message to caller program
-2. if user space library is not \*CURLIB and not a valid name, set the error parameter status to TRUE and send CPD0071 \*DIAG message to caller program
+1. if USRSPC is not a valid name, set the error parameter status to TRUE and send CPD0084 \*DIAG message to caller program
+2. if user space library is not \*CURLIB and not a valid name, set the error parameter status to TRUE and send CPD0084 \*DIAG message to caller program
 3. if ATTRIBUTE is not a valid name, set the error parameter status to TRUE and send CPD0084 \*DIAG message to caller program
 4. if there is at least one error, send CPF0002 \*ESCAPE message to caller program
 
@@ -294,8 +294,9 @@ The validity checker redoes all the checks which are done by command interface. 
 
 Basically this program performs the following actions:
 
-1. if USRSPC is not a valid name, set the error parameter status to TRUE and send CPD0071 \*DIAG message to caller program
-2. if user space library is not \*LIBL, \*CURLIB and not a valid name, set the error parameter status to TRUE and send CPD0071 \*DIAG message to caller program
+1. if USRSPC is not a valid name, set the error parameter status to TRUE and send CPD0084 \*DIAG message to caller program
+2. if user space library is not \*LIBL, \*CURLIB and not a valid name, set the error parameter status to TRUE and send CPD0084 \*DIAG message to caller program
+3. if there is at least one error, send CPF0002 \*ESCAPE message to caller program
 
 Notice that we do not check anything in relation to the parameters expected to be a variable, because the command does not send any value for those parameters. Therefore, there is no way to determine if the command processing program was properly called through using the command, or was directly called without using the command.
 
@@ -343,8 +344,9 @@ The validity checker redoes all the checks which are done by command interface. 
 
 Basically this program performs the following actions:
 
-1. if USRSPC is not a valid name, set the error parameter status to TRUE and send CPD0071 \*DIAG message to caller program
-2. if user space library is not \*LIBL, \*CURLIB and not a valid name, set the error parameter status to TRUE and send CPD0071 \*DIAG message to caller program
+1. if USRSPC is not a valid name, set the error parameter status to TRUE and send CPD0084 \*DIAG message to caller program
+2. if user space library is not \*LIBL, \*CURLIB and not a valid name, set the error parameter status to TRUE and send CPD0084 \*DIAG message to caller program
+3. if there is at least one error, send CPF0002 \*ESCAPE message to caller program
 
 Notice that we do not check anything in relation to the parameters expected to be a variable, because the command does not send any value for those parameters. Therefore, there is no way to determine if the command processing program was properly called through using the command, or was directly called without using the command.
 

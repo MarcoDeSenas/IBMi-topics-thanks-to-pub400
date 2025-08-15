@@ -21,6 +21,7 @@ Basically this program performs the following actions:
 
 1. if USER is not *CURRENT and is not a valid name, set the error parameter status to TRUE and send CPD0084 \*DIAG message to caller program
 2. if ACTION is neither \*BOTH, nor \*DLTONLY and nor \*LOGONLY, set the error parameter status to TRUE and send CPD0084 \*DIAG message to caller program
+3. if there is at least one error, send CPF0002 \*ESCAPE message to caller program
 
 In order to detect name validity, the program does the following. It tries to check the existence of a user profile object in QTEMP library with the value to check as the user profile name. There will never be a user profile outside of QSYS library. Therefore, if the name is valid, the program will detect a CPF9801 exception, and if the name is not valid, it will detect a CPD0078 diagnostic.
 
