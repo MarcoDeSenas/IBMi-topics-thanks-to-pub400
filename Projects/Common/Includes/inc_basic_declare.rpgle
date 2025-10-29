@@ -8,6 +8,8 @@
 //        2025/06/22 Updated with names related declarations                */
 //        2025/08/01 Updated with hexDigits declaration                     */
 //        2025/08/08 Updated with Error declaration                         */
+//        2025/08/15 Updated with Internal Job Id                           */
+//        2025/10/27 Updated with Found declaration                         */
 //                                                                          */
 //--------------------------------------------------------------------------*/
 
@@ -23,6 +25,7 @@ dcl-s SpoolFile                                     like(ObjectName);
 dcl-s JobName                                       char(10);
 dcl-s JobNbr                                        char(6);
 dcl-s JobUser                                       like(UserProfile);
+dcl-s InternalJobId                                 char(16);
 dcl-s Date7                                         char(7);
 dcl-s Time6                                         char(6);
 dcl-s OutQueue                                      like(ObjectName);
@@ -43,3 +46,4 @@ end-ds;
 
 dcl-s i                                             int(20);
 dcl-s Error                                         ind inz(*off);
+dcl-s Found                                         ind inz(*off);
