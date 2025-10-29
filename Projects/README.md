@@ -8,6 +8,8 @@ The second Project is named **System**. It contains resources related to [system
 
 The third Project is named **Tools**. It contains resources related to [common usage](Tools/README.md) on an IBM i system, not necessarily related to system administration. In a real world they could be used by every user.
 
+The fourth Project is named **Utilities**. It contains resources related to [programming services](Utilities/README.md), which are available for all other tools and programs.
+
 Regarding the organization in place on PUB400.com to retain the source files, which are as much as possible IFS files in place of regular physical source files, all the projects have the same structure described below.
 
 |Home directory|Sub-level 1|Sub-level 2|Sub-level 3|Sub-level 4|Content|
@@ -21,11 +23,16 @@ Regarding the organization in place on PUB400.com to retain the source files, wh
 ||||System1||System 1 utility files...|
 ||||System2||System 2 utility files...|
 ||||SystemN||System N utility files...|
-|||Tools|||tools and utilities project|
+|||Tools|||tools project|
 ||||Assets||assets files such as pictures, images...|
 ||||Tool1||Tool 1 files|
 ||||Tool2||Tool 2 files|
 ||||ToolN||Tool N files|
+|||Utilities|||utilities project|
+||||Assets||assets files such as pictures, images...|
+||||Utility1||Utility 1 files|
+||||Utility2||Utility 2 files|
+||||UtilityN||Utility N files|
 
 In order to use Code4i local development and build capabilities, all files are retained in "~/builds/IBMi-topics-thanks-to-pub400". And Code4i creates the basic structure when setting up the deploy directory.
 
