@@ -1,0 +1,167 @@
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* This is the include file to be used in standard commands validity        */
+/* checker programs.                                                        */
+/*                                                                          */
+/* Dates: 2025/10/29 Creation                                               */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+INCLUDE SRCSTMF('../../common/includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_stdapi_declare.clle')
+
+DCL VAR(&ERROR) TYPE(*LGL)
+DCL VAR(&ERRORPARAM) TYPE(*LGL)
+
+DCL VAR(&PROGRAM) TYPE(*CHAR) LEN(10)
+DCL VAR(&LIBRARY) TYPE(*CHAR) LEN(10)
+DCL VAR(&STACKPOS) TYPE(*INT) LEN(4)
+DCL VAR(&DATA) TYPE(*CHAR) LEN(80)
+
+MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Some initializations...                                                  */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+INCLUDE SRCSTMF('../../common/includes/inc_variables_init.clle')
+CHGVAR VAR(&ERROR) VALUE(&FALSE)
+CHGVAR VAR(&ERRORPARAM) VALUE(&FALSE)
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Set current program name                                                 */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CHGVAR VAR(%BIN(&DATA 1 4)) VALUE(80)
+CHGVAR VAR(%BIN(&DATA 5 4)) VALUE(80)
+CHGVAR VAR(%BIN(&DATA 9 4)) VALUE(0)
+CHGVAR VAR(%BIN(&DATA 13 4)) VALUE(0)
+CALLPRC PRC('_MATPGMNM') PARM((&DATA))
+CHGVAR VAR(&CURRENTPGM) VALUE(%SST(&DATA 51 10))
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Retrieve QSYS/QCATRS program position in the call stack.                 */
+/* This program is responsible to handle command entry.                     */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+CHGVAR VAR(&PROGRAM) VALUE('QCATRS')
+CHGVAR VAR(&LIBRARY) VALUE('QSYS')
+CHGVAR VAR(&STACKPOS) VALUE(&ZERO)
+
+CALLPRC PRC('PROGRAMPOSITIONRTV') PARM(&PROGRAM &LIBRARY &STACKPOS &ERRC0100)
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* If there is an error sent back by the procedure, we forward the message  */
+/* id as an escape message so that the error handling procedure gets it and */
+/* forward back to the calling program.                                     */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+IF COND(&EXCEPTID *NE &BLANK) THEN(DO)
+    SNDPGMMSG MSGID(&EXCEPTID) MSGF(QCPFMSG) MSGDTA(&EXCEPTDTA) TOPGMQ(*SAME) +
+        MSGTYPE(*ESCAPE)
+ENDDO
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* QCATRS program position is 1 when it is used.                            */
+/* We create a data-area in QTEMP library to remember that the CPP will be  */
+/* called normally through command interface.                               */
+/* Then, we can proceed with furter checks if required. FURTHER subroutine  */
+/* is written in the source which includes this include file.               */
+/* FURTHER is responsible to set &ERRORPARM variable to True in case it     */
+/* detects an error.                                                        */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+IF COND(&STACKPOS *EQ 1) THEN(DO)
+    CRTDTAARA DTAARA(QTEMP/&CURRENTPGM) TYPE(*CHAR)
+    MONMSG MSGID(CPF1023) EXEC(RCVMSG MSGTYPE(*EXCP) RMV(*YES))
+    RCVMSG MSGTYPE(*COMP) RMV(*YES)
+    CALLSUBR SUBR(FURTHER)
+ENDDO
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* If position is not 1, it means that the VCP is called by the CPP.        */
+/* If the data-area does not exist, it means that we are here outside of    */
+/* the command interface, so with a direct call to CPP. This is not allowed */
+/* so we can stop the program here with an escape message.                  */
+/* If the data-area does exist, this is the normal way, so we can delete it */
+/* as a cleaning operation, and do nothing else.                            */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+ELSE CMD(DO)
+    CHKOBJ OBJ(QTEMP/&CURRENTPGM) OBJTYPE(*DTAARA)
+    MONMSG MSGID(CPF9801) EXEC(DO)
+        RCVMSG MSGTYPE(*EXCP) RMV(*YES)
+        CHGVAR VAR(&MSGDTA) VALUE('Direct call to program' *BCAT +
+                                'is not allowed. Use the command to invoke it')
+        SNDPGMMSG MSGID(CPF9898) MSGF(QCPFMSG) MSGDTA(&MSGDTA) TOPGMQ(*PRV) +
+            MSGTYPE(*ESCAPE)
+    ENDDO
+    DLTDTAARA DTAARA(QTEMP/&CURRENTPGM)
+    MONMSG MSGID(CPF2105) EXEC(RCVMSG MSGTYPE(*EXCP) RMV(*YES))
+    RCVMSG MSGTYPE(*COMP) RMV(*YES)
+ENDDO
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* Error hangling.                                                          */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* We cannot include the standard error handling routine because system     */
+/* programs which run the validity checker expect only CPF0002 escape       */
+/* when they call it.                                                       */
+/* So, if an unexpected error occurs we handle it just like if it was an    */
+/* error from one of the checks. And a specific error handling routine      */
+/* exists for validity checker programs.                                    */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* To decide wether or not we come to this tag after a real error or just   */
+/* because this is the normal end of the program, we try to receive an      */
+/* *ESCAPE message in the program message queue.                            */
+/* If there is one, &MSG will not be blank, and we come here through the    */
+/* general MONMSG initial command.                                          */
+/* If there is none, &MSG will be blank.                                    */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+ERROR:
+
+CHGVAR VAR(&MSG) VALUE(&BLANK)
+RCVMSG MSGTYPE(*EXCP) RMV(*NO) MSG(&MSG)
+MONMSG MSGID(CPF0000) 
+IF COND(&MSG *NE &BLANK) THEN(DO)
+    CHGVAR VAR(&ERROR) VALUE(&TRUE)
+    CHGVAR VAR(&MSGDTA) VALUE('0000' *TCAT &MSG)
+    SNDPGMMSG TOPGMQ(*PRV) MSGID(CPD0006) MSGF(QCPFMSG) MSGDTA(&MSGDTA) +
+        MSGTYPE(*DIAG)
+    MONMSG MSGID(CPF0000)
+ENDDO
+
+/*--------------------------------------------------------------------------*/
+/*                                                                          */
+/* If an error was found we send back a CPF0002 escape message.             */
+/*                                                                          */
+/*--------------------------------------------------------------------------*/
+
+IF COND(&ERROR *OR &ERRORPARAM) THEN(DO)                                                      
+    SNDPGMMSG TOPGMQ(*PRV) MSGID(CPF0002) MSGF(QCPFMSG) MSGTYPE(*ESCAPE)
+ENDDO
+

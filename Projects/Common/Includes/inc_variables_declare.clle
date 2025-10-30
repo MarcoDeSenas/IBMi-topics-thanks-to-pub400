@@ -8,6 +8,7 @@
 /*        2023/08/25 Added &ZERO                                            */
 /*        2025/08/03 Added &I                                               */
 /*        2025/08/06 Added &MSGTYPE                                         */
+/*        2025/10/29 Added &CURRENTPGM                                      */
 /*                                                                          */
 /*--------------------------------------------------------------------------*/
 
@@ -41,3 +42,5 @@ DCL VAR(&MSGTYPE) TYPE(*CHAR) LEN(10)
 DCL VAR(&JOBNBR) TYPE(*CHAR) LEN(6)
 DCL VAR(&JOBUSER) TYPE(*CHAR) LEN(10)
 DCL VAR(&JOBNAME) TYPE(*CHAR) LEN(10)
+
+DCL VAR(&CURRENTPGM) TYPE(*CHAR) LEN(10)

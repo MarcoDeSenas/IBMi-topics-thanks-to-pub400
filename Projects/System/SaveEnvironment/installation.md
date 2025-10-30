@@ -30,8 +30,6 @@ These sources files make use the following common includes files. For details ab
 
 - inc_variables_declare.clle
 - inc_variables_init.clle
-- inc_errorhandling_forchecker_declare.clle
-- inc_errorhandling_forchecker_routine.clle
 - inc_errorhandling.clle
 
 ## Installation on PUB400 side

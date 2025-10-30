@@ -38,8 +38,6 @@ These sources files make use the following common includes files. For details ab
 
 - inc_variables_declare.clle
 - inc_variables_init.clle
-- inc_errorhandling_forchecker_declare.clle
-- inc_errorhandling_forchecker_routine.clle
 - inc_errorhandling.clle
 - inc_stdapi_declare.clle
 
@@ -60,8 +58,6 @@ These sources files make use the following common includes files. For details ab
 
 - inc_variables_declare.clle
 - inc_variables_init.clle
-- inc_errorhandling_forchecker_declare.clle
-- inc_errorhandling_forchecker_routine.clle
 - inc_errorhandling.clle
 - inc_stdapi_declare.clle
 
@@ -82,8 +78,6 @@ These sources files make use the following common includes files. For details ab
 
 - inc_variables_declare.clle
 - inc_variables_init.clle
-- inc_errorhandling_forchecker_declare.clle
-- inc_errorhandling_forchecker_routine.clle
 - inc_errorhandling.clle
 - inc_stdapi_declare.clle
 
@@ -104,8 +98,6 @@ These sources files make use the following common includes files. For details ab
 
 - inc_variables_declare.clle
 - inc_variables_init.clle
-- inc_errorhandling_forchecker_declare.clle
-- inc_errorhandling_forchecker_routine.clle
 - inc_errorhandling.clle
 - inc_stdapi_declare.clle
 - inc_QUSLSPL_SPLF0300_declare.clle
@@ -138,8 +130,6 @@ The program sources make use of the following includes files.
 - inc_wrkstn_declare.rpgle
 - inc_variables_declare.clle
 - inc_variables_init.clle
-- inc_errorhandling_forchecker_declare.clle
-- inc_errorhandling_forchecker_routine.clle
 - inc_errorhandling.clle
 - inc_stdapi_declare.clle
 - inc_QUSLSPL_SPLF0300_declare.clle

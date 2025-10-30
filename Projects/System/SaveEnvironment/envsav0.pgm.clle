@@ -4,10 +4,13 @@
 /* Validity checker program for ENVSAV command.                             */
 /*                                                                          */
 /* Dates: 2023/07/26 Creation                                               */
+/*        2025/10/29 Set behavior to check if called by command interface   */
 /*                                                                          */
 /*--------------------------------------------------------------------------*/
 
 PGM PARM(&SAVELIBB &SAVELIB1 &SAVELIB2 &SAVEHOME &INCJOBLOG &CLEANTMP &EXCLUDETMP)
+
+DCLPRCOPT DFTACTGRP(*NO) ACTGRP(ENVSAV) BNDSRVPGM((CALLSTACK))
 
 DCL VAR(&SAVELIBB) TYPE(*CHAR) LEN(4)
 DCL VAR(&SAVELIB1) TYPE(*CHAR) LEN(4)
@@ -17,113 +20,15 @@ DCL VAR(&INCJOBLOG) TYPE(*CHAR) LEN(4)
 DCL VAR(&EXCLUDETMP) TYPE(*CHAR) LEN(4)
 DCL VAR(&CLEANTMP) TYPE(*CHAR) LEN(4)
 
-DCL VAR(&PARAM1) TYPE(*CHAR) LEN(10) VALUE('SAVELIBB')
-DCL VAR(&PARAM2) TYPE(*CHAR) LEN(10) VALUE('SAVELIB1')
-DCL VAR(&PARAM3) TYPE(*CHAR) LEN(10) VALUE('SAVELIB2')
-DCL VAR(&PARAM4) TYPE(*CHAR) LEN(10) VALUE('SAVEHOME')
-DCL VAR(&PARAM5) TYPE(*CHAR) LEN(10) VALUE('INCJOBLOG')
-DCL VAR(&PARAM6) TYPE(*CHAR) LEN(10) VALUE('EXCLUDETMP')
-DCL VAR(&PARAM7) TYPE(*CHAR) LEN(10) VALUE('CLEANTMP')
-
-INCLUDE SRCSTMF('../../common/includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../common/includes/inc_validitychecker.clle')
 
 /*--------------------------------------------------------------------------*/
 /*                                                                          */
-/* We cannot include the standard error handling routine because system     */
-/* programs which run the validity checker expect only CPF0002 escape       */
-/* when they call it.                                                       */
-/* So, if an unexpected error occurs we handle it just like if it was an    */
-/* error from one of the checks. And a specific error handling routine      */
-/* exists for validity checker programs.                                    */
+/* Here there is no additional check to perform within the VCP.             */
 /*                                                                          */
 /*--------------------------------------------------------------------------*/
 
-INCLUDE +
-    SRCSTMF('../../common/includes/inc_errorhandling_forchecker_declare.clle')
-
-MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))
-
-/*--------------------------------------------------------------------------*/
-/*                                                                          */
-/* Some initializations...                                                  */
-/*                                                                          */
-/*--------------------------------------------------------------------------*/
-
-INCLUDE SRCSTMF('../../common/includes/inc_variables_init.clle')
-CHGVAR VAR(&ERROR) VALUE(&FALSE)
-CHGVAR VAR(&ERRORPARAM) VALUE(&FALSE)
-
-/*--------------------------------------------------------------------------*/
-/*                                                                          */
-/* Checkings are the following:                                             */
-/*                                                                          */
-/* all parameters must be *YES or *NO.                                      */
-/*                                                                          */
-/*--------------------------------------------------------------------------*/
-
-IF COND(&SAVELIBB *NE &YES *AND &SAVELIBB *NE &NO) THEN(DO)
-    CHGVAR VAR(&ERRORPARAM) VALUE(&TRUE)
-    CHGVAR VAR(&MSGDTA) VALUE('0000')
-    CHGVAR VAR(%SST(&MSGDTA 5 10)) VALUE(&PARAM1)
-    CHGVAR VAR(%SST(&MSGDTA 15 10)) VALUE(&SAVELIBB)
-    SNDPGMMSG MSGID(CPD0084) MSGF(QCPFMSG) MSGTYPE(*DIAG) MSGDTA(&MSGDTA)
-ENDDO
-
-IF COND(&SAVELIB1 *NE &YES *AND &SAVELIB1 *NE &NO) THEN(DO)
-    CHGVAR VAR(&ERRORPARAM) VALUE(&TRUE)
-    CHGVAR VAR(&MSGDTA) VALUE('0000')
-    CHGVAR VAR(%SST(&MSGDTA 5 10)) VALUE(&PARAM2)
-    CHGVAR VAR(%SST(&MSGDTA 15 10)) VALUE(&SAVELIB1)
-    SNDPGMMSG MSGID(CPD0084) MSGF(QCPFMSG) MSGTYPE(*DIAG) MSGDTA(&MSGDTA)
-ENDDO
-
-IF COND(&SAVELIB2 *NE &YES *AND &SAVELIB2 *NE &NO) THEN(DO)
-    CHGVAR VAR(&ERRORPARAM) VALUE(&TRUE)
-    CHGVAR VAR(&MSGDTA) VALUE('0000')
-    CHGVAR VAR(%SST(&MSGDTA 5 10)) VALUE(&PARAM3)
-    CHGVAR VAR(%SST(&MSGDTA 15 10)) VALUE(&SAVELIB2)
-    SNDPGMMSG MSGID(CPD0084) MSGF(QCPFMSG) MSGTYPE(*DIAG) MSGDTA(&MSGDTA)
-ENDDO
-
-IF COND(&SAVEHOME *NE &YES *AND &SAVEHOME *NE &NO) THEN(DO)
-    CHGVAR VAR(&ERRORPARAM) VALUE(&TRUE)
-    CHGVAR VAR(&MSGDTA) VALUE('0000')
-    CHGVAR VAR(%SST(&MSGDTA 5 10)) VALUE(&PARAM4)
-    CHGVAR VAR(%SST(&MSGDTA 15 10)) VALUE(&SAVEHOME)
-    SNDPGMMSG MSGID(CPD0084) MSGF(QCPFMSG) MSGTYPE(*DIAG) MSGDTA(&MSGDTA)
-ENDDO
-
-IF COND(&INCJOBLOG *NE &YES *AND &INCJOBLOG *NE &NO) THEN(DO)
-    CHGVAR VAR(&ERRORPARAM) VALUE(&TRUE)
-    CHGVAR VAR(&MSGDTA) VALUE('0000')
-    CHGVAR VAR(%SST(&MSGDTA 5 10)) VALUE(&PARAM5)
-    CHGVAR VAR(%SST(&MSGDTA 15 10)) VALUE(&INCJOBLOG)
-    SNDPGMMSG MSGID(CPD0084) MSGF(QCPFMSG) MSGTYPE(*DIAG) MSGDTA(&MSGDTA)
-ENDDO
-
-IF COND(&CLEANTMP *NE &YES *AND &CLEANTMP *NE &NO) THEN(DO)
-    CHGVAR VAR(&ERRORPARAM) VALUE(&TRUE)
-    CHGVAR VAR(&MSGDTA) VALUE('0000')
-    CHGVAR VAR(%SST(&MSGDTA 5 10)) VALUE(&PARAM6)
-    CHGVAR VAR(%SST(&MSGDTA 15 10)) VALUE(&CLEANTMP)
-    SNDPGMMSG MSGID(CPD0084) MSGF(QCPFMSG) MSGTYPE(*DIAG) MSGDTA(&MSGDTA)
-ENDDO
-
-IF COND(&EXCLUDETMP *NE &YES *AND &EXCLUDETMP *NE &NO) THEN(DO)
-    CHGVAR VAR(&ERRORPARAM) VALUE(&TRUE)
-    CHGVAR VAR(&MSGDTA) VALUE('0000')
-    CHGVAR VAR(%SST(&MSGDTA 5 10)) VALUE(&PARAM7)
-    CHGVAR VAR(%SST(&MSGDTA 15 10)) VALUE(&EXCLUDETMP)
-    SNDPGMMSG MSGID(CPD0084) MSGF(QCPFMSG) MSGTYPE(*DIAG) MSGDTA(&MSGDTA)
-ENDDO
-
-/*--------------------------------------------------------------------------*/
-/*                                                                          */
-/* Error hangling.                                                          */
-/*                                                                          */
-/*--------------------------------------------------------------------------*/
-
-INCLUDE +
-    SRCSTMF('../../common/includes/inc_errorhandling_forchecker_routine.clle')
+SUBR SUBR(FURTHER)
+ENDSUBR
 
 ENDPGM
