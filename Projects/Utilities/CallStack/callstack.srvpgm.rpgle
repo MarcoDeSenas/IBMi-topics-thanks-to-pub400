@@ -83,11 +83,7 @@ dcl-proc ProgramPositionRtv export;
     dcl-s QualProgram                               like(QualifiedObject);
     dcl-s Position                                  like(FourBytes);
 
-
-    dcl-s ProcName                   char(256) based(ProcNamePtr);
-    dcl-s CurProcName                char(256);
-    dcl-s PrvPgmName                 char(10);
-    dcl-s Wait                       char(1);
+    dcl-s PrvPgmName                                like(ObjectName);
 
     QualProgram = InProgram + InProgramLib;
 
