@@ -12,8 +12,6 @@ The sources files make use the following common includes files. For details abou
 
 - inc_variables_declare.clle
 - inc_variables_init.clle
-- inc_errorhandling_forchecker_declare.clle
-- inc_errorhandling_forchecker_routine.clle
 - inc_errorhandling.clle
 
 ## Creating the database objects

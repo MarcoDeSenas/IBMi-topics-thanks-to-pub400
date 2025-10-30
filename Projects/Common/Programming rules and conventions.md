@@ -2,6 +2,43 @@
 
 In all programs sources and other objects listed in this repository, the rules and conventions below were followed.
 
+## Standard variables
+
+### ILE CL standard variables
+
+Links to files:
+
+1. [inc_variables_declare.clle](./Includes/inc_variables_declare.clle)
+2. [inc_variables_init.clle](./Includes/inc_variables_init.clle)
+
+All ILE CL programs should use those two includes files. The first one contains variables declarations, and the second one contains variables initializations. Most of the times, they are used in conjunction with the error handling includes.
+
+Example when there is no DCLF:
+
+```CLLE
+DCL ...
+DCL ...
+DCL ...
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_init.clle')
+/* first program instruction */
+```
+
+Example when there is at least one DCLF:
+
+```CLLE
+DCL ...
+DCL ...
+DCL ...
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_declare.clle')
+DCLF ...
+INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_routine.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_variables_init.clle')
+/* first program instruction */
+```
+
 ## Error handling routines
 
 ### ILE CL standard error handling
@@ -69,93 +106,51 @@ Note 4: in case an error occurs within SEHR, the target program will abend with 
 - this will be CPF9898 "Unexpected error when handling errors. Review the joblog"
 - or, this will be a message id from a message file with message data if P_MSGID, P_MSGF, P_MSGFLIB, P_MSGDTA variables are properly filled up by the target program
 
-### ILE CL error routine within validity checker programs
+## ILE CL mandatories actions
+
+There are a couple of rules to comply with, along with using standard error handling routines described above:
+
+- If the program expects to receive parameters, it must check the number of received parameters
+- If the program is a command processing program, it must call again the command validity checker (see description below) to ensure that we do not perform a direct call
+
+So after declaring and initializing the variables, there should be someting like this:
+
+```CLLE
+IF COND(%PARMS() *NE expectednumberofparameters) THEN( +
+    SNDPGMMSG TOPGMQ(*SAME) MSGID(CPX6148) MSGF(QCPFMSG) MSGTYPE(*ESCAPE))
+CALL PGM(validitycheckerprogram) +
+    PARM(parameters list)
+```
+
+## ILE CL command validity checker programs
+
+All commands should be set to use a validity checker program. The goal of this program is to make sure that we do not call the command processing program directly, in order to bypass syntax and dependencies checkings provided by the command interface, and to perform additional checking if needed.
 
 Links to files:
 
-1. [inc_errorhandling_forchecker_declare.clle](./Includes/inc_errorhandling_forchecker_declare.clle)
-2. [inc_errorhandling_forchecker_routine.clle](./Includes/inc_errorhandling_forchecker_routine.clle)
+1. [inc_validitychecker.clle](./Includes/inc_validitychecker.clle)
 
-The standard error routine does not fit system requirements of a command validity checker program. Indeed, in cas of failures those programs must send a \*DIAG message with a special format followed by a CPF0002 \*ESCAPE message. The message data of the diagnostic message must start with 4 bytes which are not used in the message first and second level. Checkout [Validity checking program for a CL command](https://www.ibm.com/docs/en/i/7.3?topic=commands-validity-checking-program-cl-command) for some reference.
+Notice that for this kind of program, the standard error routine does not fit system requirements of a command validity checker program. Indeed, in case of failures those programs must send a \*DIAG message with a special format followed by a CPF0002 \*ESCAPE message. The message data of the diagnostic message must start with 4 bytes which are not used in the message first and second level. Checkout [Validity checking program for a CL command](https://www.ibm.com/docs/en/i/7.5?topic=commands-validity-checking-program-cl-command) for some reference.
 
-Here also, the chosen method is to use include source files. However, as opposite to the standard error routine, the processing part of the routine is at the end of the program. Therefore, there are only one way to include those files. The first file contains the variables declaration. The second contains the instructions and must be included at the end of the program. The program flow will always pass through the routine before ending wether an error was detected by the checking instruction or the general monitoring instruction gets activated, or even if there is no error at all.
+Here also, the chosen method is to use include source files. However, it is mandatory to include a BNDSRVPGM((CALLSTACK)) processing option declaration. Indeed, the included source calls a procedure provided by this service program.
 
 So within the validity checker program source, we have something like that:
 
 ```CLLE
+DCLPRCOPT .... _BNDSRVPGM((CALLSTACK))_
 DCL ...
 DCL ...
 DCL ...
-INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_forchecker_declare.clle')
-MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))
-/* first program instruction */
-/* last program instruction */
-INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_forchecker_routine.clle')
+INCLUDE SRCSTMF('../../Common/Includes/inc_validitychecker.clle')
+SUBR SUBR(FURTHER)
+ENDSUBR
 ENDPGM
 ```
 
-The error handling routine performs the following steps:
+The validity checker routine performs the following steps:
 
-1. Check to see if there is at least one *EXCP message in the program message queue, which means that some unexpected error occured
-2. If there is one, CPD0006 \*DIAG message is sent to calling program with the message text of the \*EXCP message as its message data
-3. If there is none, it means that there is no unexpected error
-4. If there is an unexpected error message (decided with &ERROR logical variable set in step 2) or if there is an error based on the command parameters checking (decided with &ERRORPARAM logical variable set during the checkings), CPF0002 *ESCAPE message is sent to the calling program
+1. Retrieve the position of QSYS/QCATRS program (system program responsible to handle command entry) in the current call stack
+2. If this position is 1, which is the expected position, it creates a data-area in QTEMP library as a marker of normal execution; then it executes a FURTHER subroutine which must exist in the validity checker program source; this subroutine retains other required controls not provided by the command interface, or nothing, but must exist
+3. Otherwise, it means that the validity checker is called by the command processing program as its second call; normal execution is when the data-area in QTEMP does exist, which means that the command entry step was done, so we do nothing here; when the data-area does not exist, it means that the command entry was ot used, which is a not allowed state
 
-Note 1: the routine makes use of ERROR tag
-
-Note 2: the routine expects that a logical variable &TRUE exists with the value '1', it does not declare nor it initializes this variable (must be done by the validity checker program)
-
-Note 3: the routine expects that a character variable &BLANK exists with the value ' ', it does not declare nor it initializes this variable (must be done by the validity checker program)
-
-## Standard variables
-
-### ILE CL standard variables
-
-Links to files:
-
-1. [inc_variables_declare.clle](./Includes/inc_variables_declare.clle)
-2. [inc_variables_init.clle](./Includes/inc_variables_init.clle)
-
-All ILE CL programs should use those two includes files. The first one contains variables declarations, and the second one contains variables initializations. Most of the times, they are used in conjunction with the error handling includes.
-
-Example when there is no DCLF:
-
-```CLLE
-DCL ...
-DCL ...
-DCL ...
-INCLUDE SRCSTMF('../../Common/Includes/inc_variables_declare.clle')
-INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling.clle')
-INCLUDE SRCSTMF('../../Common/Includes/inc_variables_init.clle')
-/* first program instruction */
-```
-
-Example when there is at least one DCLF:
-
-```CLLE
-DCL ...
-DCL ...
-DCL ...
-INCLUDE SRCSTMF('../../Common/Includes/inc_variables_declare.clle')
-INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_declare.clle')
-DCLF ...
-INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_routine.clle')
-INCLUDE SRCSTMF('../../Common/Includes/inc_variables_init.clle')
-/* first program instruction */
-```
-
-Example for a validity checker program:
-
-```CLLE
-DCL ...
-DCL ...
-DCL ...
-INCLUDE SRCSTMF('../../Common/Includes/inc_variables_declare.clle')
-INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_forchecker_declare.clle')
-MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))
-INCLUDE SRCSTMF('../../Common/Includes/inc_variables_init.clle')
-/* first program instruction */
-/* last program instruction */
-INCLUDE SRCSTMF('../../Common/Includes/inc_errorhandling_forchecker_routine.clle')
-ENDPGM
-```
+In case more controls are needed, they must reside in FURTHER subroutine.

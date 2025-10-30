@@ -4,91 +4,28 @@
 /* Validity checker program for SPLFDLT command.                            */
 /*                                                                          */
 /* Dates: 2025/08/07 Creation                                               */
+/*        2025/10/30 Set behavior to check if called by command interface   */
 /*                                                                          */
 /*--------------------------------------------------------------------------*/
 
 PGM PARM(&USER &ACTION &FORMTYPE &USRDTA)
 
-DCLPRCOPT DFTACTGRP(*NO) ACTGRP(USRSPC)
+DCLPRCOPT DFTACTGRP(*NO) ACTGRP(USRSPC) BNDSRVPGM((CALLSTACK))
 
 DCL VAR(&USER) TYPE(*CHAR) LEN(10)
 DCL VAR(&ACTION) TYPE(*CHAR) LEN(8)
 DCL VAR(&FORMTYPE) TYPE(*CHAR) LEN(10)
 DCL VAR(&USRDTA) TYPE(*CHAR) LEN(10)
 
-DCL VAR(&PARAM1) TYPE(*CHAR) LEN(10) VALUE('USER')
-DCL VAR(&PARAM2) TYPE(*CHAR) LEN(10) VALUE('ACTION')
-DCL VAR(&PARAM3) TYPE(*CHAR) LEN(10) VALUE('FORMTYPE')
-DCL VAR(&PARAM4) TYPE(*CHAR) LEN(10) VALUE('USRDTA')
-
-INCLUDE SRCSTMF('../../Common/Includes/inc_variables_declare.clle')
+INCLUDE SRCSTMF('../../common/includes/inc_validitychecker.clle')
 
 /*--------------------------------------------------------------------------*/
 /*                                                                          */
-/* We cannot include the standard error handling routine because system     */
-/* programs which run the validity checker expect only CPF0002 escape       */
-/* when they call it.                                                       */
-/* So, if an unexpected error occurs we handle it just like if it was an    */
-/* error from one of the checks. And a specific error handling routine      */
-/* exists for validity checker programs.                                    */
+/* Here there is no additional check to perform within the VCP.             */
 /*                                                                          */
 /*--------------------------------------------------------------------------*/
 
-INCLUDE +
-    SRCSTMF('../../Common/Includes/inc_errorhandling_forchecker_declare.clle')
-
-MONMSG MSGID(CPF0000) EXEC(GOTO CMDLBL(ERROR))
-
-/*--------------------------------------------------------------------------*/
-/*                                                                          */
-/* Some initializations...                                                  */
-/*                                                                          */
-/*--------------------------------------------------------------------------*/
-
-INCLUDE SRCSTMF('../../Common/Includes/inc_variables_init.clle')
-CHGVAR VAR(&ERROR) VALUE(&FALSE)
-CHGVAR VAR(&ERRORPARAM) VALUE(&FALSE)
-
-/*--------------------------------------------------------------------------*/
-/*                                                                          */
-/* Checkings are the following:                                             */
-/*                                                                          */
-/* USER must be a valid name if not *CURRENT                                */
-/* ACTION must be either *LOGONLY, *DLTONLY or *BOTH                        */
-/*                                                                          */
-/*--------------------------------------------------------------------------*/
-
-IF COND(&USER *NE '*CURRENT') THEN(DO)
-    CHKOBJ OBJ(QTEMP/&USER) OBJTYPE(*USRPRF)
-    MONMSG MSGID(CPF0000) EXEC(DO)
-        RCVMSG MSGTYPE(*EXCP) RMV(*YES)
-        CHGVAR VAR(&MSGID) VALUE(&BLANK)
-        RCVMSG MSGTYPE(*DIAG) MSGID(&MSGID) RMV(*YES)
-        IF COND(&MSGID *EQ 'CPD0078') THEN(DO)
-            CHGVAR VAR(&ERRORPARAM) VALUE(&TRUE)
-            CHGVAR VAR(&MSGDTA) VALUE('0000')
-            CHGVAR VAR(%SST(&MSGDTA 5 10)) VALUE(&PARAM1)
-            CHGVAR VAR(%SST(&MSGDTA 15 10)) VALUE(&USER)
-            SNDPGMMSG MSGID(CPD0084) MSGF(QCPFMSG) MSGTYPE(*DIAG) MSGDTA(&MSGDTA)
-        ENDDO
-    ENDDO
-ENDDO
-
-IF COND(&ACTION *NE '*LOGONLY' *AND &ACTION *NE '*DLTONLY' *AND &ACTION *NE '*BOTH') THEN(DO)
-    CHGVAR VAR(&ERRORPARAM) VALUE(&TRUE)
-    CHGVAR VAR(&MSGDTA) VALUE('0000')
-    CHGVAR VAR(%SST(&MSGDTA 5 10)) VALUE(&PARAM2)
-    CHGVAR VAR(%SST(&MSGDTA 15 8)) VALUE(&ACTION)
-    SNDPGMMSG MSGID(CPD0084) MSGF(QCPFMSG) MSGTYPE(*DIAG) MSGDTA(&MSGDTA)
-ENDDO
-
-/*--------------------------------------------------------------------------*/
-/*                                                                          */
-/* Error hangling.                                                          */
-/*                                                                          */
-/*--------------------------------------------------------------------------*/
-
-INCLUDE +
-    SRCSTMF('../../Common/Includes/inc_errorhandling_forchecker_routine.clle')
+SUBR SUBR(FURTHER)
+ENDSUBR
 
 ENDPGM
