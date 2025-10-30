@@ -14,6 +14,7 @@
 //                                 when retrieving the detail of an entry   */
 //                                                                          */
 // Dates: 2025/08/07 Creation (with QUSLSPL/SPLF0300 API/Format)            */
+//        2025/10/30 Fix wrong setup of SCREEN name                         */
 //                                                                          */
 //--------------------------------------------------------------------------*/
 
@@ -266,12 +267,11 @@ dcl-proc HandleSflCtl;
         StartingPosition                            like(FourBytes)         const;
     end-pi;
 
-    $SCREEN = PgmDs.PgmName + '-' + 'SFLCTL';
-
     RefreshSubFile(StartingPosition);
 
     dou (InfWorkStn.Exit or InfWorkStn.Cancel);
 
+        $SCREEN = PgmDs.PgmName + '-' + 'SFLCTL';
         write SFLFOOTER;
         exfmt SFLCTL;
 
@@ -340,6 +340,7 @@ dcl-proc SelectFormat;
     select;
         when ($APINAME = API_QUSLSPL and $FMTNAME = FMT_SPLF0300);
             InfWorkStn.In90 = PrepareDETAIL01($ENTLG:$STARTPOS);
+            $SCREEN = PgmDs.PgmName + '-' + 'DETAIL01';
             exfmt DETAIL01;
     endsl;
 
@@ -417,8 +418,6 @@ dcl-proc PrepareDETAIL01;
         InEntryLength                               like(FourBytes)         const;
         InStartingPosition                          like(FourBytes)         const;
     end-pi;
-
-    $SCREEN = PgmDs.PgmName + '-' + 'DETAIL01';
 
     UserSpaceRtvEnt($USRSPC:
                     $USRSPCLIB:
