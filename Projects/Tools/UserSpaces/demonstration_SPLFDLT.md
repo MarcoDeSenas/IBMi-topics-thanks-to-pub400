@@ -15,15 +15,7 @@ This action is done with SPLFDLT command. The description of each parameter is t
 
 ## SPLFDLT command Validity checker actions
 
-The validity checker redoes all the checks which are done by command interface. It will never detect any issue when it is called by the command interface, but it might detect an issue in case the command processing program is directly used without the command interface. For more information about the standard for a validity checker program, checkout "ILE CL error routine within validity checker programs" in [Programming rules and conventions](../../Common/Programming%20rules%20and%20conventions.md).
-
-Basically this program performs the following actions:
-
-1. if USER is not *CURRENT and is not a valid name, set the error parameter status to TRUE and send CPD0084 \*DIAG message to caller program
-2. if ACTION is neither \*BOTH, nor \*DLTONLY and nor \*LOGONLY, set the error parameter status to TRUE and send CPD0084 \*DIAG message to caller program
-3. if there is at least one error, send CPF0002 \*ESCAPE message to caller program
-
-In order to detect name validity, the program does the following. It tries to check the existence of a user profile object in QTEMP library with the value to check as the user profile name. There will never be a user profile outside of QSYS library. Therefore, if the name is valid, the program will detect a CPF9801 exception, and if the name is not valid, it will detect a CPD0078 diagnostic.
+The validity checker does nothing else than the standard. For more information about this standard, checkout "ILE CL command validity checker programs" in [Programming rules and conventions](../../Common/Programming%20rules%20and%20conventions.md).
 
 ## Behavior of SPLFDLT command
 
