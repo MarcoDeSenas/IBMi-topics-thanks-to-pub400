@@ -12,9 +12,14 @@
 //                                                                          */
 // Specific indicators usage: IN90 To condition a special error display     */
 //                                 when retrieving the detail of an entry   */
+//                            IN91 To condition not displaying the counters */
+//                                 when the user space is empty             */
+//                                                                          */
+//                                                                          */
 //                                                                          */
 // Dates: 2025/08/07 Creation (with QUSLSPL/SPLF0300 API/Format)            */
 //        2025/10/30 Fix wrong setup of SCREEN name                         */
+//        2025/10/31 Allow requesting a position in the list                */
 //                                                                          */
 //--------------------------------------------------------------------------*/
 
@@ -156,7 +161,8 @@ dcl-proc ClearSubfile;
         write SFLCTL;
         InfWorkStn.SflDspCtl = *on;
         InfWorkStn.SflDsp = *on;
-  
+        InfWorkStn.In91 = *on;
+
 end-proc;
 
 //--------------------------------------------------------------------------*/
@@ -174,11 +180,11 @@ dcl-proc LoadSubfile;
 
     dcl-s Position                                  like(FourBytes);
 
-    $ATTRIBUTE = x'00';
     $OPT = Blank;
 
-    for $RRN = 1 to %min(MaxSfl:$ENTNB);
+    for $RRN = 1 to %min(MaxSfl:%int(($MAXPOS - $REQPOS)/$ENTLG) + 1);
 
+        $ATTRIBUTE = x'00';
         i = $RRN;
         Position = StartingPosition + (i - 1) * $ENTLG;
         UserSpaceRtvEnt($USRSPC:
@@ -189,24 +195,30 @@ dcl-proc LoadSubfile;
                         EntryData);
 
         if ERRC0100.ExceptionId <> Blank;
+            $ATTRIBUTE = x'A7';
             $ROW = 'Error found with exception id ' +
                 ERRC0100.ExceptionId + ' and exception data ' + ERRC0100.ExceptionData;
+            i = i - 1;
         else;
             select;
                 when ($APINAME = API_QUSLSPL and $FMTNAME = FMT_SPLF0300);
                     $ROW = %left(SPLF0300Proc(EntryData):%size($ROW));
+                    InfWorkStn.In91 = *off;
                 other;
                     Error = *on;
             endsl;
             if Error = *on;
+                $ATTRIBUTE = x'A7';
                 $ROW = 'Unexpected API/format name: ' +
                         %trimr($APINAME:*natural) + '/' +
                         %trimr($FMTNAME:*natural);
+                i = i - 1;
             endif;
         endif;
 
         if $ENTLG > %size($ROW) and Error = *off;
             $ROW = %left($ROW:%size($ROW)-3) + '...';
+            InfWorkStn.In91 = *off;
         endif;
         Error = *off;
 
@@ -216,6 +228,7 @@ dcl-proc LoadSubfile;
     endfor;
 
     $SFLRRN = 1;
+    $ENTLDNB = %char(i) + '/' + %char($ENTNB);
 
 end-proc;
 
@@ -267,11 +280,18 @@ dcl-proc HandleSflCtl;
         StartingPosition                            like(FourBytes)         const;
     end-pi;
 
-    RefreshSubFile(StartingPosition);
+    dcl-s PreviousReqPos                            like(StartingPosition);
+
+    $MINPOS = StartingPosition;
+    $MAXPOS = $MINPOS + $ENTLG * ($ENTNB - 1);
+    $REQPOS = $MINPOS;
+    $MINMAX = OpenBracket + 'Mini ' + %char($MINPOS) + ' Maxi ' + %char($MAXPOS) + CloseBracket;
+    RefreshSubFile($REQPOS);
 
     dou (InfWorkStn.Exit or InfWorkStn.Cancel);
 
         $SCREEN = PgmDs.PgmName + '-' + 'SFLCTL';
+        PreviousReqPos = $REQPOS;
         write SFLFOOTER;
         exfmt SFLCTL;
 
@@ -281,7 +301,18 @@ dcl-proc HandleSflCtl;
             when InfWorkStn.Cancel;
                 leave;
             when InfWorkStn.Refresh;
+                $REQPOS = StartingPosition;
                 RefreshSubFile(StartingPosition);
+            when $REQPOS <> PreviousReqPos;
+                if ($REQPOS > $MAXPOS);
+                    $REQPOS = $MAXPOS;
+                endif;
+                if ($REQPOS < $MINPOS);
+                    $REQPOS = $MINPOS;
+                endif;
+                $REQPOS = $MINPOS + $ENTLG * %div(($REQPOS - $MINPOS):$ENTLG);
+                RefreshSubFile($REQPOS);
+                PreviousReqPos = $REQPOS;
             when ($ENTNB <> Zero);
                 WorkStationKey = ReadSubFile();
                 InfWorkStn.Exit = *off;
@@ -336,6 +367,7 @@ dcl-proc SelectFormat;
 
     $ENTPOS = $STARTPOS;
     $ENTRY = %char($RRN) + '/' + %char($ENTNB);
+    $ENTRY = %char($RRN + %int(%div(($REQPOS - $MINPOS):$ENTLG))) + '/' + %char($ENTNB);
 
     select;
         when ($APINAME = API_QUSLSPL and $FMTNAME = FMT_SPLF0300);

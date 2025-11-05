@@ -10,15 +10,7 @@ This action is achieved with using USRSPCDSP command. The descripton of each par
 
 ## Command validity checker actions
 
-The validity checker redoes all the checks which are done by command interface. It will never detect any issue when it is called by the command interface, but it might detect an issue in case the command processing program is directly used without the command interface. For more information about the standard for a validity checker program, checkout "ILE CL error routine within validity checker programs" in [Programming rules and conventions](../../Common/Programming%20rules%20and%20conventions.md).
-
-Basically this program performs the following actions:
-
-1. if USRSPC is not a valid name, set the error parameter status to TRUE and send CPD0084 \*DIAG message to caller program
-2. if user space library is neither \*CURLIB, nor \*LIBL, and nor a valid name, set the error parameter status to TRUE and send CPD0084 \*DIAG message to caller program
-3. if there is at least one error, send CPF0002 \*ESCAPE message to caller program
-
-In order to detect name validity, the program does the following. It tries to check the existence of a user profile object in QTEMP library with the value to check as the user profile name. There will never be a user profile outside of QSYS library. Therefore, if the name is valid, the program will detect a CPF9801 exception, and if the name is not valid, it will detect a CPD0078 diagnostic.
+The validity checker does nothing else than the standard. For more information about this standard, checkout "ILE CL command validity checker programs" in [Programming rules and conventions](../../Common/Programming%20rules%20and%20conventions.md).
 
 ## Behavior of the command
 
@@ -50,6 +42,7 @@ The subfile is fully loaded, as opposite to loading pages on request. Therefore,
 The display file makes use of INDARA keyword, so that indicators are used through self-explaining variables. The following exceptions exist:
 
 - IN90: used to condition the normal detailed display or a specific error on DETAIL01 display format
+- IN91: used to condition the normal display of fields in the subfile control format when the list is empty
 
 At initial developing time, only one API/Format output is supported. In case support for others would be required, the way to proceed is described in "Possible improvements" section of thids document.
 
@@ -71,13 +64,13 @@ It performs the following actions:
 
 1. Set SFLDSP and SFLDSPCTL indicators to *off
 2. Clear subfile
-3. Set SFLDSP and SFLDSPCTL indicators to *on; whatever the content of the user space, the subfile will always get displayed, with two special rows in case, the user space list is empty
+3. Set SFLDSP and SFLDSPCTL indicators to *on; whatever the content of the user space, the subfile will always get displayed, with two special rows in case the user space list is empty
 
 ### LoadSubFile procedure
 
 It performs the following actions:
 
-1. Browse the user space based on Entries count, Entry length, First entry position
+1. Browse the user space based on Entries count, Entry length, First entry position (which can be a position requested by the user)
 2. For each entry
     1. In case of error when retrieving the entry content, fill the subfile row with the API ExceptionId and ExceptionData
     2. If no error, invoke the appropriate subprocedure to fill the subfile row; SPLF0300Proc is the only one at this time
@@ -100,9 +93,10 @@ It performs the following actions:
 2. Until F3 or F12 key is entered
     1. display the user space content
     2. if F3 or F12 key is entered, leave the procedure
-    3. if F5 key is entered, refresh the subfile
-    4. otherwise, and when the list is not empty, invoke ReadSubFile procedure to discover any selection in the subfile, and therefore display the detail of an entry
-    5. simulate hitting F3 key if it was hitted when displaying the detail format
+    3. if F5 key is entered, refresh the subfile with the initial starting position (clearing the requested position)
+    4. if the user enters a position to start subfile loading with, ensure that this requested position is within the limits, then invoke refreshing the subfile with the new starting position
+    5. otherwise, and when the list is not empty, invoke ReadSubFile procedure to discover any selection in the subfile, and therefore display the detail of an entry
+    6. simulate hitting F3 key if it was hitted when displaying the detail format
 
 ### ReadSubFile procedure
 
@@ -136,7 +130,7 @@ It performs the following actions:
 It performs the following actions:
 
 1. Retrieve user space entry to gather all data fields
-2. In case of error, set the IN90 indocator to *on and return this error to the calling procedure
+2. In case of error, set the IN90 indicator to *on and return this error to the calling procedure
 3. In case of no error, set all display fields with the related subfield from the entry and return to the calling procedure
 
 ### ReturnProc procedure
@@ -144,7 +138,7 @@ It performs the following actions:
 It performs the following actions:
 
 1. Close the display
-2; Set INLR indocator to *off
+2. Set INLR indicator to *off
 
 ### InvokeDSPF procedure
 
@@ -180,10 +174,11 @@ The screenshot below shows the information which is common to all screens.
 
 The screenshot below describes the information specific to SPLCTL screen when there is at least one entry to display.
 
-1. Length of each entry and total count of entries
+1. Length of each entry and count of entries loaded versus existing in the user space
 2. Option field to enter 1 for more details against the entry
 3. Position of each entry within the whole user space
 4. First characters of each entry; when the length is greater than 68 characters, the content ends with "..."; the entry is formatted with the concatenation of all first fields, given that binary fields are converted to characters to avoid unpredictable display errors
+5. Availability to enter a position in the user space within the limits; when entering something here the action takes precedence to the options entered in the list; when entering something here, the requested position is set to the closest and lower existing position in the user space
 
 ![usrspcdsp_SFLCTL_1_screen](../Assets/usrspcdsp_SFLCTL_1_screen.png)
 
@@ -191,7 +186,7 @@ The screenshot below describes the information specific to SPLCTL screen when th
 
 The screenshot below describes the information specific to SPLCTL screen where there is no entry to display.
 
-1. Length of each entry and total count of entries (maybe an improvement would be needed for a better display format)
+1. Length of each entry
 2. Message to inform that the list is empty
 
 ![usrspcdsp_SFTCTL_2_screen](../Assets/usrspcdsp_SFLCTL_2_screen.png)
@@ -200,8 +195,8 @@ The screenshot below describes the information specific to SPLCTL screen where t
 
 The screenshot below describes the information specific to DETAIL01 screen. This screen is used for QUSLSPL/SPLF0300 API/Format. For the detail of each field, review SPLF0300 section and fields description on [QUSLSPL API](https://www.ibm.com/docs/en/i/7.5.0?topic=ssw_ibm_i_75/apis/QUSLSPL.html) documentation page.
 
-1. Entry count over the total of entries
-2. Length of each entry and position within the whole user space
+1. Entry count over the total of entries in the user space regardless the user requested a specific position
+2. Length of each entry and position within the whole user space regardless the user requested a specific position
 3. First set of properly formatted information
 4. Second set of properly formatted information
 
@@ -220,7 +215,7 @@ The screenshot below describes the information specific to DSPF screen.
 
 Function keys usage:
 
-- Enter on the list screen (SFLCTL): process the options selection
+- Enter on the list screen (SFLCTL): process the requested position or the options selection
 - Enter on the detail of an entry screen (DETAILxx): leave the screen and go back to the previous screen
 - Enter on the screen displayed when API/Format is not expectd (DSPF): execute DSPF command against the user space then exit
 - F3 on any screen: exit from any screen and get out of the command
@@ -229,11 +224,15 @@ Function keys usage:
 
 ### Normal use
 
-The normal use is related to displaying the content of a user space properly filled up by a list API. There are some entries in this user space and, one can use regular functions keys to navigate in the display and option 1 in the list against an entry to see the details. However, errors might happen and one of them is trying to display the user space content when it is filled up with an unexpected API/Format.
+The normal use is related to displaying the content of a user space properly filled up by a list API. There are some entries in this user space, and one can use regular functions keys to navigate in the display, or request a specific position to reload the list or option 1 in the list against an entry to see the details. However, errors might happen and one of them is trying to display the user space content when it is filled up with an unexpected API/Format.
 
 Example with several entries available for entering 1 for more details.
 
-![Press 1 for more details](../Assets/usrspcdsp_example.gif)
+![Press 1 for more details](../Assets/usrspcdsp_example1.gif)
+
+Example when requesting a new position. Requested position is set to the closest and lower valid position, and entries loaded count is updated. The list is reloaded.
+
+![Request a new position](../Assets/usrspcdsp_example2.gif)
 
 Example with a user space whom entry list is empty. It means that the API filled up the user space but did not add any entry because of criteria used.
 
@@ -255,7 +254,3 @@ Other API/Format than QUSLSPL/SPL0300 may be accepted. For instance, it might be
 - within LoadSubFile subprocedure in USRSPCDSP1 program, add an entry to the test of API/Format in order to address the added subprocedure
 - within SelectFormat subprocedure in USRSPCDSP1 program, add an entry to the test of API/Format in order to display the added display file format
 - add a new subprocedure similar to PrepareDETAIL01, to the USRSPCDSP1 program in order to populate the fields of the added display file format
-
-The display subfile is limited to 9999 rows. There might be situations where there are more entries in the user space. Therefore, a message might be displayed to warn the user that not all entries are available.
-
-When dealing with large subfiles or when the number of entries is greater than 9999, it might be interesting to have the capability to enter the position in the list to start with. A "Starting position" input field is necessary in this case to be added to the subfile control format, so that the content of this filed is read when the user hits the Enter key.
