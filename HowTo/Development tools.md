@@ -6,6 +6,8 @@ VSCode and **all IBM i related extensions** is used for all development activity
 
 Download site: [Download Visual Studio Code](https://code.visualstudio.com/Download).
 
+All the settings below are related to Code4i, that you get installed through the extension management procedures.
+
 ![Code4i login settings](Assets/VSCode_login_settings.png)
 
 - Login settings

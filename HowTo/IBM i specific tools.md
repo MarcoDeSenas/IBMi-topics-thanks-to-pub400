@@ -27,4 +27,4 @@ Main items setup:
 
 IBM i Navigator is a web based interface to access administration tasks on an IBM i system. However, on PUB400, as normal users, we have only a couple of allowed features and cannot access most of those tasks.
 
-To access IBM i Navigator, we hust have to point a browser to [!PUB400 Navigator for i(https://pub400.com:2003/Navigator/login)] and log in with our regular user profile/password.
+To access IBM i Navigator, we hust have to point a browser to ![PUB400 Navigator for i](https://pub400.com:2003/Navigator/login) and log in with our regular user profile/password.
