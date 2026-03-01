@@ -6,7 +6,7 @@ ssh based tools allow a better usage of open source based utilities than using Q
 
 When dealing with IFS files, it is often easy to use an ssh client. There is one which is provided by Microsoft and comes with recent versions of Windows. However, I have always use putty.
 
-Download site: ![PuTTY: a free SSH and Telnet client](https://www.chiark.greenend.org.uk/~sgtatham/putty/).
+Download site: ![PuTTY: a free SSH and Telnet client](https://putty.software/).
 
 I have one pub400 saved session in putty configuration. The parameters are as follow, other parameters keeping their default value.
 
