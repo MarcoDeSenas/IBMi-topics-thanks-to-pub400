@@ -19,7 +19,7 @@ All the settings below are related to Code4i, that you get installed through the
   - connection timeout: 20000 (sometimes, it might be needed to set a higher value here such as 30000 or more)
   - Turn on SSH debut output: unselected (might be selected to debug ssh errors, such as invalid private/public keys pair)
 
-(check out ![Using an ssh keys pair to login.md](Using%20an%20ssh%20keys%20pair%20to%20login.md) for more details on the way to create this openssh key file)
+(check out [Using an ssh keys pair to login.md](Using%20an%20ssh%20keys%20pair%20to%20login.md) for more details on the way to create this openssh key file)
 
 Note: Code4i stands that it supports ppk files for ssh authentication but, for some reasons, ppk files created with my putty installation do not work while openssh files do the job.
 
@@ -76,4 +76,4 @@ There is nothing to set it, as it shows a report of required and optional compon
 
 ## github repository synchronization tools
 
-In order to synchronize my laptop files with my github repositories, I use both ![Git for Windows](https://gitforwindows.org/index.html) as a git bash shell commands and ![Github Desktop](https://github.com/apps/desktop) as a GUI for git commands. I never use any git integrated commands within VS Code, only using them to list the changes on the files. Indeed, I always GitHub Desktop to handle git actions.
+In order to synchronize my laptop files with my github repositories, I use both [Git for Windows](https://gitforwindows.org/index.html) as a git bash shell commands and [Github Desktop](https://github.com/apps/desktop) as a GUI for git commands. I never use any git integrated commands within VS Code, only using them to list the changes on the files. Indeed, I always GitHub Desktop to handle git actions.

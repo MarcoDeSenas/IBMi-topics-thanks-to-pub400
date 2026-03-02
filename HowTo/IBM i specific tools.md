@@ -21,10 +21,10 @@ Main items setup:
   - com.ibm.iaccess.PreferredSSHClient=Putty
   - com.ibm.iaccess.SSHClientOpts=-i privatekey.ppk
 
-(check out ![Using an ssh keys pair to login.md](Using%20an%20ssh%20keys%20pair%20to%20login.md) for more details on the way to create those openssh and ppk key file)
+(check out [Using an ssh keys pair to login.md](Using%20an%20ssh%20keys%20pair%20to%20login.md) for more details on the way to create those openssh and ppk key file)
 
 ## IBM i Navigator
 
 IBM i Navigator is a web based interface to access administration tasks on an IBM i system. However, on PUB400, as normal users, we have only a couple of allowed features and cannot access most of those tasks.
 
-To access IBM i Navigator, we hust have to point a browser to ![PUB400 Navigator for i](https://pub400.com:2003/Navigator/login) and log in with our regular user profile/password.
+To access IBM i Navigator, we hust have to point a browser to [PUB400 Navigator for i](https://pub400.com:2003/Navigator/login) and log in with our regular user profile/password.
