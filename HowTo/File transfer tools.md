@@ -32,7 +32,7 @@ Below is and xml export of the FileZilla client remote site configuration with s
 </Server>
 ```
 
-(check out ![Using an ssh keys pair to login.md](Using%20an%20ssh%20keys%20pair%20to%20login.md) for more details on the way to create this ppk file)
+(check out [Using an ssh keys pair to login.md](Using%20an%20ssh%20keys%20pair%20to%20login.md) for more details on the way to create this ppk file)
 
 The second one, which I use most of the times when dealing with QSYS, is using FTP File Transfer Protocol over TLS. As this connects to the ftp server on PUB400 in place of sftp server, it is more suitable to handle QSYS objects such as save files. In this last case, FileZilla allows entering anf ftp subcommand, such as "cwd /QSYS.LIB/DIMARCOB.LIB" to send a save file (i.e. with a .SAVF name extension) and get it created as a real save file.
 

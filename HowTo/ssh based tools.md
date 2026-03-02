@@ -6,7 +6,7 @@ ssh based tools allow a better usage of open source based utilities than using Q
 
 When dealing with IFS files, it is often easy to use an ssh client. There is one which is provided by Microsoft and comes with recent versions of Windows. However, I have always use putty.
 
-Download site: ![PuTTY: a free SSH and Telnet client](https://putty.software/).
+Download site: [PuTTY: a free SSH and Telnet client](https://putty.software/).
 
 I have one pub400 saved session in putty configuration. The parameters are as follow, other parameters keeping their default value.
 
@@ -26,7 +26,7 @@ I have one pub400 saved session in putty configuration. The parameters are as fo
 - Connection/SSH/Auth
   - Display pre-authentication banner: selected
 - Connection/SSH/Auth/Credentials
-  - Private key file for authentication: the full path to ppk file (check out ![Using an ssh keys pair to login.md](Using%20an%20ssh%20keys%20pair%20to%20login.md) for more details on the way to create this ppk file)
+  - Private key file for authentication: the full path to ppk file (check out [Using an ssh keys pair to login.md](Using%20an%20ssh%20keys%20pair%20to%20login.md) for more details on the way to create this ppk file)
 
   In order to use any ssh connection to PUB400, the known_hosts file used by putty must be updated the first time such a connection is requested. Once done, the content of C:\Users\my_user_on_Windows\.ssh\known_hosts is similar to below:
 
